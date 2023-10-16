@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { STATUS_ACCOUNT, ROLE } from "../global/constants";
 const Schema = mongoose.Schema;
 
 const accountSchema = new Schema({
@@ -16,15 +17,13 @@ const accountSchema = new Schema({
     },
     role: {
         type: String,
-        required:true
+        enum: [ROLE.ADMIN, ROLE.STAFF],
+        default: ROLE.STAFF,
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: [STATUS_ACCOUNT.ENABLED, STATUS_ACCOUNT.DISABLED],
+        default: STATUS_ACCOUNT.ENABLED,   
     },
     createAt: {
         type: Number,

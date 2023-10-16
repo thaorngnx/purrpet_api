@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const orderSchema = new Schema({
+export const orderSchema = new Schema({
     orderCode: {
         type: String,
         required: true
@@ -36,23 +36,21 @@ const orderSchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("order", orderSchema);
+export default mongoose.model("order", orderSchema);
 
 
 

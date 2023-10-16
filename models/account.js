@@ -1,7 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import "../common/constants.js";
+import { ROLE, STATUS_ACCOUNT } from "../common/constants.js";
 const Schema = mongoose.Schema;
 
-const accountSchema = new Schema({
+export const accountSchema = new Schema({
     userCode: {
         type: String,
         required: true
@@ -16,7 +18,8 @@ const accountSchema = new Schema({
     },
     role: {
         type: String,
-        required:true
+        enum: [ROLE.ADMIN, ROLE.STAFF],
+        default: ROLE.STAFF
     },
     status: {
         type: String,
@@ -28,22 +31,20 @@ const accountSchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("account", accountSchema);
+export default mongoose.model("account", accountSchema);
 
 

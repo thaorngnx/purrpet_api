@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const bookingSpaSchema = new Schema({
+export const bookingSpaSchema = new Schema({
     bookingSpaCode: {
         type: String,
         required: true
     },
-    services: {
+    serviceSpas: {
         type: Array,
         required:true
     },
@@ -16,6 +16,7 @@ const bookingSpaSchema = new Schema({
     },
     buyerPhone: {
         type: Number,
+        length: 10,
         required:true
     },
     buyerName: {
@@ -32,20 +33,18 @@ const bookingSpaSchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("bookingSpa", bookingSpaSchema);
+export default mongoose.model("bookingSpa", bookingSpaSchema);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { STATUS_CATEGORY } from "../common/constants.js";
 const Schema = mongoose.Schema;
 
 export const categorySchema = new Schema({
@@ -16,11 +17,11 @@ export const categorySchema = new Schema({
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_CATEGORY.ACTIVE, STATUS_CATEGORY.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_CATEGORY.ACTIVE
     },
     createAt: {
         type: Number,

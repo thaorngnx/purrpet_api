@@ -18,17 +18,21 @@ export const accountSchema = new Schema({
     },
     role: {
         type: String,
-        enum: [ROLE.ADMIN, ROLE.STAFF],
+        enum: {
+           values: [ROLE.ADMIN, ROLE.STAFF],
+        message: "{VALUE} is not supported",
+        },
         default: ROLE.STAFF
     },
     status: {
         type: String,
-        required:true
+        enum: {
+            values: [STATUS_ACCOUNT.ACTIVE, STATUS_ACCOUNT.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_ACCOUNT.ACTIVE
     },
-    statusName: {
-        type: String,
-        required:true
-    },
+
     createAt: {
         type: Number,
         default: Date.now()
@@ -46,5 +50,4 @@ export const accountSchema = new Schema({
 });
 
 export default mongoose.model("account", accountSchema);
-
 

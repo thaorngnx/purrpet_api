@@ -34,6 +34,8 @@ export const STATUS_BOOKING = {
     CHECKIN: "Đã checkin",
     //đã checkout
     CHECKOUT: "Đã checkout",
+    //đã hủy
+    CANCEL: "Đã hủy",
 };
 
 export const STATUS_CATEGORY = {
@@ -45,5 +47,14 @@ export const CATEGORY_TYPE = {
     PRODUCT: "Sản phẩm",
     SPA: "Spa",
     HOMESTAY: "Homestay"
+};
+
+
+export const COLLECTION = {
+    ACCOUNT: "account",
+    CATEGORY: "category",
+    ORDER: "order",
+    BOOKING_HOME: "bookingHome",
+    BOOKING_SPA: "bookingSpa"
 };
 

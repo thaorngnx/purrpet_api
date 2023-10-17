@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const homestaySchema = new Schema({
+export const homestaySchema = new Schema({
     homeCode: {
         type: String,
         required: true
@@ -36,20 +36,18 @@ const homestaySchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("homestay", homestaySchema);
+export default mongoose.model("homestay", homestaySchema);

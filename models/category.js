@@ -1,29 +1,17 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-export const spaSchema = new Schema({
-    spaCode: {
+export const categorySchema = new Schema({
+    categoryCode: {
         type: String,
         required: true
-    },
-    spaName: {
-        type: String,
-        required:true
-    },
-    price: {
-        type: Number,
-        required:true
-    },
-    category: {
-        type: String,
-        required:true
     },
     categoryName: {
         type: String,
         required:true
     },
-    images: {
-        type: Array,
+    categoryType: {
+        type: String,
         required:true
     },
     status: {
@@ -36,21 +24,18 @@ export const spaSchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-export default mongoose.model("spa", spaSchema);
-
+export default mongoose.model("category", categorySchema);

@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const bookingHomeSchema = new Schema({
+export const bookingHomeSchema = new Schema({
     bookingHomeCode: {
         type: String,
         required: true
     },
-    services: {
+    serviceHomes: {
         type: Array,
         required:true
     },
@@ -16,6 +16,7 @@ const bookingHomeSchema = new Schema({
     },
     buyerPhone: {
         type: Number,
+        length: 10,
         required:true
     },
     buyerName: {
@@ -32,20 +33,18 @@ const bookingHomeSchema = new Schema({
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-const BookingHome = mongoose.model("BookingHome", bookingHomeSchema);
+export default mongoose.model("bookingHome", bookingHomeSchema);

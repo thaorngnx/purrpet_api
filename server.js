@@ -1,19 +1,25 @@
-import mongoose from "mongoose";
-import * as dotenv from "dotenv";
-import express from "express";
+import express from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import './database.js'
 
-const app = express()
+dotenv.config();
+const app = express();
 
-dotenv.config()
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI)
-        console.log(`MongoDB Connected`)
-    } catch (error) {
-        console.log(`Error: ${error.message} ${process.env.MONGO_URI} `)
-        process.exit(1)
-    }
-}
-connectDB()
-app.listen(3000, () => console.log("Server Started"))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+    res.send('Welcome to PurrPet API')
+})
+
+const PORT = process.env.PORT || 8888;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+

@@ -19,12 +19,9 @@ export const productSchema = new Schema({
         required:true
     },
     category: {
-        type: String,
-        required:true
-    },
-    categoryName: {
-        type: String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
+        index: false,
     },
     images: {
         type: Array,
@@ -32,11 +29,11 @@ export const productSchema = new Schema({
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: ["ACTIVE", "INACTIVE"],
+            message: "{VALUE} is not supported",
+        },
+        default: "ACTIVE"
     },
     createAt: {
         type: Number,

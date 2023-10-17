@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {COLLECTION } from "../common/constants.js";
 const Schema = mongoose.Schema;
 
 export const spaSchema = new Schema({
@@ -15,22 +16,15 @@ export const spaSchema = new Schema({
         required:true
     },
     category: {
-        type: String,
-        required:true
-    },
-    categoryName: {
-        type: String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION.CATEGORY,
+        index: false,
     },
     images: {
         type: Array,
         required:true
     },
     status: {
-        type: String,
-        required:true
-    },
-    statusName: {
         type: String,
         required:true
     },

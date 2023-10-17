@@ -18,6 +18,10 @@ export const orderSchema = new Schema({
         type: Number,
         required:true
     },
+    email:{
+        type: String,
+        required:true,
+    },
     buyerName: {
         type: String,
         required:true
@@ -28,11 +32,11 @@ export const orderSchema = new Schema({
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: ["NEW", "WAITING_FOR_PAY", "PAID", "CHECKIN", "CHECKOUT", "CANCEL"],
+            message: "{VALUE} is not supported",
+        },
+        default: "NEW"
     },
     createAt: {
         type: Number,

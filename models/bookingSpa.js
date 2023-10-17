@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { STATUS_BOOKING } from "../common/constants";
 const Schema = mongoose.Schema;
 
 export const bookingSpaSchema = new Schema({
@@ -14,6 +15,10 @@ export const bookingSpaSchema = new Schema({
         type: Number,
         required:true
     },
+    email:{
+        type: String,
+        required:true,
+    },
     buyerPhone: {
         type: Number,
         length: 10,
@@ -25,11 +30,11 @@ export const bookingSpaSchema = new Schema({
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_BOOKING.NEW, STATUS_BOOKING.WAITING_FOR_PAY, STATUS_BOOKING.PAID, STATUS_BOOKING.CHECKIN, STATUS_BOOKING.CHECKOUT, STATUS_BOOKING.CANCEL],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_BOOKING.NEW
     },
     createAt: {
         type: Number,

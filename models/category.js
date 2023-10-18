@@ -1,35 +1,29 @@
 import mongoose from "mongoose";
-import { STATUS_SPA } from "../common/constants.js";
+import { STATUS_CATEGORY } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
-export const spaSchema = new Schema({
-    spaCode: {
+export const categorySchema = new Schema({
+    categoryCode: {
         type: String,
         required: true
     },
-    spaName: {
+    categoryName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    categoryType: {
         type: String,
         required: true
-    },
-    price: {
-        type: Number,
-        required: true
-    },
-    category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: COLLECTION.CATEGORY,
-        index: false
-    },
-    images: {
-        type: Array
     },
     status: {
         type: String,
         enum: {
-            values: [STATUS_SPA, STATUS_SPA.INACTIVE],
+            values: [STATUS_CATEGORY.ACTIVE, STATUS_CATEGORY.INACTIVE],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_SPA.ACTIVE
+        default: STATUS_CATEGORY.ACTIVE
     },
     createAt: {
         type: Number,
@@ -47,5 +41,4 @@ export const spaSchema = new Schema({
     }
 });
 
-export default mongoose.model("spa", spaSchema);
-
+export default mongoose.model("category", categorySchema);

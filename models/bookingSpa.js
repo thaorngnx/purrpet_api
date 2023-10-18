@@ -1,12 +1,15 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { isEmail } from "validator";
+import { STATUS_BOOKING } from "../common/constants";
+
 const Schema = mongoose.Schema;
 
-const bookingSpaSchema = new Schema({
+export const bookingSpaSchema = new Schema({
     bookingSpaCode: {
         type: String,
         required: true
     },
-    services: {
+    serviceSpas: {
         type: Array,
         required:true
     },
@@ -14,38 +17,43 @@ const bookingSpaSchema = new Schema({
         type: Number,
         required:true
     },
+    email:{
+        type: String,
+        required:true,
+        validator: [isEmail, 'invalid email']
+    },
     buyerPhone: {
         type: Number,
-        required:true
+        length: 10,
+        required: true
     },
     buyerName: {
         type: String,
-        required:true
+        required:true,
+        trim: true
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_BOOKING.NEW, STATUS_BOOKING.WAITING_FOR_PAY, STATUS_BOOKING.PAID, STATUS_BOOKING.CHECKIN, STATUS_BOOKING.CHECKOUT, STATUS_BOOKING.CANCEL],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_BOOKING.NEW
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("bookingSpa", bookingSpaSchema);
+export default mongoose.model("bookingSpa", bookingSpaSchema);

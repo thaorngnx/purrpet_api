@@ -1,55 +1,53 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { COLLECTION, STATUS_HOME } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
-const homestaySchema = new Schema({
+export const homestaySchema = new Schema({
     homeCode: {
         type: String,
         required: true
     },
     homeName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     price: {
         type: Number,
-        required:true
+        required: true
     },
     category: {
-        type: String,
-        required:true
-    },
-    categoryName: {
-        type: String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION.CATEGORY,
+        index: false
     },
     images: {
         type: Array,
-        required:true
+        required: true
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_HOME.ACTIVE
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("homestay", homestaySchema);
+export default mongoose.model("homestay", homestaySchema);

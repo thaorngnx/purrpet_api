@@ -1,49 +1,55 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { ROLE, STATUS_ACCOUNT } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
-const accountSchema = new Schema({
+export const accountSchema = new Schema({
     userCode: {
         type: String,
         required: true
     },
     username: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     password: {
         type: String,
-        required:true
+        required: true,
+        trim: true,
+        minlength: 6,
+        maxlength: 20
     },
     role: {
         type: String,
-        required:true
+        enum: {
+           values: [ROLE.ADMIN, ROLE.STAFF],
+        message: "{VALUE} is not supported",
+        },
+        default: ROLE.STAFF
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_ACCOUNT.ACTIVE, STATUS_ACCOUNT.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_ACCOUNT.ACTIVE
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: String,
-        required:true
+        type: String
     },
     updateBy: {
-        type: String,
-        required:true
+        type: String
     }
 });
 
-module.exports = mongoose.model("account", accountSchema);
-
-
+export default mongoose.model("account", accountSchema);

@@ -1,60 +1,58 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { STATUS_PRODUCT } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema({
+export const productSchema = new Schema({
     productCode: {
         type: String,
         required: true
     },
     productName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     description: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     price: {
         type: Number,
-        required:true
+        required: true
     },
     category: {
-        type: String,
-        required:true
-    },
-    categoryName: {
-        type: String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION.CATEGORY,
+        index: false
     },
     images: {
-        type: Array,
-        required:true
+        type: Array
     },
     status: {
         type: String,
-        required:true
-    },
-    statusName: {
-        type: String,
-        required:true
+        enum: {
+            values: [STATUS_PRODUCT.ACTIVE, STATUS_PRODUCT.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_PRODUCT.ACTIVE
     },
     createAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     updateAt: {
         type: Number,
-        required:true
+        default: Date.now()
     },
     createBy: {
-        type: Number,
-        required:true
+        type: String
     },
     updateBy: {
-        type: Number,
-        required:true
+        type: String 
     }
 });
 
-module.exports = mongoose.model("product", productSchema);
+export default mongoose.model("product", productSchema);
 

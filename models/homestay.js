@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { COLLECTION } from "../common/constants.js";
+import { COLLECTION, STATUS_HOME } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
 export const homestaySchema = new Schema({
@@ -9,24 +10,29 @@ export const homestaySchema = new Schema({
     },
     homeName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     price: {
         type: Number,
-        required:true
+        required: true
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: COLLECTION.CATEGORY,
-        index: false,
+        index: false
     },
     images: {
         type: Array,
-        required:true
+        required: true
     },
     status: {
         type: String,
-        required:true
+        enum: {
+            values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
+            message: "{VALUE} is not supported",
+        },
+        default: STATUS_HOME.ACTIVE
     },
     createAt: {
         type: Number,

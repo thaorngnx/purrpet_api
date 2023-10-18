@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { STATUS_PRODUCT } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
 export const productSchema = new Schema({
@@ -8,32 +10,33 @@ export const productSchema = new Schema({
     },
     productName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     description: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     price: {
         type: Number,
-        required:true
+        required: true
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "category",
-        index: false,
+        ref: COLLECTION.CATEGORY,
+        index: false
     },
     images: {
-        type: Array,
-        required:true
+        type: Array
     },
     status: {
         type: String,
         enum: {
-            values: ["ACTIVE", "INACTIVE"],
+            values: [STATUS_PRODUCT.ACTIVE, STATUS_PRODUCT.INACTIVE],
             message: "{VALUE} is not supported",
         },
-        default: "ACTIVE"
+        default: STATUS_PRODUCT.ACTIVE
     },
     createAt: {
         type: Number,
@@ -44,10 +47,10 @@ export const productSchema = new Schema({
         default: Date.now()
     },
     createBy: {
-        type: Number
+        type: String
     },
     updateBy: {
-        type: Number 
+        type: String 
     }
 });
 

@@ -8,33 +8,36 @@ export const ROLE = {
     STAFF: "Nhân viên"
 };
 
+export const STATUS_PRODUCT = {
+    ACTIVE: "ACTIVE",
+    INACTIVE: "INACTIVE"
+};
+
+export const STATUS_HOME = {
+    ACTIVE: "ACTIVE",
+    INACTIVE: "INACTIVE"
+};
+
+export const STATUS_SPA = {
+    ACTIVE: "ACTIVE",
+    INACTIVE: "INACTIVE"
+};
+
 export const STATUS_ORDER = {
-    //THINKING
     NEW: "Mới đặt",
-    //chờ thanh toán
     WAITING_FOR_PAY: "Chờ thanh toán",
-    //đã thanh toán
     PAID: "Đã thanh toán",
-    //đang giao hàng
     DELIVERING: "Đang giao hàng",
-    //đã hủy
     CANCEL: "Đã hủy",
-    //đã hoàn thành
     DONE: "Đã hoàn thành"
 };
 
 export const STATUS_BOOKING = {
-    //THINKING
     NEW: "Mới đặt",
-    //chờ thanh toán
     WAITING_FOR_PAY: "Chờ thanh toán",
-    //đã thanh toán
     PAID: "Đã thanh toán",
-    //đã checkin
     CHECKIN: "Đã checkin",
-    //đã checkout
     CHECKOUT: "Đã checkout",
-    //đã hủy
     CANCEL: "Đã hủy",
 };
 
@@ -48,7 +51,6 @@ export const CATEGORY_TYPE = {
     SPA: "Spa",
     HOMESTAY: "Homestay"
 };
-
 
 export const COLLECTION = {
     ACCOUNT: "account",

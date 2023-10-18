@@ -7,7 +7,6 @@ import homestay from './homestay';
 import spa from './spa';
 import product from './product';
 
-
 export default {
     account,
     category,

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { STATUS_CATEGORY } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
 export const categorySchema = new Schema({
@@ -9,11 +10,12 @@ export const categorySchema = new Schema({
     },
     categoryName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     categoryType: {
         type: String,
-        required:true
+        required: true
     },
     status: {
         type: String,

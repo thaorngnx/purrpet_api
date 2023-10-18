@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+import { isEmail } from "validator";
 import { STATUS_BOOKING } from "../common/constants";
+
 const Schema = mongoose.Schema;
 
 export const bookingSpaSchema = new Schema({
@@ -18,15 +20,17 @@ export const bookingSpaSchema = new Schema({
     email:{
         type: String,
         required:true,
+        validator: [isEmail, 'invalid email']
     },
     buyerPhone: {
         type: Number,
         length: 10,
-        required:true
+        required: true
     },
     buyerName: {
         type: String,
-        required:true
+        required:true,
+        trim: true
     },
     status: {
         type: String,

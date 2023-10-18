@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import "../common/constants.js";
 import { ROLE, STATUS_ACCOUNT } from "../common/constants.js";
+
 const Schema = mongoose.Schema;
 
 export const accountSchema = new Schema({
@@ -10,11 +10,15 @@ export const accountSchema = new Schema({
     },
     username: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     password: {
         type: String,
-        required:true
+        required: true,
+        trim: true,
+        minlength: 6,
+        maxlength: 20
     },
     role: {
         type: String,
@@ -32,7 +36,6 @@ export const accountSchema = new Schema({
         },
         default: STATUS_ACCOUNT.ACTIVE
     },
-
     createAt: {
         type: Number,
         default: Date.now()
@@ -50,4 +53,3 @@ export const accountSchema = new Schema({
 });
 
 export default mongoose.model("account", accountSchema);
-

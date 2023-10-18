@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { isEmail } from "validator";
+import { STATUS_ORDER } from "../common/constants";
+
 const Schema = mongoose.Schema;
 
 export const orderSchema = new Schema({
@@ -8,35 +11,38 @@ export const orderSchema = new Schema({
     },
     products: {
         type: Array,
-        required:true
+        required: true
     },
     orderPrice: {
         type: Number,
-        required:true
+        required: true
     },
     buyerPhone: {
         type: Number,
-        required:true
+        required: true
     },
     email:{
         type: String,
-        required:true,
+        required: true,
+        validator: [isEmail, 'invalid email']
     },
     buyerName: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     buyerLocation: {
         type: String,
-        required:true
+        required: true,
+        trim: true
     },
     status: {
         type: String,
         enum: {
-            values: ["NEW", "WAITING_FOR_PAY", "PAID", "CHECKIN", "CHECKOUT", "CANCEL"],
+            values: [STATUS_ORDER.NEW, STATUS_ORDER.WAITING_FOR_PAY, STATUS_ORDER.PAID,],
             message: "{VALUE} is not supported",
         },
-        default: "NEW"
+        default: STATUS_ORDER.NEW
     },
     createAt: {
         type: Number,

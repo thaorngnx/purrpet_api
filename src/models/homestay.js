@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
-import { STATUS_SPA } from "../common/constants.js";
+import { STATUS_HOME, COLLECTION } from "../common/constants";
+
 const Schema = mongoose.Schema;
 
-export const spaSchema = new Schema({
-    spaCode: {
+export const homestaySchema = new Schema({
+    homeCode: {
         type: String,
         required: true
     },
-    spaName: {
+    homeName: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     price: {
         type: Number,
@@ -21,15 +23,16 @@ export const spaSchema = new Schema({
         index: false
     },
     images: {
-        type: Array
+        type: Array,
+        required: true
     },
     status: {
         type: String,
         enum: {
-            values: [STATUS_SPA, STATUS_SPA.INACTIVE],
+            values: [Object[STATUS_HOME.ACTIVE], Object[STATUS_HOME.INACTIVE]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_SPA.ACTIVE
+        default: Object[STATUS_HOME.ACTIVE]
     },
     createAt: {
         type: Number,
@@ -47,5 +50,4 @@ export const spaSchema = new Schema({
     }
 });
 
-export default mongoose.model("spa", spaSchema);
-
+export default mongoose.model("homestay", homestaySchema);

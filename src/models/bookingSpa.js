@@ -1,48 +1,46 @@
 import mongoose from "mongoose";
 import { isEmail } from "validator";
-import { STATUS_ORDER } from "../common/constants";
+import { STATUS_BOOKING } from "../common/constants";
 
 const Schema = mongoose.Schema;
 
-export const orderSchema = new Schema({
-    orderCode: {
+export const bookingSpaSchema = new Schema({
+    bookingSpaCode: {
         type: String,
         required: true
     },
-    products: {
+    serviceSpas: {
         type: Array,
-        required: true
+        required:true
     },
-    orderPrice: {
+    bookingSpaPrice: {
         type: Number,
-        required: true
-    },
-    buyerPhone: {
-        type: Number,
-        required: true
+        required:true
     },
     email:{
         type: String,
-        required: true,
+        required:true,
         validator: [isEmail, 'invalid email']
+    },
+    buyerPhone: {
+        type: Number,
+        length: 10,
+        required: true
     },
     buyerName: {
         type: String,
-        required: true,
-        trim: true
-    },
-    buyerLocation: {
-        type: String,
-        required: true,
+        required:true,
         trim: true
     },
     status: {
         type: String,
         enum: {
-            values: [STATUS_ORDER.NEW, STATUS_ORDER.WAITING_FOR_PAY, STATUS_ORDER.PAID,],
+            values: [Object[STATUS_BOOKING.NEW], Object[STATUS_BOOKING.WAITING_FOR_PAY], 
+                Object[STATUS_BOOKING.PAID], Object[STATUS_BOOKING.CHECKIN], 
+                Object[STATUS_BOOKING.CHECKOUT], Object[STATUS_BOOKING.CANCEL]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_ORDER.NEW
+        default: Object[STATUS_BOOKING.NEW]
     },
     createAt: {
         type: Number,
@@ -60,7 +58,4 @@ export const orderSchema = new Schema({
     }
 });
 
-export default mongoose.model("order", orderSchema);
-
-
-
+export default mongoose.model("bookingSpa", bookingSpaSchema);

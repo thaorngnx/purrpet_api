@@ -4,22 +4,22 @@ import { STATUS_BOOKING } from "../common/constants";
 
 const Schema = mongoose.Schema;
 
-export const bookingSpaSchema = new Schema({
-    bookingSpaCode: {
+export const bookingHomeSchema = new Schema({
+    bookingHomeCode: {
         type: String,
         required: true
     },
-    serviceSpas: {
+    serviceHomes: {
         type: Array,
-        required:true
+        required: true
     },
-    bookingSpaPrice: {
+    bookingHomePrice: {
         type: Number,
-        required:true
+        required: true
     },
     email:{
         type: String,
-        required:true,
+        required: true,
         validator: [isEmail, 'invalid email']
     },
     buyerPhone: {
@@ -29,16 +29,18 @@ export const bookingSpaSchema = new Schema({
     },
     buyerName: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
     status: {
         type: String,
         enum: {
-            values: [STATUS_BOOKING.NEW, STATUS_BOOKING.WAITING_FOR_PAY, STATUS_BOOKING.PAID, STATUS_BOOKING.CHECKIN, STATUS_BOOKING.CHECKOUT, STATUS_BOOKING.CANCEL],
+            values: [Object[STATUS_BOOKING.NEW], Object[STATUS_BOOKING.WAITING_FOR_PAY], 
+                Object[STATUS_BOOKING.PAID], Object[STATUS_BOOKING.CHECKIN], 
+                Object[STATUS_BOOKING.CHECKOUT], Object[STATUS_BOOKING.CANCEL]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_BOOKING.NEW
+        default: Object[STATUS_BOOKING.NEW]
     },
     createAt: {
         type: Number,
@@ -56,4 +58,4 @@ export const bookingSpaSchema = new Schema({
     }
 });
 
-export default mongoose.model("bookingSpa", bookingSpaSchema);
+export default mongoose.model("bookingHome", bookingHomeSchema);

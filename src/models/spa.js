@@ -1,22 +1,15 @@
 import mongoose from "mongoose";
-import { STATUS_PRODUCT } from "../common/constants.js";
-
+import { STATUS_SPA, COLLECTION } from "../common/constants";
 const Schema = mongoose.Schema;
 
-export const productSchema = new Schema({
-    productCode: {
+export const spaSchema = new Schema({
+    spaCode: {
         type: String,
         required: true
     },
-    productName: {
+    spaName: {
         type: String,
-        required: true,
-        trim: true
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true
+        required: true
     },
     price: {
         type: Number,
@@ -33,10 +26,10 @@ export const productSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: [STATUS_PRODUCT.ACTIVE, STATUS_PRODUCT.INACTIVE],
+            values: [Object[STATUS_SPA.ACTIVE], Object[STATUS_SPA.INACTIVE]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_PRODUCT.ACTIVE
+        default: Object[STATUS_SPA.ACTIVE]
     },
     createAt: {
         type: Number,
@@ -50,9 +43,9 @@ export const productSchema = new Schema({
         type: String
     },
     updateBy: {
-        type: String 
+        type: String
     }
 });
 
-export default mongoose.model("product", productSchema);
+export default mongoose.model("spa", spaSchema);
 

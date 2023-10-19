@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
-import { COLLECTION, STATUS_HOME } from "../common/constants.js";
+import { STATUS_PRODUCT, COLLECTION } from "../common/constants";
 
 const Schema = mongoose.Schema;
 
-export const homestaySchema = new Schema({
-    homeCode: {
+export const productSchema = new Schema({
+    productCode: {
         type: String,
         required: true
     },
-    homeName: {
+    productName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    description: {
         type: String,
         required: true,
         trim: true
@@ -23,16 +28,15 @@ export const homestaySchema = new Schema({
         index: false
     },
     images: {
-        type: Array,
-        required: true
+        type: Array
     },
     status: {
         type: String,
         enum: {
-            values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
+            values: [Object[STATUS_PRODUCT.ACTIVE], Object[STATUS_PRODUCT.INACTIVE]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_HOME.ACTIVE
+        default: Object[STATUS_PRODUCT.ACTIVE]
     },
     createAt: {
         type: Number,
@@ -46,8 +50,9 @@ export const homestaySchema = new Schema({
         type: String
     },
     updateBy: {
-        type: String
+        type: String 
     }
 });
 
-export default mongoose.model("homestay", homestaySchema);
+export default mongoose.model("product", productSchema);
+

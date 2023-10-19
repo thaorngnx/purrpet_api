@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { STATUS_CATEGORY } from "../common/constants.js";
+import { STATUS_CATEGORY } from "../common/constants";
 
 const Schema = mongoose.Schema;
 
@@ -20,10 +20,10 @@ export const categorySchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: [STATUS_CATEGORY.ACTIVE, STATUS_CATEGORY.INACTIVE],
+            values: [Object[STATUS_CATEGORY.ACTIVE], Object[STATUS_CATEGORY.INACTIVE]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_CATEGORY.ACTIVE
+        default: Object[STATUS_CATEGORY.ACTIVE]
     },
     createAt: {
         type: Number,

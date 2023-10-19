@@ -1,19 +1,23 @@
 import mongoose from "mongoose";
 import { isEmail } from "validator";
-import { STATUS_BOOKING } from "../common/constants";
+import { STATUS_ORDER } from "../common/constants";
 
 const Schema = mongoose.Schema;
 
-export const bookingHomeSchema = new Schema({
-    bookingHomeCode: {
+export const orderSchema = new Schema({
+    orderCode: {
         type: String,
         required: true
     },
-    serviceHomes: {
+    products: {
         type: Array,
         required: true
     },
-    bookingHomePrice: {
+    orderPrice: {
+        type: Number,
+        required: true
+    },
+    buyerPhone: {
         type: Number,
         required: true
     },
@@ -22,12 +26,12 @@ export const bookingHomeSchema = new Schema({
         required: true,
         validator: [isEmail, 'invalid email']
     },
-    buyerPhone: {
-        type: Number,
-        length: 10,
-        required: true
-    },
     buyerName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    buyerLocation: {
         type: String,
         required: true,
         trim: true
@@ -35,11 +39,12 @@ export const bookingHomeSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: [STATUS_BOOKING.NEW, STATUS_BOOKING.WAITING_FOR_PAY, STATUS_BOOKING.PAID, 
-                STATUS_BOOKING.CHECKIN, STATUS_BOOKING.CHECKOUT, STATUS_BOOKING.CANCEL],
+            values: [Object[STATUS_ORDER.NEW], Object[STATUS_ORDER.WAITING_FOR_PAY], 
+                Object[STATUS_ORDER.PAID], Object[STATUS_ORDER.DELIVERING], 
+                Object[STATUS_ORDER.CANCEL], Object[STATUS_ORDER.DONE]],
             message: "{VALUE} is not supported",
         },
-        default: STATUS_BOOKING.NEW
+        default: Object[STATUS_ORDER.NEW]
     },
     createAt: {
         type: Number,
@@ -57,4 +62,7 @@ export const bookingHomeSchema = new Schema({
     }
 });
 
-export default mongoose.model("bookingHome", bookingHomeSchema);
+export default mongoose.model("order", orderSchema);
+
+
+

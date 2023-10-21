@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import { STATUS_PRODUCT } from '../common/constants';
+import { STATUS_PRODUCT, TYPE_PRODUCT } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
 export const productSchema = new Schema({
     productCode: {
         type: String,
-        required: true
+       // required: true
     },
     productName: {
         type: String,
@@ -23,17 +23,21 @@ export const productSchema = new Schema({
         required: true
     },
     categoryCode: {
-        type: Array,
+        type: String,
         required: true
     },
-    categoryName: {
-        type: Array,
-        required: true
+    typeProduct: {
+        type: String,
+        enum: {
+            values: [TYPE_PRODUCT.DOG, TYPE_PRODUCT.CAT],
+            message: "{VALUE} is not supported",
+        },
+        default: TYPE_PRODUCT.DOG   
     },
     images: {
         type: Array
     },
-    inventory: {
+    invetory: {
         type: Number,
         required: true
     },

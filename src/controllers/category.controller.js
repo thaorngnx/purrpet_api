@@ -1,6 +1,6 @@
 import * as services from '../services';
 import { categoryDto } from '../helpers/joi_schema';
-import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import { badRequest } from '../middlewares/handle_errors';
 import HttpStatusCode from '../exceptions/HttpStatusCode';
 
 export const getAllCategory = async (req, res) => {

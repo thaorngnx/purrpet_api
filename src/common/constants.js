@@ -52,3 +52,8 @@ export const CATEGORY_TYPE = {
     SPA: "Spa",
     HOMESTAY: "Homestay"
 };
+
+export const TYPE_PRODUCT = {
+    DOG: "Chó",
+    CAT: "Mèo"
+};

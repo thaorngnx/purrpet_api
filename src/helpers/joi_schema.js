@@ -35,7 +35,7 @@ export const productDto = Joi.object({
     description: Joi.string().required(),
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
-    categoryName: Joi.string().required(),
+ //   categoryName: Joi.string().required(),
     images: Joi.array().items(Joi.string()),
     invetory: Joi.number().integer().required(),
     status: Joi.string().allow(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE),

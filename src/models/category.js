@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import { STATUS_CATEGORY } from '../common/constants';
+import { STATUS_CATEGORY, CATEGORY_TYPE } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
 export const categorySchema = new Schema({
     categoryCode: {
         type: String,
-        required: true
+      //  required: true
     },
     categoryName: {
         type: String,
@@ -15,7 +15,11 @@ export const categorySchema = new Schema({
     },
     categoryType: {
         type: String,
-        required: true
+        enum: {
+            values: [CATEGORY_TYPE.PRODUCT, CATEGORY_TYPE.SPA, CATEGORY_TYPE.HOMESTAY],
+            message: "{VALUE} is not supported",
+        },
+        default: CATEGORY_TYPE.PRODUCT
     },
     status: {
         type: String,
@@ -25,20 +29,17 @@ export const categorySchema = new Schema({
         },
         default: STATUS_CATEGORY.ACTIVE
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+},{
+    timestamps: {
+        currentTime: () => new Date().getTime(),
+    },
+}  
+);
 
 export default mongoose.model("category", categorySchema);

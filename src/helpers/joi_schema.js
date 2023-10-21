@@ -24,7 +24,7 @@ export const bookingHomeItemDto = Joi.object({
 
 export const categoryDto = Joi.object({
     categoryName: Joi.string().required(),
-    categoryType: Joi.string().required(),
+    categoryType: Joi.string().allow(Constant.CATEGORY_TYPE.PRODUCT, Constant.CATEGORY_TYPE.SPA, Constant.CATEGORY_TYPE.HOMESTAY),
     status: Joi.string().allow(Constant.STATUS_CATEGORY.ACTIVE, Constant.STATUS_CATEGORY.INACTIVE),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)

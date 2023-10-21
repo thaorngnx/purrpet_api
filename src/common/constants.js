@@ -46,6 +46,7 @@ export const STATUS_CATEGORY = {
     INACTIVE: "INACTIVE"
 };
 
+
 export const CATEGORY_TYPE = {
     PRODUCT: "Sản phẩm",
     SPA: "Spa",

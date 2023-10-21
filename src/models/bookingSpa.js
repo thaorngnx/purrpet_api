@@ -44,20 +44,16 @@ export const bookingSpaSchema = new Schema({
         },
         default: STATUS_BOOKING.NEW
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, {
+    timestamps: {
+        currentTime: () => new Date().getTime(),
+    },
+} );
 
 export default mongoose.model("bookingSpa", bookingSpaSchema);

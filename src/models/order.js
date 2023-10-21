@@ -48,21 +48,17 @@ export const orderSchema = new Schema({
         },
         default: STATUS_ORDER.NEW
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, {
+    timestamps: {
+        currentTime: () => new Date().getTime(),
+    },
+} );
 
 export default mongoose.model("order", orderSchema);
 

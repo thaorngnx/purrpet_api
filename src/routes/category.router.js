@@ -7,6 +7,6 @@ router.get('/query', controllers.getAllCategory);
 router.get('/:id', controllers.getCategoryById);
 router.post('/create', controllers.createCategory);
 router.put('/update/:id', controllers.updateCategory);
-router.delete('/delete/:id', controllers.deleteCategory);
+//router.delete('/delete/:id', controllers.deleteCategory); //cap nhat lai status
 
 module.exports = router;

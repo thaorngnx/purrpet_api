@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-import { isEmail } from "validator";
-import { STATUS_ORDER } from "../common/constants";
+import mongoose from 'mongoose';
+import { STATUS_ORDER } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +8,7 @@ export const orderSchema = new Schema({
         type: String,
         required: true
     },
-    products: {
+    orderItems: {
         type: Array,
         required: true
     },
@@ -17,34 +16,37 @@ export const orderSchema = new Schema({
         type: Number,
         required: true
     },
-    buyerPhone: {
+    customerPhone: {
         type: Number,
         required: true
     },
-    email:{
+    customerEmail:{
         type: String,
-        required: true,
-        validator: [isEmail, 'invalid email']
+        required: true
     },
-    buyerName: {
+    customerName: {
         type: String,
         required: true,
         trim: true
     },
-    buyerLocation: {
+    customerAddress: {
         type: String,
         required: true,
+        trim: true
+    },
+    customerNote: {
+        type: String,
         trim: true
     },
     status: {
         type: String,
         enum: {
-            values: [Object[STATUS_ORDER.NEW], Object[STATUS_ORDER.WAITING_FOR_PAY], 
-                Object[STATUS_ORDER.PAID], Object[STATUS_ORDER.DELIVERING], 
-                Object[STATUS_ORDER.CANCEL], Object[STATUS_ORDER.DONE]],
+            values: [STATUS_ORDER.NEW, STATUS_ORDER.WAITING_FOR_PAY, 
+                STATUS_ORDER.PAID, STATUS_ORDER.DELIVERING, 
+                STATUS_ORDER.CANCEL, STATUS_ORDER.DONE],
             message: "{VALUE} is not supported",
         },
-        default: Object[STATUS_ORDER.NEW]
+        default: STATUS_ORDER.NEW
     },
     createAt: {
         type: Number,

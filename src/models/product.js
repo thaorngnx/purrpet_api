@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { STATUS_PRODUCT, COLLECTION } from "../common/constants";
+import mongoose from 'mongoose';
+import { STATUS_PRODUCT } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
@@ -22,21 +22,28 @@ export const productSchema = new Schema({
         type: Number,
         required: true
     },
-    category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: COLLECTION.CATEGORY,
-        index: false
+    categoryCode: {
+        type: Array,
+        required: true
+    },
+    categoryName: {
+        type: Array,
+        required: true
     },
     images: {
         type: Array
     },
+    inventory: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: {
-            values: [Object[STATUS_PRODUCT.ACTIVE], Object[STATUS_PRODUCT.INACTIVE]],
+            values: [STATUS_PRODUCT.ACTIVE, STATUS_PRODUCT.INACTIVE],
             message: "{VALUE} is not supported",
         },
-        default: Object[STATUS_PRODUCT.ACTIVE]
+        default: STATUS_PRODUCT.ACTIVE
     },
     createAt: {
         type: Number,

@@ -51,12 +51,3 @@ export const CATEGORY_TYPE = {
     SPA: "Spa",
     HOMESTAY: "Homestay"
 };
-
-export const COLLECTION = {
-    ACCOUNT: "account",
-    CATEGORY: "category",
-    ORDER: "order",
-    BOOKING_HOME: "bookingHome",
-    BOOKING_SPA: "bookingSpa"
-};
-

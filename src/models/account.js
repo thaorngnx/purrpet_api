@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { ROLE, STATUS_ACCOUNT } from "../common/constants";
+import mongoose from 'mongoose';
+import { ROLE, STATUS_ACCOUNT } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
@@ -31,10 +31,10 @@ export const accountSchema = new Schema({
     status: {
         type: String,
         enum: {
-            values: [Object[STATUS_ACCOUNT.ACTIVE], Object[STATUS_ACCOUNT.INACTIVE]],
+            values: [STATUS_ACCOUNT.ACTIVE, STATUS_ACCOUNT.INACTIVE],
             message: "{VALUE} is not supported",
         },
-        default: Object[STATUS_ACCOUNT.ACTIVE]
+        default: STATUS_ACCOUNT.ACTIVE
     },
     createAt: {
         type: Number,

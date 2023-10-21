@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { STATUS_SPA, COLLECTION } from "../common/constants";
+import mongoose from 'mongoose';
+import { STATUS_SPA } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const spaSchema = new Schema({
@@ -15,21 +15,28 @@ export const spaSchema = new Schema({
         type: Number,
         required: true
     },
-    category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: COLLECTION.CATEGORY,
-        index: false
+    categoryCode: {
+        type: Array,
+        required: true
+    },
+    categoryName: {
+        type: Array,
+        required: true
     },
     images: {
         type: Array
     },
+    inventory: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: {
-            values: [Object[STATUS_SPA.ACTIVE], Object[STATUS_SPA.INACTIVE]],
+            values: [STATUS_SPA.ACTIVE, STATUS_SPA.INACTIVE],
             message: "{VALUE} is not supported",
         },
-        default: Object[STATUS_SPA.ACTIVE]
+        default: STATUS_SPA.ACTIVE
     },
     createAt: {
         type: Number,

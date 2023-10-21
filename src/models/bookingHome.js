@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-import { isEmail } from "validator";
-import { STATUS_BOOKING } from "../common/constants";
+import mongoose from 'mongoose';
+import { STATUS_BOOKING } from '../common/constants';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +8,7 @@ export const bookingHomeSchema = new Schema({
         type: String,
         required: true
     },
-    serviceHomes: {
+    bookingHomeItems: {
         type: Array,
         required: true
     },
@@ -17,27 +16,30 @@ export const bookingHomeSchema = new Schema({
         type: Number,
         required: true
     },
-    email:{
+    customerEmail:{
         type: String,
-        required: true,
-        validator: [isEmail, 'invalid email']
+        required: true
     },
-    buyerPhone: {
+    customerPhone: {
         type: Number,
         length: 10,
         required: true
     },
-    buyerName: {
+    customerName: {
         type: String,
         required: true,
+        trim: true
+    },
+    customerNote: {
+        type: String,
         trim: true
     },
     status: {
         type: String,
         enum: {
-            values: [Object[STATUS_BOOKING.NEW], Object[STATUS_BOOKING.WAITING_FOR_PAY], 
-                Object[STATUS_BOOKING.PAID], Object[STATUS_BOOKING.CHECKIN], 
-                Object[STATUS_BOOKING.CHECKOUT], Object[STATUS_BOOKING.CANCEL]],
+            values: [STATUS_BOOKING.NEW, STATUS_BOOKING.WAITING_FOR_PAY, 
+                STATUS_BOOKING.PAID, STATUS_BOOKING.CHECKIN, 
+                STATUS_BOOKING.CHECKOUT, STATUS_BOOKING.CANCEL],
             message: "{VALUE} is not supported",
         },
         default: Object[STATUS_BOOKING.NEW]

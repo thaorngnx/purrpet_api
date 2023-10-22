@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { STATUS_ORDER } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const orderSchema = new Schema({

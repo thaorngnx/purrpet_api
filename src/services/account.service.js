@@ -6,7 +6,6 @@ export const createAccount = async (data) => new Promise(async (resolve, reject)
     try {
         data.purrPetCode = await generateCode(COLLECTION.ACCOUNT, PREFIX.ACCOUNT);
         const response = await db.account.create(data);
-        console.log(response);
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Create account successfully' : 'Create account failed',

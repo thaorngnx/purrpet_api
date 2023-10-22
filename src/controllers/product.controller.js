@@ -38,9 +38,9 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     try {
-        const { error } = updateProductDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        const { error } = updateProductDto.validate({ ...req.body });
         if (error) return badRequest(error.message, res);
-        const response = await services.updateProduct(req.body, req.params.purrPetCode);
+        const response = await services.updateProduct(req.body);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

@@ -73,3 +73,8 @@ export const COLLECTION = {
     CATEGORY: "category",
     ACCOUNT: "account"
 };
+
+export const TYPE_PRODUCT = {
+    DOG: "Chó",
+    CAT: "Mèo"
+};

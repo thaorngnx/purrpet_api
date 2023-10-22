@@ -5,12 +5,21 @@ import { generateCode } from '../common/utils/generateCode';
 export const createSpa = async (data) => new Promise(async (resolve, reject) => {
     try {
         data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
+        const category = await db.category.findOne({ purrPetCode: data.categoryCode });
+        if (!category) {
+            resolve({
+                error: -1,
+                message: 'Category code is not exist',
+            });
+        }else{
         const response = await db.spa.create(data);
         resolve({
             error: response ? 0 : -1,
             message: response ? 'Create spa success' : 'Create spa fail',
+            categoryName: category.categoryName,
             data: response
         });
+    }
     } catch (error) {
         reject(error);
     }
@@ -44,11 +53,20 @@ export const getSpaByCode = async (purrPetCode) => new Promise(async (resolve, r
 
 export const updateSpa = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
+        const category = await db.category.findOne({ purrPetCode: data.categoryCode });
+        if (!category) {
+            resolve({
+                error: -1,
+                message: 'Category code is not exist',
+            });
+        }
+        else {
         const response = await db.spa.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
         resolve({
             error: response ? 0 : -1,
             message: response ? 'Update spa success' : 'Update spa fail'
         });
+    }
     } catch (error) {
         reject(error);
     }

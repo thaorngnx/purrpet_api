@@ -20,18 +20,14 @@ export const homestaySchema = new Schema({
         required: true
     },
     categoryCode: {
-        type: Array,
-        required: true
-    },
-    categoryName: {
-        type: Array,
+        type: String,
         required: true
     },
     images: {
         type: Array,
         required: true
     },
-    inventory: {
+    invetory: {
         type: Number,
         required: true
     },

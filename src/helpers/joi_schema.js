@@ -40,8 +40,8 @@ export const productDto = Joi.object({
     productName: Joi.string().required(),
     description: Joi.string().required(),
     price: Joi.number().required(),
+    typeProduct: Joi.string().valid(Constant.TYPE_PRODUCT.DOG, Constant.TYPE_PRODUCT.CAT).required(),
     categoryCode: Joi.string().required(),
-    categoryName: Joi.string().required(),
     images: Joi.array().items(Joi.string()),
     invetory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
@@ -51,10 +51,8 @@ export const productDto = Joi.object({
 
 export const spaDto = Joi.object({
     spaName: Joi.string().required(),
-    description: Joi.string().required(),
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
-    categoryName: Joi.string().required(),
     images: Joi.array().items(Joi.string()),
     invetory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
@@ -64,10 +62,8 @@ export const spaDto = Joi.object({
 
 export const homestayDto = Joi.object({
     homeName: Joi.string().required(),
-    description: Joi.string().required(),
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
-    categoryName: Joi.string().required(),
     images: Joi.array().items(Joi.string()),
     invetory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
@@ -167,6 +163,7 @@ export const updateProductDto = Joi.object({
     description: Joi.string().allow(null),
     price: Joi.number().allow(null),
     categoryCode: Joi.string().allow(null),
+    typeProduct: Joi.string().valid(Constant.TYPE_PRODUCT.DOG, Constant.TYPE_PRODUCT.CAT).allow(null),
     images: Joi.array().items(Joi.string()).allow(null),
     invetory: Joi.number().integer().allow(null),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),

@@ -5,10 +5,18 @@ import { generateCode } from '../common/utils/generateCode';
 export const createHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
         data.purrPetCode = await generateCode(COLLECTION.HOMESTAY, PREFIX.HOMESTAY);
+        const category = await db.category.findOne({ purrPetCode: data.categoryCode });
+        if (!category) {
+            resolve({
+                err: -1,
+                message: 'Category code is not exist',
+            });
+        }
         const response = await db.homestay.create(data);
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Create homestay successfully' : 'Create homestay failed',
+            categoryName: category.categoryName,
             data: response
         });
     } catch (error) {
@@ -42,13 +50,22 @@ export const getHomestayByCode = async (purrPetCode) => new Promise(async (resol
     }
 });
 
-export const updateHomestay = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
+export const updateHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const response = await db.homestay.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        const category = await db.category.findOne({ purrPetCode: data.categoryCode });
+        if (!category) {
+            resolve({
+                err: -1,
+                message: 'Category code is not exist',
+            });
+        }
+        else {
+        const response = await db.homestay.findOneAndUpdate({ purrPetCode: data.purrPetCode }, data);
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Update homestay successfully' : 'Update homestay failed'
         });
+    }
     } catch (error) {
         reject(error);
     }

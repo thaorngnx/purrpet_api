@@ -8,7 +8,7 @@ const Schema = mongoose.Schema;
 export const productSchema = new Schema({
     purrPetCode: {
         type: String,
-       // required: true
+        required: true
     },
     productName: {
         type: String,

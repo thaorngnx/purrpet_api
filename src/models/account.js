@@ -1,17 +1,20 @@
 import mongoose from 'mongoose';
 import { ROLE, STATUS_ACCOUNT } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const accountSchema = new Schema({
-    userCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
     username: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     password: {
         type: String,
@@ -42,10 +45,7 @@ export const accountSchema = new Schema({
     updateBy: {
         type: String
     }
-}, {
-        timestamps: {
-            currentTime: () => new Date().getTime(),
-        },
-});
+}, { timestamps: true });
+
 
 export default mongoose.model("account", accountSchema);

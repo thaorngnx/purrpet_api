@@ -1,41 +1,67 @@
 import db from '../models';
+import { COLLECTION, PREFIX } from '../common/constants';
+import { generateCode } from '../common/utils/generateCode';
 
-export const createBookingSpa = async (data) => {
+export const createBookingSpa = async (data) => new Promise(async (resolve, reject) => {
     try {
-        return await db.bookingSpa.create(data);
+        data.purrPetCode = await generateCode(COLLECTION.BOOKING_SPA, PREFIX.BOOKING_SPA);
+        const response = await db.bookingSpa.create(data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Create booking spa successfully' : 'Create booking spa failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const getAllBookingSpa = async () => {
+export const getAllBookingSpa = async () => new Promise(async (resolve, reject) => {
     try {
-        return await db.bookingSpa.find();
+        const response = await db.bookingSpa.find();
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get all booking spa successfully' : 'Get all booking spa failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const getBookingSpaById = async (id) => {
+export const getBookingSpaByCode = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.bookingSpa.findOne({ where: { id: id } });
+        const response = await db.bookingSpa.findOne({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get booking spa by code successfully' : 'Get booking spa by code failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const updateBookingSpa = async (data, id) => {
+export const updateBookingSpa = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.bookingSpa.update(data, { where: { id: id } });
+        const response = await db.bookingSpa.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Update booking spa successfully' : 'Update booking spa failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const deleteBookingSpa = async (id) => {
+export const deleteBookingSpa = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.bookingSpa.destroy({ where: { id: id } });
+        const response = await db.bookingSpa.findOneAndDelete({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Delete booking spa successfully' : 'Delete booking spa failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});

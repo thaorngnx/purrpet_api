@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { STATUS_ORDER } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const orderSchema = new Schema({
-    orderCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -54,12 +56,8 @@ export const orderSchema = new Schema({
     updateBy: {
         type: String
     }
-}, {
-    timestamps: {
-        currentTime: () => new Date().getTime(),
-    },
-} );
 
+}, { timestamps: true });
 export default mongoose.model("order", orderSchema);
 
 

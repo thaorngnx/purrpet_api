@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { STATUS_PRODUCT, TYPE_PRODUCT } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const productSchema = new Schema({
-    productCode: {
+    purrPetCode: {
         type: String,
        // required: true
     },
@@ -55,11 +57,7 @@ export const productSchema = new Schema({
     updateBy: {
         type: String 
     }
-}, {
-    timestamps: {
-        currentTime: () => new Date().getTime(),
-    },
-} );
+}, { timestamps: true });
 
 export default mongoose.model("product", productSchema);
 

@@ -4,9 +4,9 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/query', controllers.getAllCategory);
-router.get('/:id', controllers.getCategoryById);
+router.get('/:purrPetCode', controllers.getCategoryByCode);
 router.post('/create', controllers.createCategory);
-router.put('/update/:id', controllers.updateCategory);
-//router.delete('/delete/:id', controllers.deleteCategory); //cap nhat lai status
+router.put('/update/:purrPetCode', controllers.updateCategory);
+router.delete('/delete/:purrPetCode', controllers.deleteCategory);
 
 module.exports = router;

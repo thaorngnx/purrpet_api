@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { STATUS_CATEGORY, CATEGORY_TYPE } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const categorySchema = new Schema({
-    categoryCode: {
+    purrPetCode: {
         type: String,
       //  required: true
     },
@@ -35,11 +37,7 @@ export const categorySchema = new Schema({
     updateBy: {
         type: String
     }
-},{
-    timestamps: {
-        currentTime: () => new Date().getTime(),
-    },
-}  
-);
+}, { timestamps: true });
+
 
 export default mongoose.model("category", categorySchema);

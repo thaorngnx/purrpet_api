@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { STATUS_BOOKING } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const bookingSpaSchema = new Schema({
-    bookingSpaCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -50,10 +52,6 @@ export const bookingSpaSchema = new Schema({
     updateBy: {
         type: String
     }
-}, {
-    timestamps: {
-        currentTime: () => new Date().getTime(),
-    },
-} );
+}, { timestamps: true });
 
 export default mongoose.model("bookingSpa", bookingSpaSchema);

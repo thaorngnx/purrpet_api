@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { STATUS_HOME } from '../common/constants';
 
+mongoose.set('runValidators', true);
+
 const Schema = mongoose.Schema;
 
 export const homestaySchema = new Schema({
-    homeCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -47,10 +49,6 @@ export const homestaySchema = new Schema({
     updateBy: {
         type: String
     }
-}, {
-    timestamps: {
-        currentTime: () => new Date().getTime(),
-    },
-} );
+}, { timestamps: true });
 
 export default mongoose.model("homestay", homestaySchema);

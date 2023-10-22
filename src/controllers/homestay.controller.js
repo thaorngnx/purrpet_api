@@ -4,7 +4,7 @@ import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllHomestay = async (req, res) => {
     try {
-        const response = await services.getAllHomestay();
+        const response = await services.getAllHomestay(req.query);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

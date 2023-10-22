@@ -17,9 +17,30 @@ export const createCategory = async (data) => new Promise(async (resolve, reject
     }
 });
 
-export const getAllCategory = async () => new Promise(async (resolve, reject) => {
+export const getAllCategory = async ({page, limit, order, search_key, ...query}) => new Promise(async (resolve, reject) => {
     try {
-        const response = await db.category.find();
+        //search
+        let search = {};
+        if (search_key) {
+            search = {
+                ...search,
+                $or: [
+                    { purrPetCode: { $regex: search_key, $options: 'i' } },
+                    { categoryName: { $regex: search_key, $options: 'i' } },
+                ],
+            };
+        }
+        //pagination
+        const _limit = parseInt(limit) || 10;
+        const _page = parseInt(page) || 1;
+        const _skip = (_page - 1) * _limit;
+        //sort
+        const _sort = {};
+        if (order) {
+            const [key, value] = order.split('.');
+            _sort[key] = value === 'asc' ? 1 : -1;
+        }
+        const response = await db.category.find({...query, ...search});
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Get all category successfully' : 'Get all category failed',
@@ -62,9 +83,9 @@ export const getCategoryById = async (id) => {
 //   }
 // };
 
-export const updateCategory = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
+export const updateCategory = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const response = await db.category.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        const response = await db.category.findOneAndUpdate({ purrPetCode: data.purrPetCode }, data);
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Update category successfully' : 'Update category failed'

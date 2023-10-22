@@ -4,7 +4,7 @@ import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllCategory = async (req, res) => {
     try {
-        const response = await services.getAllCategory();
+        const response = await services.getAllCategory(req.query);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -38,9 +38,9 @@ export const createCategory = async (req, res) => {
 
 export const updateCategory = async (req, res) => {
     try {
-        const { error } = updateCategoryDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        const { error } = updateCategoryDto.validate({ ...req.body });
         if (error) return badRequest(error.message, res);
-        const response = await services.updateCategory(req.body, req.params.purrPetCode);
+        const response = await services.updateCategory(req.body);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

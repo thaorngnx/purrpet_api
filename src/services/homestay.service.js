@@ -24,9 +24,32 @@ export const createHomestay = async (data) => new Promise(async (resolve, reject
     }
 });
 
-export const getAllHomestay = async () => new Promise(async (resolve, reject) => {
+export const getAllHomestay = async ({page, limit, order, search_key, ...query}) => new Promise(async (resolve, reject) => {
     try {
-        const response = await db.homestay.find();
+        //search
+        let search = {};
+        if (search_key) {
+            search = {
+                ...search,
+                $or: [
+                    { purrPetCode: { $regex: search_key, $options: 'i' } },
+                    { homestayName: { $regex: search_key, $options: 'i' } },
+                    { description: { $regex: search_key, $options: 'i' } },
+                    { categoryName: { $regex: search_key, $options: 'i' } },
+                ],
+            };
+        }
+        //pagination
+        const _limit = parseInt(limit) || 10;
+        const _page = parseInt(page) || 1;
+        const _skip = (_page - 1) * _limit;
+        //sort
+        const _sort = {};
+        if (order) {
+            const [key, value] = order.split('.');
+            _sort[key] = value === 'asc' ? 1 : -1;
+        }
+        const response = await db.homestay.find({...query, ...search});
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Get all homestay successfully' : 'Get all homestay failed',

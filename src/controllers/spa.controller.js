@@ -4,7 +4,7 @@ import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllSpa = async (req, res) => {
     try {
-        const response = await services.getAllSpa();
+        const response = await services.getAllSpa(req.query);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -38,9 +38,9 @@ export const createSpa = async (req, res) => {
 
 export const updateSpa = async (req, res) => {
     try {
-        const { error } = updateSpaDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        const { error } = updateSpaDto.validate({  ...req.body });
         if (error) return badRequest(error.message, res);
-        const response = await services.updateSpa(req.body, req.params.purrPetCode);
+        const response = await services.updateSpa(req.body);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

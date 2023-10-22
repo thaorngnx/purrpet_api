@@ -12,11 +12,11 @@ export const getAllOrder = async (req, res) => {
     }
 };
 
-export const getOrderById = async (req, res) => {
+export const getOrderByCode = async (req, res) => {
     try {
-        const { error } = orderDto.validate(req.body);
-        const response = await services.getOrderById(req.params.id);
-        if (!response) return badRequest("Order not found!", res);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.getOrderByCode(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -27,6 +27,7 @@ export const getOrderById = async (req, res) => {
 export const createOrder = async (req, res) => {
     try {
         const { error } = orderDto.validate(req.body);
+        if (error) return badRequest(error.message, res);
         const response = await services.createOrder(req.body);
         return res.status(200).json(response);
     } catch (error) {
@@ -37,8 +38,9 @@ export const createOrder = async (req, res) => {
 
 export const updateOrder = async (req, res) => {
     try {
-        const { error } = orderDto.validate(req.body);
-        const response = await services.updateOrder(req.body, req.params.id);
+        const { error } = updateOrderDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateOrder(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -48,7 +50,9 @@ export const updateOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
     try {
-        const response = await services.deleteOrder(req.params.id);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.deleteOrder(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

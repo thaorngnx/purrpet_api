@@ -4,14 +4,15 @@ import { ROLE, STATUS_ACCOUNT } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const accountSchema = new Schema({
-    userCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
     username: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     password: {
         type: String,
@@ -36,20 +37,12 @@ export const accountSchema = new Schema({
         },
         default: STATUS_ACCOUNT.ACTIVE
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model("account", accountSchema);

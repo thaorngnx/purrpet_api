@@ -4,7 +4,7 @@ import { STATUS_HOME } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const homestaySchema = new Schema({
-    homeCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -41,20 +41,12 @@ export const homestaySchema = new Schema({
         },
         default: STATUS_HOME.ACTIVE
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model("homestay", homestaySchema);

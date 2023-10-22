@@ -1,41 +1,67 @@
 import db from '../models';
+import { COLLECTION, PREFIX } from '../common/constants';
+import { generateCode } from '../common/utils/generateCode';
 
-export const createOrder = async (data) => {
+export const createOrder = async (data) => new Promise(async (resolve, reject) => {
     try {
-        return await db.order.create(data);
+        data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
+        const response = await db.order.create(data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Create order successfully' : 'Create order failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-}
+});
 
-export const getAllOrder = async () => {
+export const getAllOrder = async () => new Promise(async (resolve, reject) => {
     try {
-        return await db.order.find();
+        const response = await db.order.find();
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get all order successfully' : 'Get all order failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const getOrderById = async (id) => {
+export const getOrderByCode = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.order.findOne({ where: { id: id } });
+        const response = await db.order.findOne({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get order by code successfully' : 'Get order by code failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const updateOrder = async (data, id) => {
+export const updateOrder = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.order.update(data, { where: { id: id } });
+        const response = await db.order.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Update order successfully' : 'Update order failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const deleteOrder = async (id) => {
+export const deleteOrder = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.order.destroy({ where: { id: id } });
+        const response = await db.order.findOneAndDelete({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Delete order successfully' : 'Delete order failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});

@@ -51,3 +51,25 @@ export const CATEGORY_TYPE = {
     SPA: "Spa",
     HOMESTAY: "Homestay"
 };
+
+export const PREFIX = {
+    PRODUCT: "PRD_",
+    SPA: "SPA_",
+    HOMESTAY: "HOME_",
+    ORDER: "ORD_",
+    BOOKING_HOME: "BKHOME_",
+    BOOKING_SPA: "BKSPA_",
+    CATEGORY: "CAT_",
+    ACCOUNT: "ACC_"
+};
+
+export const COLLECTION = {
+    PRODUCT: "product",
+    SPA: "spa",
+    HOMESTAY: "homestay",
+    ORDER: "order",
+    BOOKINGHOME: "bookinghome",
+    BOOKINGSPA: "bookingspa",
+    CATEGORY: "category",
+    ACCOUNT: "account"
+};

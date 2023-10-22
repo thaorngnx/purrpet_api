@@ -4,7 +4,7 @@ import { STATUS_ORDER } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const orderSchema = new Schema({
-    orderCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -48,22 +48,13 @@ export const orderSchema = new Schema({
         },
         default: STATUS_ORDER.NEW
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
-
+}, { timestamps: true });
 export default mongoose.model("order", orderSchema);
 
 

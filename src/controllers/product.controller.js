@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { productDto } from '../helpers/joi_schema';
+import { purrPetCode, updateProductDto, productDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllProduct = async (req, res) => {
@@ -12,11 +12,11 @@ export const getAllProduct = async (req, res) => {
     }
 }
 
-export const getProductById = async (req, res) => {
+export const getProductByCode = async (req, res) => {
     try {
-        const { error } = productDto.validate(req.body);
-        const response = await services.getProductById(req.params.id);
-        if (!response) return badRequest("Product not found!", res);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.getProductByCode(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -27,6 +27,7 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
     try {
         const { error } = productDto.validate(req.body);
+        if (error) return badRequest(error.message, res);
         const response = await services.createProduct(req.body);
         return res.status(200).json(response);
     } catch (error) {
@@ -37,8 +38,9 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     try {
-        const { error } = productDto.validate(req.body);
-        const response = await services.updateProduct(req.body, req.params.id);
+        const { error } = updateProductDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateProduct(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -48,7 +50,9 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        const response = await services.deleteProduct(req.params.id);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.deleteProduct(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

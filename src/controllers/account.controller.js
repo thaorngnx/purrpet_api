@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { accountDto } from '../helpers/joi_schema';
+import { purrPetCode, accountDto, updateAccountDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllAccount = async (req, res) => {
@@ -12,11 +12,11 @@ export const getAllAccount = async (req, res) => {
     }
 };
 
-export const getAccountById = async (req, res) => {
+export const getAccountByCode = async (req, res) => {
     try {
-        const { error } = accountDto.validate(req.body);
-        const response = await services.getAccountById(req.params.id);
-        if (!response) return badRequest("Account not found!", res);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.getAccountByCode(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -27,6 +27,7 @@ export const getAccountById = async (req, res) => {
 export const createAccount = async (req, res) => {
     try {
         const { error } = accountDto.validate(req.body);
+        if (error) return badRequest(error.message, res);
         const response = await services.createAccount(req.body);
         return res.status(200).json(response);
     } catch (error) {
@@ -37,8 +38,9 @@ export const createAccount = async (req, res) => {
 
 export const updateAccount = async (req, res) => {
     try {
-        const { error } = accountDto.validate(req.body);
-        const response = await services.updateAccount(req.body, req.params.id);
+        const { error } = updateAccountDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateAccount(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -48,7 +50,9 @@ export const updateAccount = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
     try {
-        const response = await services.deleteAccount(req.params.id);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.deleteAccount(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

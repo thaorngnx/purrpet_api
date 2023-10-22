@@ -4,7 +4,7 @@ import { STATUS_CATEGORY } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const categorySchema = new Schema({
-    categoryCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -25,20 +25,12 @@ export const categorySchema = new Schema({
         },
         default: STATUS_CATEGORY.ACTIVE
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model("category", categorySchema);

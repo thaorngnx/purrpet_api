@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { spaDto } from '../helpers/joi_schema';
+import { purrPetCode, updateSpaDto, spaDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllSpa = async (req, res) => {
@@ -12,11 +12,11 @@ export const getAllSpa = async (req, res) => {
     }
 };
 
-export const getSpaById = async (req, res) => {
+export const getSpaByCode = async (req, res) => {
     try {
-        const { error } = spaDto.validate(req.body);
-        const response = await services.getSpaById(req.params.id);
-        if (!response) return badRequest("Spa not found!", res);
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.getSpaByCode(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -27,6 +27,7 @@ export const getSpaById = async (req, res) => {
 export const createSpa = async (req, res) => {
     try {
         const { error } = spaDto.validate(req.body);
+        if (error) return badRequest(error.message, res);
         const response = await services.createSpa(req.body);
         return res.status(200).json(response);
     } catch (error) {
@@ -37,8 +38,9 @@ export const createSpa = async (req, res) => {
 
 export const updateSpa = async (req, res) => {
     try {
-        const { error } = spaDto.validate(req.body);
-        const response = await services.updateSpa(req.body, req.params.id);
+        const { error } = updateSpaDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateSpa(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -48,7 +50,9 @@ export const updateSpa = async (req, res) => {
 
 export const deleteSpa = async (req, res) => {
     try {
-        const response = await services.deleteSpa(req.params.id);
+        const { error } = purrPetCode.validate(req.body);
+        if (error) return badRequest(error.message, res);
+        const response = await services.deleteSpa(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

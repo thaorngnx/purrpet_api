@@ -4,9 +4,9 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/query', controllers.getAllOrder);
-router.get('/:id', controllers.getOrderById);
+router.get('/:purrPetCode', controllers.getOrderByCode);
 router.post('/create', controllers.createOrder);
-router.put('/update/:id', controllers.updateOrder);
-router.delete('/delete/:id', controllers.deleteOrder);
+router.put('/update/:purrPetCode', controllers.updateOrder);
+router.delete('/delete/:purrPetCode', controllers.deleteOrder);
 
 module.exports = router;

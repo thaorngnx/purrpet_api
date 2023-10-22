@@ -1,48 +1,67 @@
 import db from '../models';
+import { COLLECTION, PREFIX } from '../common/constants';
+import { generateCode } from '../common/utils/generateCode';
 
-//CRUD category
+export const createCategory = async (data) => new Promise(async (resolve, reject) => {
+    try {
+        data.purrPetCode = await generateCode(COLLECTION.CATEGORY, PREFIX.CATEGORY);
+        const response = await db.category.create(data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Create category successfully' : 'Create category failed',
+            data: response
+        });
+    } catch (error) {
+        reject(error);
+    }
+});
 
-//Create
-export const createCategory = async (data) => {
-  try {
-    return await db.category.create(data);
-  } catch (error) {
-    throw error;
-  }
-};
+export const getAllCategory = async () => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.category.find();
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get all category successfully' : 'Get all category failed',
+            data: response
+        });
+    } catch (error) {
+        reject(error);
+    }
+});
 
-//Get all
-export const getAllCategory = async () => {
-  try {
-    return await db.category.find();
-  } catch (error) {
-    throw error;
-  }
-};
+export const getCategoryByCode = async (purrPetCode) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.category.findOne({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get category by code successfully' : 'Get category by code failed',
+            data: response
+        });
+    } catch (error) {
+        reject(error);
+    }
+});
 
-//Get by id
-export const getCategoryById = async (id) => {
-  try {
-    return await db.category.findOne({ where: { id: id } });
-  } catch (error) {
-    throw error;
-  }
-};
+export const updateCategory = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.category.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Update category successfully' : 'Update category failed'
+        });
+    } catch (error) {
+        reject(error);
+    }
+});
 
-//Update
-export const updateCategory = async (data, id) => {
-  try {
-    return await db.category.update(data, { where: { id: id } });
-  } catch (error) {
-    throw error;
-  }
-};
-
-//Delete
-export const deleteCategory = async (id) => {
-  try {
-    return await db.category.destroy({ where: { id: id } });
-  } catch (error) {
-    throw error;
-  }
-};
+export const deleteCategory = async (purrPetCode) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.category.findOneAndDelete({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Delete category successfully' : 'Delete category failed'
+        });
+    } catch (error) {
+        reject(error);
+    }
+});

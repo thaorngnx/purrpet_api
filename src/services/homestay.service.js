@@ -1,41 +1,67 @@
 import db from '../models';
+import { COLLECTION, PREFIX } from '../common/constants';
+import { generateCode } from '../common/utils/generateCode';
 
-export const createHomestay = async (data) => {
+export const createHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
-        return await db.homestay.create(data);
+        data.purrPetCode = await generateCode(COLLECTION.HOMESTAY, PREFIX.HOMESTAY);
+        const response = await db.homestay.create(data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Create homestay successfully' : 'Create homestay failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const getAllHomestay = async () => {
+export const getAllHomestay = async () => new Promise(async (resolve, reject) => {
     try {
-        return await db.homestay.find();
+        const response = await db.homestay.find();
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get all homestay successfully' : 'Get all homestay failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-}
+});
 
-export const getHomestayById = async (id) => {
+export const getHomestayByCode = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.homestay.findOne({ where: { id: id } });
+        const response = await db.homestay.findOne({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Get homestay by code successfully' : 'Get homestay by code failed',
+            data: response
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const updateHomestay = async (data, id) => {
+export const updateHomestay = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.homestay.update(data, { where: { id: id } });
+        const response = await db.homestay.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Update homestay successfully' : 'Update homestay failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});
 
-export const deleteHomestay = async (id) => {
+export const deleteHomestay = async (purrPetCode) => new Promise(async (resolve, reject) => {
     try {
-        return await db.homestay.destroy({ where: { id: id } });
+        const response = await db.homestay.findOneAndDelete({ purrPetCode: purrPetCode });
+        resolve({
+            err: response ? 0 : -1,
+            message: response ? 'Delete homestay successfully' : 'Delete homestay failed'
+        });
     } catch (error) {
-        throw error;
+        reject(error);
     }
-};
+});

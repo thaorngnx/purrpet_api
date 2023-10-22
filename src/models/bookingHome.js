@@ -4,7 +4,7 @@ import { STATUS_BOOKING } from '../common/constants';
 const Schema = mongoose.Schema;
 
 export const bookingHomeSchema = new Schema({
-    bookingHomeCode: {
+    purrPetCode: {
         type: String,
         required: true
     },
@@ -44,20 +44,12 @@ export const bookingHomeSchema = new Schema({
         },
         default: Object[STATUS_BOOKING.NEW]
     },
-    createAt: {
-        type: Number,
-        default: Date.now()
-    },
-    updateAt: {
-        type: Number,
-        default: Date.now()
-    },
     createBy: {
         type: String
     },
     updateBy: {
         type: String
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model("bookingHome", bookingHomeSchema);

@@ -8,9 +8,9 @@ export const purrPetCode = Joi.object({
 //#region Create
 export const orderItemDto = Joi.object({
     producCode: Joi.string().required(),
-    unitPrice: Joi.number().required(),
+  //  unitPrice: Joi.number().required(),
     quantity: Joi.number().integer().required(),
-    totalPrice: Joi.number().required()
+ //   totalPrice: Joi.number().required()
 });
 
 export const bookingSpaItemDto = Joi.object({
@@ -73,7 +73,7 @@ export const homestayDto = Joi.object({
 
 export const orderDto = Joi.object({
     orderItems: Joi.array().items(orderItemDto).required(),
-    orderPrice: Joi.number().required(),
+ //   orderPrice: Joi.number().required(),
     customerPhone: Joi.string().required(),
     customerEmail: Joi.string().email().required(),
     customerName: Joi.string().required(),
@@ -207,7 +207,7 @@ export const updateOrderDto = Joi.object({
     customerEmail: Joi.string().email().allow(null),
     customerName: Joi.string().allow(null),
     customerAddress: Joi.string().allow(null),
-    customerNote: Joi.string(),
+    customerNote: Joi.string().allow(null),
     status: Joi.string().valid(Constant.STATUS_ORDER.NEW, 
         Constant.STATUS_ORDER.WAITING_FOR_PAY, Constant.STATUS_ORDER.PAID, 
         Constant.STATUS_ORDER.DELIVERING, Constant.STATUS_ORDER.CANCEL, 

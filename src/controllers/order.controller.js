@@ -1,10 +1,10 @@
 import * as services from '../services';
-import { orderDto } from '../helpers/joi_schema';
+import { orderDto, updateOrderDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllOrder = async (req, res) => {
     try {
-        const response = await services.getAllOrder();
+        const response = await services.getAllOrder(req.query);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

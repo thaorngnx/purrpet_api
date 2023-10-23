@@ -12,6 +12,7 @@ export const orderSchema = new Schema({
     },
     orderItems: {
         type: Array,
+        JSON: true,
         required: true
     },
     orderPrice: {

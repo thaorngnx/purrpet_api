@@ -1,5 +1,5 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../common/constants';
+import { COLLECTION, PREFIX } from '../common/utils/constants';
 import { generateCode } from '../common/utils/generateCode';
 
 export const createHomestay = async (data) => new Promise(async (resolve, reject) => {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_PRODUCT, TYPE_PRODUCT } from '../common/constants';
+import { STATUS_PRODUCT, TYPE_PRODUCT } from '../common/utils/constants';
 
 mongoose.set('runValidators', true);
 

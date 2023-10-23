@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_HOME } from '../common/constants';
+import { STATUS_HOME } from '../common/utils/constants';
 
 mongoose.set('runValidators', true);
 

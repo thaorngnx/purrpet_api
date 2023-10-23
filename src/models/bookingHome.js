@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_BOOKING } from '../common/constants';
+import { STATUS_BOOKING } from '../common/utils/constants';
 
 mongoose.set('runValidators', true);
 

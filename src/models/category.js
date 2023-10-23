@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_CATEGORY } from '../common/constants';
+import { STATUS_CATEGORY } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -13,7 +13,8 @@ export const categorySchema = new Schema({
     categoryName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     categoryType: {
         type: String,

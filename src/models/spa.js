@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_SPA } from '../common/constants';
+import { STATUS_SPA } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -12,7 +12,9 @@ export const spaSchema = new Schema({
     },
     spaName: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        unique: true
     },
     price: {
         type: Number,

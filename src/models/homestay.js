@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_HOME } from '../common/constants';
+import { STATUS_HOME } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -13,7 +13,8 @@ export const homestaySchema = new Schema({
     homeName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     price: {
         type: Number,

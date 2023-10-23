@@ -1,9 +1,25 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../common/constants';
-import { generateCode } from '../common/utils/generateCode';
+import { COLLECTION, PREFIX } from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
+import { checkValidCategory, checkDuplicateValue } from '../utils/validationData';
 
 export const createHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
+        const validCategory = await checkValidCategory(data);
+        if (validCategory.err !== 0) {
+            return resolve(validCategory);
+        }
+
+        data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
+
+        const isExistHome = await checkDuplicateValue('homeName', data.homeName, COLLECTION.HOMESTAY);
+        if (isExistHome.err !== 0) {
+            return resolve({
+                err: -1,
+                message: 'Tên homestay đã tồn tại. Vui lòng chọn tên khác!'
+            });
+        }
+
         data.purrPetCode = await generateCode(COLLECTION.HOMESTAY, PREFIX.HOMESTAY);
         const response = await db.homestay.create(data);
         resolve({
@@ -44,6 +60,19 @@ export const getHomestayByCode = async (purrPetCode) => new Promise(async (resol
 
 export const updateHomestay = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
+        const validCategory = await checkValidCategory(data);
+        if (validCategory.err !== 0) {
+            return resolve(validCategory);
+        }
+
+        const isExistHome = await checkDuplicateValue('homeName', data.homeName, COLLECTION.HOMESTAY);
+        if (isExistHome.err !== 0) {
+            return resolve({
+                err: -1,
+                message: 'Tên homestay đã tồn tại. Vui lòng chọn tên khác!'
+            });
+        }
+        
         const response = await db.homestay.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
         resolve({
             err: response ? 0 : -1,

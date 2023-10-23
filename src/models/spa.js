@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_SPA } from '../common/utils/constants';
+import { STATUS_SPA } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 

@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import * as Constant from '../common/constants';
+import * as Constant from '../utils/constants';
 
 export const purrPetCode = Joi.object({
     purrPetCode: Joi.string().required()

@@ -1,4 +1,4 @@
-import db from "../../models";
+import db from "../models";
 
 export const generateCode = async (collectionName, prefix) => {
     const collection = await db[collectionName].find();

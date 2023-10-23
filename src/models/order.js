@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_ORDER } from '../common/utils/constants';
+import { STATUS_ORDER } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 

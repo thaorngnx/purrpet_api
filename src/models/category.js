@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_CATEGORY, CATEGORY_TYPE } from '../common/utils/constants';
+import { STATUS_CATEGORY, CATEGORY_TYPE } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 

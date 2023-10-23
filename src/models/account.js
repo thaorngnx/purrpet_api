@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ROLE, STATUS_ACCOUNT } from '../common/utils/constants';
+import { ROLE, STATUS_ACCOUNT } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 

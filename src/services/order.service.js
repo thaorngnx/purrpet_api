@@ -6,14 +6,19 @@ import { generateCode } from '../utils/generateCode';
 
 export const createOrder = async (data) => new Promise(async (resolve, reject) => {
     try {
+        let isOutOfStock = false;
         data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
         const priceItems = data.orderItems.map(item => item.producCode);
         const price = await db.product.find({ purrPetCode: { $in: priceItems } });
-      
-        
-
+        if (price.length !== priceItems.length) {
+            isOutOfStock = true;
+            resolve({
+                err: -1,
+                message: 'Product not found',
+            });
+        }
         data.orderPrice = 0;
-        let isOutOfStock = false;
+       
         price.forEach(item => {
             data.orderPrice += item.price * data.orderItems.find(i => i.producCode === item.purrPetCode).quantity ;
             item.invetory -= data.orderItems.find(i => i.producCode === item.purrPetCode).quantity;

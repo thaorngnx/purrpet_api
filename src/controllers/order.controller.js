@@ -14,8 +14,7 @@ export const getAllOrder = async (req, res) => {
 
 export const getOrderByCode = async (req, res) => {
     try {
-        const { error } = purrPetCode.validate(req.params);
-        if (error) return badRequest(error.message, res);
+
         const response = await services.getOrderByCode(req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {

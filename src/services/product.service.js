@@ -1,18 +1,18 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../utils/constants';
+import { COLLECTION, PREFIX, CATEGORY_TYPE } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { checkValidCategory, checkDuplicateValue } from '../utils/validationData';
 
 export const createProduct = async (data) => new Promise(async (resolve, reject) => {
   try {
-	const validCategory = await checkValidCategory(data);
+	const validCategory = await checkValidCategory(data, COLLECTION.PRODUCT);
 	if (validCategory.err !== 0) {
 		return resolve(validCategory);
 	}
 
     data.purrPetCode = await generateCode(COLLECTION.PRODUCT, PREFIX.PRODUCT);
 
-	const isExistProduct = await checkDuplicateValue('productName', data.productName, COLLECTION.PRODUCT);
+	const isExistProduct = await checkDuplicateValue('productName', data.productName, CATEGORY_TYPE.PRODUCT);
 	if (isExistProduct.err !== 0) {
 		return resolve({
 			err: -1,
@@ -83,12 +83,12 @@ export const getProductByCode = async (purrPetCode) => new Promise(async (resolv
 
 export const updateProduct = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
 	try {
-		const validCategory = await checkValidCategory(data);
+		const validCategory = await checkValidCategory(data, COLLECTION.PRODUCT);
 		if (validCategory.err !== 0) {
 			return resolve(validCategory);
 		}
 
-		const isExistProduct = await checkDuplicateValue('productName', data.productName, COLLECTION.PRODUCT);
+		const isExistProduct = await checkDuplicateValue('productName', data.productName, CATEGORY_TYPE.PRODUCT);
 		if (isExistProduct.err !== 0) {
 			return resolve({
 				err: -1,

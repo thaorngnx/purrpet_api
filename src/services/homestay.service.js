@@ -1,11 +1,11 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../utils/constants';
+import { COLLECTION, PREFIX, CATEGORY_TYPE } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { checkValidCategory, checkDuplicateValue } from '../utils/validationData';
 
 export const createHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const validCategory = await checkValidCategory(data);
+        const validCategory = await checkValidCategory(data, CATEGORY_TYPE.HOMESTAY);
         if (validCategory.err !== 0) {
             return resolve(validCategory);
         }
@@ -91,7 +91,7 @@ export const getHomestayByCode = async (purrPetCode) => new Promise(async (resol
 
 export const updateHomestay = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const validCategory = await checkValidCategory(data);
+        const validCategory = await checkValidCategory(data, CATEGORY_TYPE.HOMESTAY);
         if (validCategory.err !== 0) {
             return resolve(validCategory);
         }

@@ -1,11 +1,11 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../utils/constants';
+import { COLLECTION, PREFIX, CATEGORY_TYPE } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { checkValidCategory, checkDuplicateValue } from '../utils/validationData';
 
 export const createSpa = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const validCategory = await checkValidCategory(data);
+        const validCategory = await checkValidCategory(data, CATEGORY_TYPE.SPA);
         if (validCategory.err !== 0) {
             return resolve(validCategory);
         }
@@ -82,7 +82,7 @@ export const getSpaByCode = async (purrPetCode) => new Promise(async (resolve, r
 
 export const updateSpa = async (data) => new Promise(async (resolve, reject) => {
     try {
-        const validCategory = await checkValidCategory(data);
+        const validCategory = await checkValidCategory(data, CATEGORY_TYPE.SPA);
         if (validCategory.err !== 0) {
             return resolve(validCategory);
         }

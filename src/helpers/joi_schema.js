@@ -1,8 +1,18 @@
 import * as Joi from 'joi';
-import * as Constant from '../common/constants';
+import * as Constant from '../utils/constants';
 
 export const purrPetCode = Joi.object({
     purrPetCode: Joi.string().required()
+});
+
+export const images = Joi.object({
+    fieldname: Joi.string().valid('images').required(),
+    originalname: Joi.string().required(),
+    encoding: Joi.string().valid('7bit', '8bit', 'binary', 'base64').required(),
+    mimetype: Joi.string().valid('image/png', 'image/jpeg', 'image/jpg').required(),
+    path: Joi.string().required(),
+    size: Joi.number().integer().required(),
+    filename: Joi.string().required(),
 });
 
 //#region Create
@@ -42,8 +52,8 @@ export const productDto = Joi.object({
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
     categoryName: Joi.string().required(),
-    images: Joi.array().items(Joi.string()),
-    invetory: Joi.number().integer().required(),
+    images: Joi.array().items(images).allow(null),
+    inventory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)
@@ -55,8 +65,8 @@ export const spaDto = Joi.object({
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
     categoryName: Joi.string().required(),
-    images: Joi.array().items(Joi.string()),
-    invetory: Joi.number().integer().required(),
+    images: Joi.array().items(images),
+    inventory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)
@@ -68,8 +78,8 @@ export const homestayDto = Joi.object({
     price: Joi.number().required(),
     categoryCode: Joi.string().required(),
     categoryName: Joi.string().required(),
-    images: Joi.array().items(Joi.string()),
-    invetory: Joi.number().integer().required(),
+    images: Joi.array().items(images).allow(null),
+    inventory: Joi.number().integer().required(),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)
@@ -167,8 +177,8 @@ export const updateProductDto = Joi.object({
     description: Joi.string().allow(null),
     price: Joi.number().allow(null),
     categoryCode: Joi.string().allow(null),
-    images: Joi.array().items(Joi.string()).allow(null),
-    invetory: Joi.number().integer().allow(null),
+    images: Joi.array().items(images).allow(null),
+    inventory: Joi.number().integer().allow(null),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)
@@ -181,8 +191,8 @@ export const updateSpaDto = Joi.object({
     price: Joi.number().allow(null),
     categoryCode: Joi.string().allow(null),
     categoryName: Joi.string().allow(null),
-    images: Joi.array().items(Joi.string()).allow(null),
-    invetory: Joi.number().integer().allow(null),
+    images: Joi.array().items(images).allow(null),
+    inventory: Joi.number().integer().allow(null),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)
@@ -195,8 +205,8 @@ export const updateHomestayDto = Joi.object({
     price: Joi.number().allow(null),
     categoryCode: Joi.string().allow(null),
     categoryName: Joi.string().allow(null),
-    images: Joi.array().items(Joi.string()).allow(null),
-    invetory: Joi.number().integer().allow(null),
+    images: Joi.array().items(images).allow(null),
+    inventory: Joi.number().integer().allow(null),
     status: Joi.string().valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE).allow(null),
     createBy: Joi.string().allow(null),
     updateBy: Joi.string().allow(null)

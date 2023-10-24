@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_PRODUCT } from '../common/constants';
+import { STATUS_PRODUCT } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -13,7 +13,8 @@ export const productSchema = new Schema({
     productName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     description: {
         type: String,

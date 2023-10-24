@@ -1,6 +1,6 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../common/constants';
-import { generateCode } from '../common/utils/generateCode';
+import { COLLECTION, PREFIX } from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
 
 export const createBookingSpa = async (data) => new Promise(async (resolve, reject) => {
     try {

@@ -44,7 +44,7 @@ export const productSchema = new Schema({
     images: {
         type: Array
     },
-    invetory: {
+    inventory: {
         type: Number,
         required: true
     },

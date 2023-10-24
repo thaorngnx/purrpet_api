@@ -28,7 +28,7 @@ export const homestaySchema = new Schema({
         type: Array,
         required: true
     },
-    invetory: {
+    inventory: {
         type: Number,
         required: true
     },

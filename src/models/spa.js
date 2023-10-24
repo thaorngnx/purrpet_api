@@ -27,7 +27,7 @@ export const spaSchema = new Schema({
     images: {
         type: Array
     },
-    invetory: {
+    inventory: {
         type: Number,
         required: true
     },

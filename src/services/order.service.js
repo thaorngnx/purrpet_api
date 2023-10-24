@@ -2,8 +2,6 @@ import db from '../models';
 import { COLLECTION, PREFIX } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 
-
-
 export const createOrder = async (data) => new Promise(async (resolve, reject) => {
     try {
         data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);

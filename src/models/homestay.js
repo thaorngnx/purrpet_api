@@ -13,7 +13,8 @@ export const homestaySchema = new Schema({
     homeName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     price: {
         type: Number,

@@ -23,7 +23,6 @@ export const createSpa = async (data) => new Promise(async (resolve, reject) => 
         resolve({
             error: response ? 0 : -1,
             message: response ? 'Create spa success' : 'Create spa fail',
-            categoryName: category.categoryName,
             data: response
         });
     } catch (error) {

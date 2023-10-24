@@ -32,7 +32,6 @@ export const createHomestay = async (data) => new Promise(async (resolve, reject
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Create homestay successfully' : 'Create homestay failed',
-            categoryName: category.categoryName,
             data: response
         });
     } catch (error) {

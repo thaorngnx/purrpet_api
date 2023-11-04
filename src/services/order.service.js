@@ -2,8 +2,6 @@ import db from '../models';
 import { COLLECTION, PREFIX } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 
-
-
 export const createOrder = async (data) => new Promise(async (resolve, reject) => {
     try {
         let isOutOfStock = false;
@@ -21,13 +19,13 @@ export const createOrder = async (data) => new Promise(async (resolve, reject) =
        
         price.forEach(item => {
             data.orderPrice += item.price * data.orderItems.find(i => i.producCode === item.purrPetCode).quantity ;
-            item.invetory -= data.orderItems.find(i => i.producCode === item.purrPetCode).quantity;
+            item.inventory -= data.orderItems.find(i => i.producCode === item.purrPetCode).quantity;
            
 
         });
-         const invetoryCheck = price.map(item => item.invetory);
-         const invetory = invetoryCheck.every(item => item > 0);
-         if (!invetory) {
+         const inventoryCheck = price.map(item => item.inventory);
+         const inventory = inventoryCheck.every(item => item > 0);
+         if (!inventory) {
            isOutOfStock = true;
         }else{
             price.forEach(item => {
@@ -113,7 +111,7 @@ export const updateOrder = async ( data, purrPetCode) => new Promise(async (reso
             const priceItems = order.orderItems.map(item => item.producCode);
             const price = await db.product.find({ purrPetCode: { $in: priceItems } });
             price.forEach(item => {
-                item.invetory += order.orderItems.find(i => i.producCode === item.purrPetCode).quantity;
+                item.inventory += order.orderItems.find(i => i.producCode === item.purrPetCode).quantity;
                 item.save();
             });
         }

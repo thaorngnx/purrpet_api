@@ -1,4 +1,3 @@
-import Exception from '../exceptions/Exception';
 import db from '../models';
 import { COLLECTION, PREFIX } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
@@ -64,24 +63,6 @@ export const getCategoryByCode = async (purrPetCode) => new Promise(async (resol
         reject(error);
     }
 });
-
-//Get by id
-export const getCategoryById = async (id) => {
-  let category = await db.category.findById(id);
-  console.log(id)
-  if (!category) throw new Exception(Exception.CATEGORY_NOT_FOUND);
-  return category;
-};
-
-
-//Delete
-// export const deleteCategory = async (id) => {
-//   try {
-//     return await db.category.destroy({ where: { id: id } });
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const updateCategory = async (data) => new Promise(async (resolve, reject) => {
     try {

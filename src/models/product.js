@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_PRODUCT, TYPE_PRODUCT } from '../utils/constants';
+import { STATUS_PRODUCT, PRODUCT_TYPE } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -13,7 +13,8 @@ export const productSchema = new Schema({
     productName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     description: {
         type: String,
@@ -28,18 +29,22 @@ export const productSchema = new Schema({
         type: String,
         required: true
     },
-    typeProduct: {
+    categoryName: {
+        type: String,
+        required: true
+    },
+    productType: {
         type: String,
         enum: {
-            values: [TYPE_PRODUCT.DOG, TYPE_PRODUCT.CAT],
+            values: [PRODUCT_TYPE.DOG, PRODUCT_TYPE.CAT],
             message: "{VALUE} is not supported",
         },
-        default: TYPE_PRODUCT.DOG   
+        default: PRODUCT_TYPE.DOG   
     },
     images: {
         type: Array
     },
-    invetory: {
+    inventory: {
         type: Number,
         required: true
     },

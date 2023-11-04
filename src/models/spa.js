@@ -12,7 +12,9 @@ export const spaSchema = new Schema({
     },
     spaName: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        unique: true
     },
     price: {
         type: Number,
@@ -25,7 +27,7 @@ export const spaSchema = new Schema({
     images: {
         type: Array
     },
-    invetory: {
+    inventory: {
         type: Number,
         required: true
     },

@@ -8,12 +8,13 @@ const Schema = mongoose.Schema;
 export const categorySchema = new Schema({
     purrPetCode: {
         type: String,
-      //  required: true
+        required: true
     },
     categoryName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     categoryType: {
         type: String,

@@ -1,10 +1,18 @@
 import db from '../models';
 import { COLLECTION, PREFIX } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
+import { checkDuplicateValue } from '../utils/validationData';
 
 export const createAccount = async (data) => new Promise(async (resolve, reject) => {
     try {
         data.purrPetCode = await generateCode(COLLECTION.ACCOUNT, PREFIX.ACCOUNT);
+        const isExistAccount = await checkDuplicateValue('username', data.username, COLLECTION.ACCOUNT);
+        if (isExistAccount.err !== 0) {
+            return resolve({
+                err: -1,
+                message: 'Tên tài khoản đã tồn tại. Vui lòng chọn tên khác!'
+            });
+        }
         const response = await db.account.create(data);
         resolve({
             err: response ? 0 : -1,
@@ -36,7 +44,7 @@ export const getAccountByCode = async (purrPetCode) => new Promise(async (resolv
             err: response ? 0 : -1,
             message: response ? 'Get account by code successfully' : 'Get account by code failed',
             data: response
-        })
+        });
     } catch (error) {
         reject(error);
     }
@@ -44,11 +52,17 @@ export const getAccountByCode = async (purrPetCode) => new Promise(async (resolv
 
 export const updateAccount = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
     try {
+        if (isExistAccount.err !== 0) {
+            return resolve({
+                err: -1,
+                message: 'Tên tài khoản đã tồn tại. Vui lòng chọn tên khác!'
+            });
+        }
         const response = await db.account.findOneAndUpdate({ purrPetCode: purrPetCode }, data);
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Update account successfully' : 'Update account failed'
-        })
+        });
     } catch (error) {
         reject(error);
     }

@@ -21,7 +21,7 @@ export const accountSchema = new Schema({
         required: true,
         trim: true,
         minlength: 6,
-        maxlength: 20
+        //maxlength: 20
     },
     role: {
         type: String,
@@ -38,6 +38,9 @@ export const accountSchema = new Schema({
             message: "{VALUE} is not supported",
         },
         default: STATUS_ACCOUNT.ACTIVE
+    },
+    refreshToken: {
+        type: String
     },
     createBy: {
         type: String

@@ -16,6 +16,15 @@ export const images = Joi.object({
 });
 
 //#region Create
+export const loginDto = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required()
+});
+
+export const refreshDto = Joi.object({
+    refresh_token: Joi.string().required()
+});
+
 export const orderItemDto = Joi.object({
     producCode: Joi.string().required(),
   //  unitPrice: Joi.number().required(),

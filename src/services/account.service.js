@@ -2,7 +2,12 @@ import db from '../models';
 import { COLLECTION, PREFIX } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { checkDuplicateValue } from '../utils/validationData';
+import bcrypt from 'bcryptjs';
 
+const hashPassword = (password) => {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
+} 
 export const createAccount = async (data) => new Promise(async (resolve, reject) => {
     try {
         data.purrPetCode = await generateCode(COLLECTION.ACCOUNT, PREFIX.ACCOUNT);
@@ -13,7 +18,11 @@ export const createAccount = async (data) => new Promise(async (resolve, reject)
                 message: 'Tên tài khoản đã tồn tại. Vui lòng chọn tên khác!'
             });
         }
-        const response = await db.account.create(data);
+        const response = await db.account.create({
+            purrPetCode: data.purrPetCode,
+            username: data.username,
+            password: hashPassword(data.password),
+        });
         resolve({
             err: response ? 0 : -1,
             message: response ? 'Create account successfully' : 'Create account failed',

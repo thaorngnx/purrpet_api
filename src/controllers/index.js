@@ -6,3 +6,4 @@ export * from "./bookingSpa.controller";
 export * from "./homestay.controller";
 export * from "./spa.controller";
 export * from "./product.controller";
+export * from "./login.controller";

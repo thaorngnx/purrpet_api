@@ -6,9 +6,11 @@ import bookingSpa from './bookingSpa.router';
 import homestay from './homestay.router';
 import spa from './spa.router';
 import product from './product.router';
+import login from './login.router';
 import { notFound } from '../middlewares/handle_errors';
 
 const initRoutes = (app) => {
+    app.use('/api/auth', login);
     app.use('/api/account', account);
     app.use('/api/category', category);
     app.use('/api/order', order);

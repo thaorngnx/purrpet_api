@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/query', controllers.getAllSpa);
 router.get('/:purrPetCode', controllers.getSpaByCode);
-router.use(verifyToken);
+// router.use(verifyToken);
 router.post('/create', upload.array('images'), controllers.createSpa);
 router.put('/update/:purrPetCode', upload.array('images'), controllers.updateSpa);
 router.delete('/delete/:purrPetCode', controllers.deleteSpa);

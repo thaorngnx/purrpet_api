@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/query', controllers.getAllProduct);
 router.get('/:purrPetCode', controllers.getProductByCode);
-router.use(verifyToken);
+// router.use(verifyToken);
 router.post('/create', upload.array('images'), controllers.createProduct);
 router.put('/update/:purrPetCode', upload.array('images'), controllers.updateProduct);
 router.delete('/delete/:purrPetCode', controllers.deleteProduct);

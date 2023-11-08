@@ -38,9 +38,9 @@ export const createHomestay = async (req, res) => {
 
 export const updateHomestay = async (req, res) => {
     try {
-        const { error } = updateHomestayDto.validate({ ...req.body });
+        const { error } = updateHomestayDto.validate({ purrPetCode: req.params.purrPetCode, ...req.body });
         if (error) return badRequest(error.message, res);
-        const response = await services.updateHomestay(req.body);
+        const response = await services.updateHomestay(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);

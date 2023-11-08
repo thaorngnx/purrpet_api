@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/staff/login', controllers.loginAccount);
 router.post('/admin/login', controllers.loginAccountAdmin);
-router.use(verifyToken);
+// router.use(verifyToken);
 router.post('/refresh-token', controllers.refreshToken);
 router.put('/logout', controllers.logout);
 

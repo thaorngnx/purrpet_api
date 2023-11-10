@@ -9,6 +9,7 @@ router.get('/:purrPetCode', controllers.getCategoryByCode);
 // router.use(verifyToken);
 router.post('/create', controllers.createCategory);
 router.put('/update/:purrPetCode', controllers.updateCategory);
+router.put('/update-status/:purrPetCode', controllers.updateStatusCategory);
 router.delete('/delete/:purrPetCode', controllers.deleteCategory);
 
 module.exports = router;

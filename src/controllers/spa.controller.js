@@ -38,15 +38,27 @@ export const createSpa = async (req, res) => {
 
 export const updateSpa = async (req, res) => {
     try {
-        const { error } = updateSpaDto.validate({  ...req.body });
+        const { error } = updateSpaDto.validate({  purrPetCode: req.params.purrPetCode, ...req.body});
         if (error) return badRequest(error.message, res);
-        const response = await services.updateSpa(req.body);
+        const response = await services.updateSpa(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
         return internalServerError(res);
     }
 };
+
+export const updateStatusSpa = async (req, res) => {
+    try {
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateStatusSpa(req.params.purrPetCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return internalServerError(res);
+    }
+}
 
 export const deleteSpa = async (req, res) => {
     try {

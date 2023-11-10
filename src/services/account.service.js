@@ -1,5 +1,5 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../utils/constants';
+import { COLLECTION, PREFIX, STATUS_ACCOUNT} from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { checkDuplicateValue } from '../utils/validationData';
 import bcrypt from 'bcryptjs';
@@ -73,6 +73,34 @@ export const updateAccount = async (data, purrPetCode) => new Promise(async (res
             message: response ? 'Update account successfully' : 'Update account failed'
         });
     } catch (error) {
+        reject(error);
+    }
+});
+
+export const updateStatusAccount = async (purrPetCode) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.account.findOne({ purrPetCode: purrPetCode });
+        if (!response) {
+            return resolve({
+                err: -1,
+                message: 'Account not found'
+            });
+        }else{
+            if(response.status === STATUS_ACCOUNT.ACTIVE){
+                response.status = STATUS_ACCOUNT.INACTIVE;
+            }else{  
+                response.status = STATUS_ACCOUNT.ACTIVE;
+            }
+            await response.save();
+            resolve({
+                err: 0,
+                message: 'Update status account successfully',
+                data: response
+            });
+        }
+
+    }
+    catch (error) {
         reject(error);
     }
 });

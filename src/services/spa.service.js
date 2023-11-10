@@ -1,5 +1,5 @@
 import db from "../models";
-import { COLLECTION, PREFIX, CATEGORY_TYPE } from "../utils/constants";
+import { COLLECTION, PREFIX, CATEGORY_TYPE, STATUS_SPA } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
@@ -89,7 +89,7 @@ export const getSpaByCode = async (purrPetCode) =>
     }
   });
 
-export const updateSpa = async (data) =>
+export const updateSpa = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const validCategory = await checkValidCategory(data, CATEGORY_TYPE.SPA);
@@ -121,6 +121,33 @@ export const updateSpa = async (data) =>
       reject(error);
     }
   });
+
+export const updateStatusSpa = async (purrPetCode) =>
+new Promise(async (resolve, reject) => {
+  try{
+    const response = await db.spa.findOne ({purrPetCode: purrPetCode});
+    if (!response) {
+      return resolve({
+        error: -1,
+        message: "spa is not exist",
+      });
+    }else{
+      if(response.status === STATUS_SPA.ACTIVE){
+        response.status = STATUS_SPA.INACTIVE;
+      }
+    else{
+      response.status = STATUS_SPA.ACTIVE;
+    }
+    await response.save();
+    resolve({
+      error: 0,
+      message: "Update status spa success",
+    });
+    }
+  }catch(error){
+    reject(error);
+  }
+});
 
 export const deleteSpa = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

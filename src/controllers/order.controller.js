@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { orderDto, updateOrderDto } from '../helpers/joi_schema';
+import { orderDto, updateOrderDto, updateOrderStatusDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllOrder = async (req, res) => {
@@ -46,6 +46,18 @@ export const updateOrder = async (req, res) => {
         return internalServerError(res);
     }
 };
+
+export const updateStatusOrder = async (req, res) => {
+    try {
+        const { error } = updateOrderStatusDto.validate({purrPetCode: req.params.purrPetCode, ...req.body});
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateStatusOrder( req.body, req.params.purrPetCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return internalServerError(res);
+    }
+}
 
 export const deleteOrder = async (req, res) => {
     try {

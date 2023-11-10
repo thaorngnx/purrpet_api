@@ -10,6 +10,8 @@ router.get('/:purrPetCode', controllers.getSpaByCode);
 // router.use(verifyToken);
 router.post('/create', upload.array('images'), controllers.createSpa);
 router.put('/update/:purrPetCode', upload.array('images'), controllers.updateSpa);
+router.put('/update-status/:purrPetCode', controllers.updateStatusSpa);;
 router.delete('/delete/:purrPetCode', controllers.deleteSpa);
+
 
 module.exports = router;

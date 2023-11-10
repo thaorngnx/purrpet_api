@@ -1,5 +1,5 @@
 import db from "../models";
-import { COLLECTION, PREFIX, CATEGORY_TYPE } from "../utils/constants";
+import { COLLECTION, PREFIX, CATEGORY_TYPE, STATUS_PRODUCT } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
@@ -56,7 +56,6 @@ export const getAllProduct = async ({ page, limit, order, key, ...query }) =>
             { purrPetCode: { $regex: key, $options: "i" } },
             { productName: { $regex: key, $options: "i" } },
             { description: { $regex: key, $options: "i" } },
-            { categoryName: { $regex: key, $options: "i" } },
           ],
         };
       }
@@ -83,6 +82,7 @@ export const getAllProduct = async ({ page, limit, order, key, ...query }) =>
     }
   });
 
+
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -92,6 +92,46 @@ export const getProductByCode = async (purrPetCode) =>
         message: response
           ? "Tìm thấy sản phẩm!"
           : "Đã có lỗi xảy ra. Vui lòng thử lại!",
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const searchProduct= async ({ page, limit, order, key, ...query }) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      //search
+      let search = {};
+      if (key) {
+        search = {
+          ...search,
+          $or: [
+            { purrPetCode: { $regex: key, $options: "i" } },
+            { productName: { $regex: key, $options: "i" } },
+          ],
+          $and: [
+            { status: STATUS_PRODUCT.ACTIVE }
+          ],
+        };
+      }
+      //pagination
+      const _limit = parseInt(limit) || 10;
+      const _page = parseInt(page) || 1;
+      const _skip = (_page - 1) * _limit;
+      //sort
+      const _sort = {};
+      if (order) {
+        const [key, value] = order.split(".");
+        _sort[key] = value === "asc" ? 1 : -1;
+      }
+      const response = await db.product.find({ ...query, ...search });
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Get all product successfully"
+          : "Get all product failed",
         data: response,
       });
     } catch (error) {
@@ -151,6 +191,32 @@ export const deleteProduct = async (purrPetCode) =>
           ? "Xóa sản phẩm thành công!"
           : "Đã có lỗi xảy ra. Vui lòng thử lại!",
       });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+  export const updateProductStatus = async (purrPetCode) => new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.product.findOne({ purrPetCode: purrPetCode });
+      if (!response) {
+        return resolve({
+          err: -1,
+          message: "Sản phẩm không tồn tại!",
+        });
+      }else{
+        if (response.status === STATUS_PRODUCT.INACTIVE ) {
+          response.status = STATUS_PRODUCT.ACTIVE;
+        }
+        else {
+          response.status = STATUS_PRODUCT.INACTIVE;
+        }
+        await response.save();
+        resolve({
+          err: 0,
+          message: `Cập nhật trạng thái sản phẩm thành công!`
+        })
+      }
     } catch (error) {
       reject(error);
     }

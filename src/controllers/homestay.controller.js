@@ -43,7 +43,17 @@ export const updateHomestay = async (req, res) => {
         const response = await services.updateHomestay(req.body, req.params.purrPetCode);
         return res.status(200).json(response);
     } catch (error) {
-        console.log(error);
+        return internalServerError(res);
+    }
+};
+
+export const updateStatusHomestay = async(req, res) => {  
+    try {
+        const {error} = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateStatusHomestay(req.params.purrPetCode);
+        return res.status(200).json(response);
+    } catch (error) {
         return internalServerError(res);
     }
 };

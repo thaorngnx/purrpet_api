@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { purrPetCode, updateBookingSpaDto, bookingSpaDto } from '../helpers/joi_schema';
+import { purrPetCode, updateBookingSpaDto, bookingSpaDto, updateBookingSpaStatusDto } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllBookingSpa = async (req, res) => {
@@ -47,6 +47,18 @@ export const updateBookingSpa = async (req, res) => {
         return internalServerError(res);
     }
 };
+
+export const updateStatusBookingSpa = async (req, res) => {
+    try {
+        const { error } = updateBookingSpaStatusDto.validate({purrPetCode: req.params.purrPetCode, ...req.body});
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateStatusBookingSpa( req.body, req.params.purrPetCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return internalServerError(res);
+    }
+}
 
 export const deleteBookingSpa = async (req, res) => {
     try {

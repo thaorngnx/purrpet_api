@@ -1,5 +1,5 @@
 import db from "../models";
-import { COLLECTION, PREFIX } from "../utils/constants";
+import { COLLECTION, PREFIX, STATUS_CATEGORY } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 
 export const createCategory = async (data) =>
@@ -118,6 +118,33 @@ export const updateCategory = async (data, purrPetCode) =>
       reject(error);
     }
   });
+
+export const updateStatusCategory = async (purrPetCode) =>
+new Promise(async (resolve, reject) => {
+  try {
+    const response = await db.category.findOne({ purrPetCode: purrPetCode });
+    if (!response) {
+      return resolve({
+        err: -1,
+        message: "Category not found",
+      });
+    } else {
+        if (response.status === STATUS_CATEGORY.ACTIVE){
+          response.status = STATUS_CATEGORY.INACTIVE;
+        }else{
+          response.status = STATUS_CATEGORY.ACTIVE;
+        }
+        await response.save();
+        resolve({
+          err: 0,
+          message: "Update status category successfully"
+        });
+    }
+  }
+  catch (error) {
+    reject(error);
+  }
+})
 
 export const deleteCategory = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

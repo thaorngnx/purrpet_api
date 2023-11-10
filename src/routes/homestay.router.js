@@ -10,6 +10,7 @@ router.get('/:purrPetCode', controllers.getHomestayByCode);
 // router.use(verifyToken);
 router.post('/create', upload.array('images'), controllers.createHomestay);
 router.put('/update/:purrPetCode', upload.array('images'), controllers.updateHomestay);
+router.put('/update-status/:purrPetCode', controllers.updateStatusHomestay);
 router.delete('/delete/:purrPetCode', controllers.deleteHomestay);
 
 module.exports = router;

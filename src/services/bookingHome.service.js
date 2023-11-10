@@ -1,5 +1,5 @@
 import db from '../models';
-import { COLLECTION, PREFIX } from '../utils/constants';
+import { COLLECTION, PREFIX, STATUS_BOOKING } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 
 export const createBookingHome = async (data) => new Promise(async (resolve, reject) => {
@@ -51,6 +51,88 @@ export const updateBookingHome = async (data, purrPetCode) => new Promise(async 
         });
     } catch (error) {
         reject(error);
+    }
+});
+
+export const updateStatusBookingHome = async (data, purrPetCode) => new Promise(async (resolve, reject) => {
+    try{
+        const response = await db.bookingHome.findOne({ purrPetCode: purrPetCode });
+        if(!response){
+          resolve({
+            err: -1,
+            message: "Order not found"
+          })
+      }else{
+        if(response.status === STATUS_BOOKING.NEW)
+          {
+            if(data.status === STATUS_BOOKING.WAITING_FOR_PAY || data.status === STATUS_BOOKING.CANCEL){  
+              response.status = data.status;
+              response.save();
+              resolve({
+                err: 0,
+                message: "Update status order successfully"
+              })
+          }
+          else{
+            resolve({
+              err: -1,
+              message: "Status order is invalid"
+            })
+          }
+        }else if(response.status === STATUS_BOOKING.WAITING_FOR_PAY){
+          if(data.status === STATUS_BOOKING.PAID || data.status === STATUS_BOOKING.CANCEL){
+            response.status = data.status;
+            response.save();
+            resolve({
+              err: 0,
+              message: "Update status order successfully"
+            })
+          }
+          else{
+            resolve({
+              err: -1,
+              message: "Status order is invalid"
+            })
+          }
+        }else if(response.status === STATUS_BOOKING.PAID){
+          if(data.status === STATUS_BOOKING.CHECKIN){
+            response.status = data.status;
+            response.save();
+            resolve({
+              err: 0,
+              message: "Update status order successfully"
+            })
+          }
+          else{
+            resolve({
+              err: -1,
+              message: "Status order is invalid"
+            })
+          }
+        }else if(response.status === STATUS_BOOKING.CHECKIN){
+            if(data.status === STATUS_BOOKING.CHECKOUT){
+              response.status = data.status;
+              response.save();
+              resolve({
+                err: 0,
+                message: "Update status order successfully"
+              })
+            }
+            else{
+              resolve({
+                err: -1,
+                message: "Status order is invalid"
+              })
+          }
+        }else{
+          resolve({
+            err: -1,
+            message: "You cannot change the order status"
+          })
+        }
+        }
+    }catch(error){
+      reject(error);
     }
 });
 

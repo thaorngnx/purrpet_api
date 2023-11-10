@@ -1,5 +1,5 @@
 import * as services from '../services';
-import { purrPetCode, updateProductDto, productDto } from '../helpers/joi_schema';
+import { purrPetCode, productDto, updateProductDto} from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 const cloudinary = require('cloudinary').v2;
 
@@ -25,6 +25,16 @@ export const getProductByCode = async (req, res) => {
     }
 };
 
+export const searchProduct = async (req, res) => {
+    try {
+        
+        const response = await services.searchProduct(req.query);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return internalServerError(res);
+    }
+};
 export const createProduct = async (req, res) => {
     try {
         const images = req.files;
@@ -61,6 +71,18 @@ export const updateProduct = async (req, res) => {
     }
 };
 
+export const updateProductStatus = async (req, res) => {
+    try {
+        const { error } = purrPetCode.validate(req.params);
+        if (error) return badRequest(error.message, res);
+        const response = await services.updateProductStatus( req.params.purrPetCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return internalServerError(res);
+    }
+}
+
 export const deleteProduct = async (req, res) => {
     try {
         const { error } = purrPetCode.validate(req.params);
@@ -72,3 +94,4 @@ export const deleteProduct = async (req, res) => {
         return internalServerError(res);
     }
 };
+

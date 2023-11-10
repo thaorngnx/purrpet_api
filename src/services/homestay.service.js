@@ -1,5 +1,10 @@
 import db from "../models";
-import { COLLECTION, PREFIX, CATEGORY_TYPE, STATUS_HOME} from "../utils/constants";
+import {
+  COLLECTION,
+  PREFIX,
+  CATEGORY_TYPE,
+  STATUS_HOME,
+} from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
@@ -139,7 +144,7 @@ export const updateHomestay = async (data, purrPetCode) =>
         { purrPetCode: purrPetCode },
         data
       );
-      
+
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -152,30 +157,30 @@ export const updateHomestay = async (data, purrPetCode) =>
   });
 
 export const updateStatusHomestay = async (purrPetCode) =>
-new Promise( async (resolve, reject)=>{
-  try {
-      const response = await db.homestay.findOne({ purrPetCode: purrPetCode  });
-      if(!response){
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.homestay.findOne({ purrPetCode: purrPetCode });
+      if (!response) {
         resolve({
           err: -1,
-          message: "Homestay is not exist"
-        })
-      }else{
-        if(response.status === STATUS_HOME.ACTIVE){
-          response.status = STATUS_HOME.INACTIVE;}
-        else{
+          message: "Homestay is not exist",
+        });
+      } else {
+        if (response.status === STATUS_HOME.ACTIVE) {
+          response.status = STATUS_HOME.INACTIVE;
+        } else {
           response.status = STATUS_HOME.ACTIVE;
         }
         await response.save();
         resolve({
           err: 0,
-          message: "Update status homestay success"
-        })
+          message: "Update status homestay success",
+        });
+      }
+    } catch (error) {
+      reject(error);
     }
-  }catch (error) {
-    reject(error)
-}
-});
+  });
 
 export const deleteHomestay = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

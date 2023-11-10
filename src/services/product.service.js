@@ -1,5 +1,10 @@
 import db from "../models";
-import { COLLECTION, PREFIX, CATEGORY_TYPE, STATUS_PRODUCT } from "../utils/constants";
+import {
+  COLLECTION,
+  PREFIX,
+  CATEGORY_TYPE,
+  STATUS_PRODUCT,
+} from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
@@ -82,7 +87,6 @@ export const getAllProduct = async ({ page, limit, order, key, ...query }) =>
     }
   });
 
-
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -99,7 +103,7 @@ export const getProductByCode = async (purrPetCode) =>
     }
   });
 
-export const searchProduct= async ({ page, limit, order, key, ...query }) =>
+export const searchProduct = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
       //search
@@ -111,9 +115,7 @@ export const searchProduct= async ({ page, limit, order, key, ...query }) =>
             { purrPetCode: { $regex: key, $options: "i" } },
             { productName: { $regex: key, $options: "i" } },
           ],
-          $and: [
-            { status: STATUS_PRODUCT.ACTIVE }
-          ],
+          $and: [{ status: STATUS_PRODUCT.ACTIVE }],
         };
       }
       //pagination
@@ -196,7 +198,8 @@ export const deleteProduct = async (purrPetCode) =>
     }
   });
 
-  export const updateProductStatus = async (purrPetCode) => new Promise(async (resolve, reject) => {
+export const updateProductStatus = async (purrPetCode) =>
+  new Promise(async (resolve, reject) => {
     try {
       const response = await db.product.findOne({ purrPetCode: purrPetCode });
       if (!response) {
@@ -204,18 +207,17 @@ export const deleteProduct = async (purrPetCode) =>
           err: -1,
           message: "Sản phẩm không tồn tại!",
         });
-      }else{
-        if (response.status === STATUS_PRODUCT.INACTIVE ) {
+      } else {
+        if (response.status === STATUS_PRODUCT.INACTIVE) {
           response.status = STATUS_PRODUCT.ACTIVE;
-        }
-        else {
+        } else {
           response.status = STATUS_PRODUCT.INACTIVE;
         }
         await response.save();
         resolve({
           err: 0,
-          message: `Cập nhật trạng thái sản phẩm thành công!`
-        })
+          message: `Cập nhật trạng thái sản phẩm thành công!`,
+        });
       }
     } catch (error) {
       reject(error);

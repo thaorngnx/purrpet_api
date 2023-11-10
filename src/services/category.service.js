@@ -120,31 +120,30 @@ export const updateCategory = async (data, purrPetCode) =>
   });
 
 export const updateStatusCategory = async (purrPetCode) =>
-new Promise(async (resolve, reject) => {
-  try {
-    const response = await db.category.findOne({ purrPetCode: purrPetCode });
-    if (!response) {
-      return resolve({
-        err: -1,
-        message: "Category not found",
-      });
-    } else {
-        if (response.status === STATUS_CATEGORY.ACTIVE){
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.category.findOne({ purrPetCode: purrPetCode });
+      if (!response) {
+        return resolve({
+          err: -1,
+          message: "Category not found",
+        });
+      } else {
+        if (response.status === STATUS_CATEGORY.ACTIVE) {
           response.status = STATUS_CATEGORY.INACTIVE;
-        }else{
+        } else {
           response.status = STATUS_CATEGORY.ACTIVE;
         }
         await response.save();
         resolve({
           err: 0,
-          message: "Update status category successfully"
+          message: "Update status category successfully",
         });
+      }
+    } catch (error) {
+      reject(error);
     }
-  }
-  catch (error) {
-    reject(error);
-  }
-})
+  });
 
 export const deleteCategory = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

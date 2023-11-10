@@ -143,88 +143,89 @@ export const updateOrder = async (data, purrPetCode) =>
     }
   });
 
-export const updateStatusOrder = async (data, purrPetCode ) =>
+export const updateStatusOrder = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
-    try{
+    try {
       const response = await db.order.findOne({ purrPetCode: purrPetCode });
-      if(!response){
+      if (!response) {
         resolve({
           err: -1,
-          message: "Order not found"
-        })
-    }else{
-      if(response.status === STATUS_ORDER.NEW)
-        {
-          if(data.status === STATUS_ORDER.WAITING_FOR_PAY || data.status === STATUS_ORDER.CANCEL){  
+          message: "Order not found",
+        });
+      } else {
+        if (response.status === STATUS_ORDER.NEW) {
+          if (
+            data.status === STATUS_ORDER.WAITING_FOR_PAY ||
+            data.status === STATUS_ORDER.CANCEL
+          ) {
             response.status = data.status;
             response.save();
             resolve({
               err: 0,
-              message: "Update status order successfully"
-            })
-        }
-        else{
-          resolve({
-            err: -1,
-            message: "Status order is invalid"
-          })
-        }
-      }else if(response.status === STATUS_ORDER.WAITING_FOR_PAY){
-        if(data.status === STATUS_ORDER.PAID || data.status === STATUS_ORDER.CANCEL){
-          response.status = data.status;
-          response.save();
-          resolve({
-            err: 0,
-            message: "Update status order successfully"
-          })
-        }
-        else{
-          resolve({
-            err: -1,
-            message: "Status order is invalid"
-          })
-        }
-      }else if(response.status === STATUS_ORDER.PAID){
-        if(data.status === STATUS_ORDER.DELIVERING){
-          response.status = data.status;
-          response.save();
-          resolve({
-            err: 0,
-            message: "Update status order successfully"
-          })
-        }
-        else{
-          resolve({
-            err: -1,
-            message: "Status order is invalid"
-          })
-        }
-      }else if(response.status === STATUS_ORDER.DELIVERING){
-          if(data.status === STATUS_ORDER.DONE){
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully"
-            })
-          }
-          else{
+              message: "Update status order successfully",
+            });
+          } else {
             resolve({
               err: -1,
-              message: "Status order is invalid"
-            })
+              message: "Status order is invalid",
+            });
+          }
+        } else if (response.status === STATUS_ORDER.WAITING_FOR_PAY) {
+          if (
+            data.status === STATUS_ORDER.PAID ||
+            data.status === STATUS_ORDER.CANCEL
+          ) {
+            response.status = data.status;
+            response.save();
+            resolve({
+              err: 0,
+              message: "Update status order successfully",
+            });
+          } else {
+            resolve({
+              err: -1,
+              message: "Status order is invalid",
+            });
+          }
+        } else if (response.status === STATUS_ORDER.PAID) {
+          if (data.status === STATUS_ORDER.DELIVERING) {
+            response.status = data.status;
+            response.save();
+            resolve({
+              err: 0,
+              message: "Update status order successfully",
+            });
+          } else {
+            resolve({
+              err: -1,
+              message: "Status order is invalid",
+            });
+          }
+        } else if (response.status === STATUS_ORDER.DELIVERING) {
+          if (data.status === STATUS_ORDER.DONE) {
+            response.status = data.status;
+            response.save();
+            resolve({
+              err: 0,
+              message: "Update status order successfully",
+            });
+          } else {
+            resolve({
+              err: -1,
+              message: "Status order is invalid",
+            });
+          }
+        } else {
+          resolve({
+            err: -1,
+            message: "You cannot change the order status",
+          });
         }
-      }else{
-        resolve({
-          err: -1,
-          message: "You cannot change the order status"
-        })
       }
-      }
-  }catch(error){
-    reject(error);
-  }
-});
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 export const deleteOrder = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

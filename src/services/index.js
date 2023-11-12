@@ -6,3 +6,5 @@ export * from "./bookingSpa.service";
 export * from "./homestay.service";
 export * from "./spa.service";
 export * from "./product.service";
+export * from "./login.service";
+export * from "./customer.service";

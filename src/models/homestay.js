@@ -1,54 +1,59 @@
-import mongoose from 'mongoose';
-import { STATUS_HOME } from '../common/constants';
+import mongoose from "mongoose";
+import { STATUS_HOME } from "../utils/constants";
 
-mongoose.set('runValidators', true);
+mongoose.set("runValidators", true);
 
 const Schema = mongoose.Schema;
 
-export const homestaySchema = new Schema({
+export const homestaySchema = new Schema(
+  {
     purrPetCode: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     homeName: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
     },
     price: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     categoryCode: {
-        type: Array,
-        required: true
-    },
-    categoryName: {
-        type: Array,
-        required: true
+      type: String,
+      required: true,
     },
     images: {
-        type: Array,
-        required: true
+      type: Array,
+      required: true,
     },
     inventory: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     status: {
-        type: String,
-        enum: {
-            values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
-            message: "{VALUE} is not supported",
-        },
-        default: STATUS_HOME.ACTIVE
+      type: String,
+      enum: {
+        values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
+        message: "{VALUE} is not supported",
+      },
+      default: STATUS_HOME.ACTIVE,
     },
     createBy: {
-        type: String
+      type: String,
     },
     updateBy: {
-        type: String
-    }
-}, { timestamps: true });
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("homestay", homestaySchema);

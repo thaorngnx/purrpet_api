@@ -188,6 +188,11 @@ export const accountDto = Joi.object({
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
+
+export const addCartDto = Joi.object({
+  productCode: Joi.string().required(),
+  quantity: Joi.number().integer().allow(null),
+});
 //#endregion
 
 //#region Update

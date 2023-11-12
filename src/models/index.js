@@ -6,6 +6,7 @@ import bookingSpa from "./bookingSpa";
 import homestay from "./homestay";
 import spa from "./spa";
 import product from "./product";
+import customer from "./customer";
 
 export default {
   account,
@@ -16,4 +17,5 @@ export default {
   homestay,
   spa,
   product,
+  customer,
 };

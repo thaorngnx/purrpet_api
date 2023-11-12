@@ -1,6 +1,14 @@
 import * as Joi from "joi";
 import * as Constant from "../utils/constants";
 
+const checkNumberPhone = (value, helpers) => {
+  const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
+  if (!value.match(regexPhoneNumber)) {
+    return helpers.message("Số điện thoại không hợp lệ");
+  }
+  return value;
+};
+
 export const purrPetCode = Joi.object({
   purrPetCode: Joi.string().required(),
 });
@@ -116,11 +124,9 @@ export const homestayDto = Joi.object({
 
 export const orderDto = Joi.object({
   orderItems: Joi.array().items(orderItemDto).required(),
-  //   orderPrice: Joi.number().required(),
-  customerPhone: Joi.string().required(),
-  customerEmail: Joi.string().email().required(),
-  customerName: Joi.string().required(),
-  customerAddress: Joi.string().required(),
+  customerPhone: Joi.string().required().custom(checkNumberPhone),
+  customerName: Joi.string().allow(null),
+  customerAddress: Joi.string().allow(null),
   customerNote: Joi.string(),
   status: Joi.string()
     .valid(
@@ -139,7 +145,6 @@ export const orderDto = Joi.object({
 export const bookingSpaDto = Joi.object({
   bookingSpaItems: Joi.array().items(bookingSpaItemDto).required(),
   bookingSpaPrice: Joi.number().required(),
-  customerPhone: Joi.string().required(),
   customerEmail: Joi.string().email().required(),
   customerName: Joi.string().required(),
   customerNote: Joi.string(),
@@ -160,8 +165,6 @@ export const bookingSpaDto = Joi.object({
 export const bookingHomeDto = Joi.object({
   bookingHomeItems: Joi.array().items(bookingHomeItemDto).required(),
   bookingHomePrice: Joi.number().required(),
-  customerPhone: Joi.string().required(),
-  customerEmail: Joi.string().required(),
   customerName: Joi.string().required(),
   customerNote: Joi.string(),
   status: Joi.string()
@@ -191,6 +194,11 @@ export const accountDto = Joi.object({
 //#endregion
 
 //#region Update
+export const updateCustomerDto = Joi.object({
+  name: Joi.string().allow(null),
+  address: Joi.string().allow(null),
+});
+
 export const updateOrderItemDto = Joi.object({
   unitPrice: Joi.number().allow(null),
   quantity: Joi.number().integer().allow(null),
@@ -319,7 +327,6 @@ export const updateBookingSpaStatusDto = Joi.object({
 export const updateBookingHomeDto = Joi.object({
   purrPetCode: Joi.string().required(),
   customerPhone: Joi.string().allow(null),
-  customerEmail: Joi.string().allow(null),
   customerName: Joi.string().allow(null),
   customerNote: Joi.string(),
   createBy: Joi.string().allow(null),

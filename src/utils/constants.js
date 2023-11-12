@@ -61,6 +61,7 @@ export const PREFIX = {
   BOOKING_SPA: "BKSPA_",
   CATEGORY: "CAT_",
   ACCOUNT: "ACC_",
+  CUSTOMER: "CUS_",
 };
 
 export const COLLECTION = {
@@ -72,6 +73,7 @@ export const COLLECTION = {
   BOOKINGSPA: "bookingspa",
   CATEGORY: "category",
   ACCOUNT: "account",
+  CUSTOMER: "customer",
 };
 
 export const PRODUCT_TYPE = {

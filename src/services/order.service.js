@@ -6,6 +6,16 @@ export const createOrder = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       let isOutOfStock = false;
+      const isCustomer = await db.customer.findOne({phoneNumber: data.customerPhone});
+      if (!isCustomer) {
+        const customer = await db.customer.create({
+          purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
+          name: data.customerName,
+          phoneNumber: data.customerPhone,
+          address: data.customerAddress,
+        });
+        data.customerCode = customer.purrPetCode;
+      }
       data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
       const priceItems = data.orderItems.map((item) => item.producCode);
       const price = await db.product.find({ purrPetCode: { $in: priceItems } });
@@ -37,8 +47,12 @@ export const createOrder = async (data) =>
         });
       }
       if (!isOutOfStock) {
-        const response = await db.order.create(data);
-
+        const response = await db.order.create({
+          ...data,
+          customerName:  data.customerName ?? isCustomer.name,
+          customerAddress:  data.customerAddress ?? isCustomer.address,
+          customerCode: isCustomer.purrPetCode ?? data.customerCode,
+        });
         resolve({
           err: response ? 0 : -1,
           message: response

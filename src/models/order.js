@@ -20,13 +20,10 @@ export const orderSchema = new Schema(
       type: Number,
       required: true,
     },
-    customerPhone: {
-      type: Number,
-      required: true,
-    },
-    customerEmail: {
+    customerCode: {
       type: String,
       required: true,
+      trim: true,
     },
     customerName: {
       type: String,

@@ -19,16 +19,7 @@ export const bookingHomeSchema = new Schema(
       type: Number,
       required: true,
     },
-    customerEmail: {
-      type: String,
-      required: true,
-    },
-    customerPhone: {
-      type: Number,
-      length: 10,
-      required: true,
-    },
-    customerName: {
+    customerCode: {
       type: String,
       required: true,
       trim: true,

@@ -21,11 +21,16 @@ export const checkValidCategory = async (data, categoryType) =>
     }
   });
 
-export const checkDuplicateValue = async (field, value, collectionName) =>
+export const checkDuplicateValue = async (
+  purrPetCode,
+  field,
+  value,
+  collectionName
+) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db[collectionName].findOne({ [field]: value });
-      if (response && !response[field] === value) {
+      if (response && response.purrPetCode !== purrPetCode) {
         return resolve({
           err: -1,
         });

@@ -86,6 +86,14 @@ export const RESPONSE_STATUS = {
   ERROR: -1,
 };
 
+export const VALIDATE_DUPLICATE = {
+  CATEGORY: "categoryName",
+  PRODUCT: "productName",
+  SPA: "spaName",
+  HOMESTAY: "homeName",
+  ACCOUNT: "username",
+};
+
 export const RESPONSE_MESSAGE = {
   SUCCESS: "Thành công",
   ERROR: "Đã có lỗi xảy ra. Vui lòng thử lại!",

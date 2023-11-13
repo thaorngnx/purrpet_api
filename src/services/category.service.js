@@ -1,5 +1,10 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_CATEGORY } from "../utils/constants";
+import {
+  COLLECTION,
+  PREFIX,
+  STATUS_CATEGORY,
+  VALIDATE_DUPLICATE,
+} from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 
 export const createCategory = async (data) =>
@@ -9,6 +14,18 @@ export const createCategory = async (data) =>
         COLLECTION.CATEGORY,
         PREFIX.CATEGORY
       );
+      const isExistAccount = await checkDuplicateValue(
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.CATEGORY,
+        data.categoryName,
+        COLLECTION.CATEGORY
+      );
+      if (isExistAccount.err !== 0) {
+        return resolve({
+          err: -1,
+          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+        });
+      }
       const response = await db.category.create(data);
       resolve({
         err: response ? 0 : -1,
@@ -104,6 +121,18 @@ export const getCategoryByCode = async (purrPetCode) =>
 export const updateCategory = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
+      const isExistAccount = await checkDuplicateValue(
+        purrPetCode,
+        VALIDATE_DUPLICATE.CATEGORY,
+        data.categoryName,
+        COLLECTION.CATEGORY
+      );
+      if (isExistAccount.err !== 0) {
+        return resolve({
+          err: -1,
+          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+        });
+      }
       const response = await db.category.findOneAndUpdate(
         { purrPetCode: purrPetCode },
         data

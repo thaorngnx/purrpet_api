@@ -4,6 +4,7 @@ import {
   PREFIX,
   CATEGORY_TYPE,
   STATUS_HOME,
+  VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
@@ -25,7 +26,8 @@ export const createHomestay = async (data) =>
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
       const isExistHome = await checkDuplicateValue(
-        "homeName",
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.HOMESTAY,
         data.homeName,
         COLLECTION.HOMESTAY
       );
@@ -129,7 +131,8 @@ export const updateHomestay = async (data, purrPetCode) =>
       }
 
       const isExistHome = await checkDuplicateValue(
-        "homeName",
+        purrPetCode,
+        VALIDATE_DUPLICATE.HOMESTAY,
         data.homeName,
         COLLECTION.HOMESTAY
       );

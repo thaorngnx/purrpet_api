@@ -28,7 +28,7 @@ export const loginAccount = async (data) =>
           role: response.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "30s" }
+        { expiresIn: "30d" }
       );
       // refresh token
       const refreshToken = jwt.sign(
@@ -38,7 +38,7 @@ export const loginAccount = async (data) =>
           role: response.role,
         },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "3m" }
+        { expiresIn: "365d" }
       );
       //save refresh token
       await db.account.findByIdAndUpdate(response.id, {
@@ -78,7 +78,7 @@ export const loginAccountAdmin = async (data) =>
           role: response.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "30s" }
+        { expiresIn: "30d" }
       );
       // refresh token
       const refreshToken = jwt.sign(
@@ -88,7 +88,7 @@ export const loginAccountAdmin = async (data) =>
           role: response.role,
         },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "3m" }
+        { expiresIn: "365d" }
       );
       //save refresh token
       await db.account.findByIdAndUpdate(response.id, {
@@ -131,7 +131,7 @@ export const refreshToken = async (refresh_token) =>
                   role_id: response.role,
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: "30s" }
+                { expiresIn: "30d" }
               );
               resolve({
                 err: 0,

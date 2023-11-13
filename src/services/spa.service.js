@@ -4,6 +4,7 @@ import {
   PREFIX,
   CATEGORY_TYPE,
   STATUS_SPA,
+  VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
@@ -22,7 +23,8 @@ export const createSpa = async (data) =>
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
       const isExistSpa = await checkDuplicateValue(
-        "spaName",
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.SPA,
         data.spaName,
         COLLECTION.SPA
       );
@@ -103,7 +105,8 @@ export const updateSpa = async (data, purrPetCode) =>
       }
 
       const isExistSpa = await checkDuplicateValue(
-        "spaName",
+        purrPetCode,
+        VALIDATE_DUPLICATE.SPA,
         data.spaName,
         COLLECTION.SPA
       );

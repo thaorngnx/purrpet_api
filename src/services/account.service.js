@@ -1,5 +1,10 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_ACCOUNT } from "../utils/constants";
+import {
+  COLLECTION,
+  PREFIX,
+  STATUS_ACCOUNT,
+  VALIDATE_DUPLICATE,
+} from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import { checkDuplicateValue } from "../utils/validationData";
 import bcrypt from "bcryptjs";
@@ -13,20 +18,22 @@ export const createAccount = async (data) =>
     try {
       data.purrPetCode = await generateCode(COLLECTION.ACCOUNT, PREFIX.ACCOUNT);
       const isExistAccount = await checkDuplicateValue(
-        "username",
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.ACCOUNT,
         data.username,
         COLLECTION.ACCOUNT
       );
       if (isExistAccount.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên tài khoản đã tồn tại. Vui lòng chọn tên khác!",
+          message: "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
       const response = await db.account.create({
         purrPetCode: data.purrPetCode,
         username: data.username,
         password: hashPassword(data.password),
+        role: data.role,
       });
       resolve({
         err: response ? 0 : -1,
@@ -75,10 +82,16 @@ export const getAccountByCode = async (purrPetCode) =>
 export const updateAccount = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
+      const isExistAccount = await checkDuplicateValue(
+        purrPetCode,
+        VALIDATE_DUPLICATE.ACCOUNT,
+        data.username,
+        COLLECTION.ACCOUNT
+      );
       if (isExistAccount.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên tài khoản đã tồn tại. Vui lòng chọn tên khác!",
+          message: "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
       const response = await db.account.findOneAndUpdate(
@@ -88,7 +101,7 @@ export const updateAccount = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update account successfully"
+          ? "Update tài khoản successfully"
           : "Update account failed",
       });
     } catch (error) {

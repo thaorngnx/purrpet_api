@@ -8,6 +8,7 @@ import spa from "./spa.router";
 import product from "./product.router";
 import login from "./login.router";
 import customer from "./customer.router";
+import cart from "./cart.router";
 import { notFound } from "../middlewares/handle_errors";
 
 const initRoutes = (app) => {
@@ -21,7 +22,7 @@ const initRoutes = (app) => {
   app.use("/api/spa", spa);
   app.use("/api/product", product);
   app.use("/api/customer", customer);
-
+  app.use("/api/cart", cart);
   app.use(notFound);
 };
 

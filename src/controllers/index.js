@@ -8,3 +8,4 @@ export * from "./spa.controller";
 export * from "./product.controller";
 export * from "./login.controller";
 export * from "./customer.controller";
+export * from "./cart.controller";

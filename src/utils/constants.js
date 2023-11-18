@@ -62,21 +62,21 @@ export const PREFIX = {
   CATEGORY: "CAT_",
   ACCOUNT: "ACC_",
   CUSTOMER: "CUS_",
-};
+}
 
 export const COLLECTION = {
   PRODUCT: "product",
   SPA: "spa",
   HOMESTAY: "homestay",
   ORDER: "order",
-  BOOKINGHOME: "bookinghome",
-  BOOKINGSPA: "bookingspa",
+  BOOKINGHOME: "bookingHome",
+  BOOKINGSPA: "bookingSpa",
   CATEGORY: "category",
   ACCOUNT: "account",
-  CUSTOMER: "customer",
+  CUSTOMER: "customer"
 };
 
-export const PRODUCT_TYPE = {
+export const SPA_TYPE = {
   DOG: "Chó",
   CAT: "Mèo",
 };

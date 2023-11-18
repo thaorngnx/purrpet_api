@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { STATUS_SPA } from "../utils/constants";
+import { STATUS_SPA, SPA_TYPE } from "../utils/constants";
 
 mongoose.set("runValidators", true);
 
@@ -15,7 +15,11 @@ export const spaSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
+    },
+    spaType:{
+      type: String,
+      enum: { values: [SPA_TYPE.DOG, SPA_TYPE.CAT], message: "{VALUE} is not supported" },
+      default: SPA_TYPE.DOG,
     },
     description: {
       type: String,
@@ -33,10 +37,10 @@ export const spaSchema = new Schema(
     images: {
       type: Array,
     },
-    inventory: {
-      type: Number,
-      required: true,
-    },
+//     inventory: {
+//       type: Number,
+//      required: true,
+//     },
     status: {
       type: String,
       enum: {

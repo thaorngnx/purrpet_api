@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { STATUS_PRODUCT, PRODUCT_TYPE } from "../utils/constants";
+import { STATUS_PRODUCT } from "../utils/constants";
 
 mongoose.set("runValidators", true);
 
@@ -29,14 +29,6 @@ export const productSchema = new Schema(
     categoryCode: {
       type: String,
       required: true,
-    },
-    productType: {
-      type: String,
-      enum: {
-        values: [PRODUCT_TYPE.DOG, PRODUCT_TYPE.CAT],
-        message: "{VALUE} is not supported",
-      },
-      default: PRODUCT_TYPE.DOG,
     },
     images: {
       type: Array,

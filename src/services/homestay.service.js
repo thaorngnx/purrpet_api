@@ -39,7 +39,6 @@ export const createHomestay = async (data) =>
           message: "Tên homestay đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
-
       data.purrPetCode = await generateCode(
         COLLECTION.HOMESTAY,
         PREFIX.HOMESTAY
@@ -75,10 +74,7 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
         search = {
           ...search,
           $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { homestayName: { $regex: key, $options: "i" } },
-            { description: { $regex: key, $options: "i" } },
-            { categoryName: { $regex: key, $options: "i" } },
+            { homeName: { $regex: key, $options: "i" } }
           ],
         };
       }
@@ -100,6 +96,57 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
           : "Get all homestay failed",
         data: response,
       });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const searchPrice = async ( data ) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const existCategory = await db.category.findOne({purrPetCode: data.timeCode});
+      const response = await db.homestay.findOne({ homeName: data.homeName, categoryCode: data.timeCode });
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Search price successfully"
+          : "Search price failed",
+        data: {
+          categoryName: response.homeName,
+          time: existCategory.categoryName,
+          price: response.price,
+        },
+      });
+    } catch (error) {
+      reject(error);
+    }
+});
+
+export const searchAvailable = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      let booked = 0;
+      const response = await db.bookingHome.find({
+        homeName: data.homeName,
+        date: data.date,
+      });
+      response.forEach((element) => { booked += element.quantity; });
+      const existHome = await db.homestay.findOne({ homeName: data.homeName });
+      const isSlot = await db.masterData.findOne({ purrPetCode: existHome.masterDataCode });
+      const available = isSlot.value - booked;
+      if(available < 0) {
+        resolve({
+          err: -1,
+          message: "Homestay is not available",
+        });
+      }
+      else{
+        resolve({
+          err: 0,
+          message: "Homestay is available",
+          data: available,
+        });
+      }
     } catch (error) {
       reject(error);
     }
@@ -146,7 +193,6 @@ export const updateHomestay = async (data, purrPetCode) =>
           message: "Tên homestay đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
-
       const response = await db.homestay.findOneAndUpdate(
         { purrPetCode: purrPetCode },
         data

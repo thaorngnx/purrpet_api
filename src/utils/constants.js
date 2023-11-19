@@ -83,6 +83,7 @@ export const SPA_TYPE = {
   CAT: "Mèo",
 };
 
+
 export const RESPONSE_STATUS = {
   SUCCESS: 0,
   ERROR: -1,

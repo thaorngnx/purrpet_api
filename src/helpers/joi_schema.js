@@ -42,19 +42,17 @@ export const orderItemDto = Joi.object({
   //   totalPrice: Joi.number().required()
 });
 
-export const bookingSpaItemDto = Joi.object({
-  spaCode: Joi.string().required(),
-  unitPrice: Joi.number().required(),
-  quantity: Joi.number().integer().required(),
-  totalPrice: Joi.number().required(),
-});
+ export const bookingSpaItemDto = Joi.object({
+   spaCode: Joi.string().required(),
+   unitPrice: Joi.number().required(),
+   quantity: Joi.number().integer().required(),
+   totalPrice: Joi.number().required(),
+ });
 
-export const bookingHomeItemDto = Joi.object({
-  producCode: Joi.string().required(),
-  unitPrice: Joi.number().required(),
-  quantity: Joi.number().integer().required(),
-  totalPrice: Joi.number().required(),
-});
+// export const bookingHomeItemDto = Joi.object({
+//   homeCode: Joi.string().required(),
+//   quantity: Joi.number().integer().required(),
+// });
 
 export const categoryDto = Joi.object({
   categoryName: Joi.string().required(),
@@ -107,8 +105,8 @@ export const homestayDto = Joi.object({
   description: Joi.string().required(),
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
+  masterDataCode: Joi.string().required(),
   images: Joi.array().items(images).allow(null),
-  inventory: Joi.number().integer().required(),
   status: Joi.string()
     .valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE)
     .allow(null),
@@ -138,10 +136,14 @@ export const orderDto = Joi.object({
 
 export const bookingSpaDto = Joi.object({
   bookingSpaItems: Joi.array().items(bookingSpaItemDto).required(),
+  bookingSpaItems: Joi.string().required(),
+  sizeCode: Joi.string().required(),
+  quantity: Joi.number().integer().required(),
+  bookingSpaDate: Joi.date().required(),
   bookingSpaPrice: Joi.number().required(),
   customerEmail: Joi.string().email().required(),
-  customerName: Joi.string().required(),
-  customerNote: Joi.string(),
+  customerCode: Joi.string().required(),
+  customerNote: Joi.string().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.NEW,
@@ -157,10 +159,12 @@ export const bookingSpaDto = Joi.object({
 });
 
 export const bookingHomeDto = Joi.object({
-  bookingHomeItems: Joi.array().items(bookingHomeItemDto).required(),
-  bookingHomePrice: Joi.number().required(),
+  homeCode: Joi.string().required(),
+  quantity: Joi.number().integer().required(),
+  customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerName: Joi.string().required(),
   customerNote: Joi.string(),
+  date: Joi.date().required(),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.NEW,
@@ -264,7 +268,6 @@ export const updateSpaDto = Joi.object({
   description: Joi.string().allow(null),
   price: Joi.number().allow(null),
   categoryCode: Joi.string().allow(null),
-  categoryName: Joi.string().allow(null),
   images: Joi.array().items(images).allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
@@ -276,6 +279,7 @@ export const updateHomestayDto = Joi.object({
   description: Joi.string().allow(null),
   price: Joi.number().allow(null),
   categoryCode: Joi.string().allow(null),
+  masterDataCode: Joi.string().allow(null),
   images: Joi.array().items(images).allow(null),
   inventory: Joi.number().integer().allow(null),
   createBy: Joi.string().allow(null),

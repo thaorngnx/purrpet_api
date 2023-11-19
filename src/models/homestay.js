@@ -16,6 +16,10 @@ export const homestaySchema = new Schema(
       required: true,
       trim: true,
     },
+    masterDataCode: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -31,10 +35,6 @@ export const homestaySchema = new Schema(
     },
     images: {
       type: Array,
-      required: true,
-    },
-    inventory: {
-      type: Number,
       required: true,
     },
     status: {

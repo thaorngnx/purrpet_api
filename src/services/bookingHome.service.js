@@ -1,31 +1,117 @@
 import db from "../models";
 import { COLLECTION, PREFIX, STATUS_BOOKING } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import { hadelDateinBookHome } from "../utils/dateTime";
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
-    try {
+    try { 
+      // check customer
+      const isCustomer = await db.customer.findOne({phoneNumber: data.customerPhone});
+      if (!isCustomer) {
+        const customer = await db.customer.create({
+          purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
+          name: data.customerName,
+          phoneNumber: data.customerPhone,
+          address: data.customerAddress,
+        });
+        data.customerCode = customer.purrPetCode;
+      }
+      data.customerCode = isCustomer.purrPetCode;
       data.purrPetCode = await generateCode(
-        COLLECTION.BOOKING_HOME,
+        COLLECTION.BOOKINGHOME,
         PREFIX.BOOKING_HOME
       );
-      const response = await db.bookingHome.create(data);
-      resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? "Create booking home successfully"
-          : "Create booking home failed",
-        data: response,
-      });
+      // check homestay
+      const existHome = await db.homestay.findOne({purrPetCode: data.homeCode, });
+      if (!existHome) {
+        resolve({
+          err: -1,
+          message: "Homestay code is not exist",
+        });
+      }
+      else{
+        const existSlot = await db.masterData.findOne({purrPetCode: existHome.masterDataCode});
+        const existBooking = await db.bookingHome.find({
+            homeName: existHome.homeName,
+            date: data.date,
+         });
+          let count =0;
+        existBooking.forEach((element) => {
+          count += element.quantity;
+         });
+         if(count + data.quantity > Number(existSlot.value)){
+          resolve({
+            err: -1,
+            message: "Homestay is full",
+          });
+          }else{
+            const  dateNext = await hadelDateinBookHome(existHome.categoryCode, data.date);
+            data.bookingHomePrice = existHome.price * data.quantity;
+            const response = await db.bookingHome.create({
+              ...data,
+              date: [data.date, dateNext],
+              homeName: existHome.homeName,
+            });
+            resolve({
+              err: response ? 0 : -1,
+              message: response
+                ? "Create booking home successfully"
+                : "Create booking home failed",
+              data: response
+            });
+          }
+       
+      }
     } catch (error) {
       reject(error);
     }
   });
 
-export const getAllBookingHome = async () =>
+export const getAllBookingHome = async ({
+  page,
+  limit,
+  order,
+  key,
+  status,
+  ...query
+}
+
+) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.bookingHome.find();
+        // Tạo object truy vấn
+        const search = {};
+        // Tạo điều kiện tìm kiếm theo key (nếu có)
+        if (key) {
+          search.$or = [
+            { purrPetCode: { $regex: key, $options: "i" } },
+            { date: { $regex: key, $options: "i" } },
+          ];
+        }
+        // Tạo điều kiện tìm kiếm theo status (nếu có)
+        if (status) {
+          search.status = status;
+        }
+  
+        // Phân trang
+        const _limit = parseInt(limit) || 10;
+        const _page = parseInt(page) || 1;
+        const _skip = (_page - 1) * _limit;
+  
+        // Sắp xếp
+        const _sort = {};
+        if (order) {
+          const [key, value] = order.split(".");
+          _sort[key] = value === "asc" ? 1 : -1;
+        }
+  
+        // Truy vấn MongoDB
+        const response = await db.bookingHome
+          .find({ ...query, ...search })
+          .limit(_limit)
+          .skip(_skip)
+          .sort(_sort);
       resolve({
         err: response ? 0 : -1,
         message: response

@@ -21,7 +21,6 @@ export const createSpa = async (data) =>
       }
 
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
-
       const isExistSpa = await checkDuplicateValueForSpa(
         data.purrPetCode,
         data.categoryCode,
@@ -165,6 +164,21 @@ export const deleteSpa = async (purrPetCode) =>
       resolve({
         error: response ? 0 : -1,
         message: response ? "Delete spa success" : "Delete spa fail",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const createSize = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      data.purrPetCode = await generateCode(COLLECTION.SIZE, PREFIX.SIZE);
+      const response = await db.size.create(data);
+      resolve({
+        error: response ? 0 : -1,
+        message: response ? "Create size success" : "Create size fail",
+        data: response,
       });
     } catch (error) {
       reject(error);

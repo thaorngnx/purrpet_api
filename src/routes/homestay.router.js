@@ -7,7 +7,9 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllHomestay);
 router.get("/:purrPetCode", controllers.getHomestayByCode);
-router.use(verifyToken);
+router.post("/search-price", controllers.searchPrice);
+router.post("/search-available", controllers.searchAvailable);
+//router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createHomestay);
 router.put(
   "/update/:purrPetCode",

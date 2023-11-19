@@ -28,6 +28,26 @@ export const getHomestayByCode = async (req, res) => {
   }
 };
 
+export const searchPrice = async (req, res) => {
+  try {
+    const response = await services.searchPrice(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
+export const searchAvailable = async (req, res) => {
+  try {
+    const response = await services.searchAvailable(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
 export const createHomestay = async (req, res) => {
   try {
     const { error } = homestayDto.validate(req.body);

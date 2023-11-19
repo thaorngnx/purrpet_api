@@ -11,8 +11,16 @@ export const bookingHomeSchema = new Schema(
       type: String,
       required: true,
     },
-    bookingHomeItems: {
-      type: Array,
+    homeCode:{
+      type: String,
+      required: true,
+    },
+    homeName:{
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
       required: true,
     },
     bookingHomePrice: {
@@ -23,6 +31,11 @@ export const bookingHomeSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    date:{
+      type: Array,
+      Date: true,
+      required: true,
     },
     customerNote: {
       type: String,
@@ -41,7 +54,7 @@ export const bookingHomeSchema = new Schema(
         ],
         message: "{VALUE} is not supported",
       },
-      default: Object[STATUS_BOOKING.NEW],
+      default: STATUS_BOOKING.NEW,
     },
     createBy: {
       type: String,

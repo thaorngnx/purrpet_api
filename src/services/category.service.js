@@ -4,8 +4,10 @@ import {
   PREFIX,
   STATUS_CATEGORY,
   VALIDATE_DUPLICATE,
+  CATEGORY_TYPE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import { checkDuplicateValue } from "../utils/validationData";
 
 export const createCategory = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -14,13 +16,13 @@ export const createCategory = async (data) =>
         COLLECTION.CATEGORY,
         PREFIX.CATEGORY
       );
-      const isExistAccount = await checkDuplicateValue(
+      const isExistCategory = await checkDuplicateValue(
         data.purrPetCode,
-        VALIDATE_DUPLICATE.CATEGORY,
+        VALIDATE_DUPLICATE.CATEGORY_NAME,
         data.categoryName,
         COLLECTION.CATEGORY
       );
-      if (isExistAccount.err !== 0) {
+      if (isExistCategory.err !== 0) {
         return resolve({
           err: -1,
           message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
@@ -84,11 +86,10 @@ export const getAllCategory = async ({
       }
 
       // Truy vấn MongoDB
-      const response = await db.category
-        .find({ ...query, ...search })
-        .limit(_limit)
-        .skip(_skip)
-        .sort(_sort);
+      const response = await db.category.find({ ...query, ...search });
+      // .limit(_limit)
+      // .skip(_skip)
+      // .sort(_sort);
 
       resolve({
         err: response ? 0 : -1,
@@ -121,13 +122,13 @@ export const getCategoryByCode = async (purrPetCode) =>
 export const updateCategory = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const isExistAccount = await checkDuplicateValue(
+      const isExistCategory = await checkDuplicateValue(
         purrPetCode,
-        VALIDATE_DUPLICATE.CATEGORY,
+        VALIDATE_DUPLICATE.CATEGORY_NAME,
         data.categoryName,
         COLLECTION.CATEGORY
       );
-      if (isExistAccount.err !== 0) {
+      if (isExistCategory.err !== 0) {
         return resolve({
           err: -1,
           message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",

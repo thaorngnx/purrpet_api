@@ -9,7 +9,7 @@ import {
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
-  checkDuplicateValue,
+  checkDuplicateValueForSpa,
 } from "../utils/validationData";
 
 export const createSpa = async (data) =>
@@ -22,11 +22,11 @@ export const createSpa = async (data) =>
 
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
-      const isExistSpa = await checkDuplicateValue(
+      const isExistSpa = await checkDuplicateValueForSpa(
         data.purrPetCode,
-        VALIDATE_DUPLICATE.SPA,
+        data.categoryCode,
         data.spaName,
-        COLLECTION.SPA
+        data.spaType
       );
       if (isExistSpa.err !== 0) {
         return resolve({
@@ -62,9 +62,9 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
         };
       }
       //pagination
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
+      // const _limit = parseInt(limit) || 10;
+      // const _page = parseInt(page) || 1;
+      // const _skip = (_page - 1) * _limit;
       //sort
       const _sort = {};
       if (order) {
@@ -104,11 +104,11 @@ export const updateSpa = async (data, purrPetCode) =>
         return resolve(validCategory);
       }
 
-      const isExistSpa = await checkDuplicateValue(
+      const isExistSpa = await checkDuplicateValueForSpa(
         purrPetCode,
-        VALIDATE_DUPLICATE.SPA,
+        data.categoryCode,
         data.spaName,
-        COLLECTION.SPA
+        data.spaType
       );
       if (isExistSpa.err !== 0) {
         return resolve({

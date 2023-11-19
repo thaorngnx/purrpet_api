@@ -27,7 +27,7 @@ export const createProduct = async (data) =>
 
       const isExistProduct = await checkDuplicateValue(
         data.purrPetCode,
-        VALIDATE_DUPLICATE.PRODUCT,
+        VALIDATE_DUPLICATE.PRODUCT_NAME,
         data.productName,
         COLLECTION.PRODUCT
       );
@@ -158,7 +158,7 @@ export const updateProduct = async (data, purrPetCode) =>
 
       const isExistProduct = await checkDuplicateValue(
         purrPetCode,
-        VALIDATE_DUPLICATE.PRODUCT,
+        VALIDATE_DUPLICATE.PRODUCT_NAME,
         data.productName,
         COLLECTION.PRODUCT
       );

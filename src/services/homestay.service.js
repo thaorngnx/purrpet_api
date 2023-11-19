@@ -9,7 +9,7 @@ import {
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
-  checkDuplicateValue,
+  checkDuplicateValueV2,
 } from "../utils/validationData";
 
 export const createHomestay = async (data) =>
@@ -25,9 +25,11 @@ export const createHomestay = async (data) =>
 
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
-      const isExistHome = await checkDuplicateValue(
+      const isExistHome = await checkDuplicateValueV2(
         data.purrPetCode,
-        VALIDATE_DUPLICATE.HOMESTAY,
+        VALIDATE_DUPLICATE.CATEGORY_CODE,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.HOMESTAY_NAME,
         data.homeName,
         COLLECTION.HOMESTAY
       );
@@ -130,9 +132,11 @@ export const updateHomestay = async (data, purrPetCode) =>
         return resolve(validCategory);
       }
 
-      const isExistHome = await checkDuplicateValue(
+      const isExistHome = await checkDuplicateValueV2(
         purrPetCode,
-        VALIDATE_DUPLICATE.HOMESTAY,
+        VALIDATE_DUPLICATE.CATEGORY_CODE,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.HOMESTAY_NAME,
         data.homeName,
         COLLECTION.HOMESTAY
       );

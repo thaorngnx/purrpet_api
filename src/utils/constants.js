@@ -62,7 +62,8 @@ export const PREFIX = {
   CATEGORY: "CAT_",
   ACCOUNT: "ACC_",
   CUSTOMER: "CUS_",
-}
+  MASTERDATA: "MD_",
+};
 
 export const COLLECTION = {
   PRODUCT: "product",
@@ -73,7 +74,8 @@ export const COLLECTION = {
   BOOKINGSPA: "bookingSpa",
   CATEGORY: "category",
   ACCOUNT: "account",
-  CUSTOMER: "customer"
+  CUSTOMER: "customer",
+  MASTERDATA: "masterData",
 };
 
 export const SPA_TYPE = {
@@ -87,11 +89,16 @@ export const RESPONSE_STATUS = {
 };
 
 export const VALIDATE_DUPLICATE = {
-  CATEGORY: "categoryName",
-  PRODUCT: "productName",
-  SPA: "spaName",
-  HOMESTAY: "homeName",
-  ACCOUNT: "username",
+  CATEGORY_NAME: "categoryName",
+  PRODUCT_NAME: "productName",
+  SPA_NAME: "spaName",
+  SPA_TYPE: "spaType",
+  HOMESTAY_NAME: "homeName",
+  HOMESTAY_TYPE: "homeType",
+  USERNAME: "username",
+  GROUP_CODE: "groupCode",
+  CATEGORY_CODE: "categoryCode",
+  MASTERDATA_NAME: "name",
 };
 
 export const RESPONSE_MESSAGE = {

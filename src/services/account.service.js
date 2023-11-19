@@ -19,7 +19,7 @@ export const createAccount = async (data) =>
       data.purrPetCode = await generateCode(COLLECTION.ACCOUNT, PREFIX.ACCOUNT);
       const isExistAccount = await checkDuplicateValue(
         data.purrPetCode,
-        VALIDATE_DUPLICATE.ACCOUNT,
+        VALIDATE_DUPLICATE.USERNAME,
         data.username,
         COLLECTION.ACCOUNT
       );
@@ -84,7 +84,7 @@ export const updateAccount = async (data, purrPetCode) =>
     try {
       const isExistAccount = await checkDuplicateValue(
         purrPetCode,
-        VALIDATE_DUPLICATE.ACCOUNT,
+        VALIDATE_DUPLICATE.USERNAME,
         data.username,
         COLLECTION.ACCOUNT
       );

@@ -77,9 +77,6 @@ export const productDto = Joi.object({
   description: Joi.string().required(),
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
-  productType: Joi.string()
-    .valid(Constant.PRODUCT_TYPE.DOG, Constant.PRODUCT_TYPE.CAT)
-    .required(),
   images: Joi.array().items(images).allow(null),
   inventory: Joi.number().integer().required(),
   status: Joi.string()
@@ -91,18 +88,16 @@ export const productDto = Joi.object({
 
 export const spaDto = Joi.object({
   spaName: Joi.string().required(),
+  spaType: Joi.string()
+    .valid(Constant.SPA_TYPE.DOG, Constant.SPA_TYPE.CAT)
+    .required(),
   description: Joi.string().required(),
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
   images: Joi.array().items(images),
-  inventory: Joi.number().integer().required(),
-  productType: Joi.string()
-    .valid(Constant.PRODUCT_TYPE.DOG, Constant.PRODUCT_TYPE.CAT)
-    .required(),
   status: Joi.string()
     .valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE)
     .allow(null),
-  inventory: Joi.number().integer().required(),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
@@ -112,7 +107,6 @@ export const homestayDto = Joi.object({
   description: Joi.string().required(),
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
-  categoryName: Joi.string().required(),
   images: Joi.array().items(images).allow(null),
   inventory: Joi.number().integer().required(),
   status: Joi.string()
@@ -192,6 +186,15 @@ export const accountDto = Joi.object({
   updateBy: Joi.string().allow(null),
 });
 
+export const masterDataDto = Joi.object({
+  groupCode: Joi.string().required(),
+  name: Joi.string().required(),
+  value: Joi.string().required(),
+  description: Joi.string().allow(null),
+  createBy: Joi.string().allow(null),
+  updateBy: Joi.string().allow(null),
+});
+
 export const addCartDto = Joi.object({
   productCode: Joi.string().required(),
   quantity: Joi.number().integer().allow(null),
@@ -246,9 +249,6 @@ export const updateProductDto = Joi.object({
   price: Joi.number().allow(null),
   categoryCode: Joi.string().allow(null),
   categoryName: Joi.string().allow(null),
-  productType: Joi.string()
-    .valid(Constant.PRODUCT_TYPE.DOG, Constant.PRODUCT_TYPE.CAT)
-    .allow(null),
   images: Joi.array().items(Joi.string()).allow(null),
   inventory: Joi.number().integer().allow(null),
   createBy: Joi.string().allow(null),
@@ -258,12 +258,14 @@ export const updateProductDto = Joi.object({
 export const updateSpaDto = Joi.object({
   purrPetCode: Joi.string().required(),
   spaName: Joi.string().allow(null),
+  spaType: Joi.string()
+    .valid(Constant.SPA_TYPE.DOG, Constant.SPA_TYPE.CAT)
+    .allow(null),
   description: Joi.string().allow(null),
   price: Joi.number().allow(null),
   categoryCode: Joi.string().allow(null),
   categoryName: Joi.string().allow(null),
   images: Joi.array().items(images).allow(null),
-  inventory: Joi.number().integer().allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
@@ -360,6 +362,16 @@ export const updateAccountDto = Joi.object({
   status: Joi.string()
     .valid(Constant.STATUS_ACCOUNT.ACTIVE, Constant.STATUS_ACCOUNT.INACTIVE)
     .allow(null),
+  createBy: Joi.string().allow(null),
+  updateBy: Joi.string().allow(null),
+});
+
+export const updateMasterDataDto = Joi.object({
+  purrPetCode: Joi.string().required(),
+  groupCode: Joi.string().allow(null),
+  name: Joi.string().allow(null),
+  value: Joi.string().allow(null),
+  description: Joi.string().allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });

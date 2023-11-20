@@ -101,7 +101,6 @@ export const spaDto = Joi.object({
 });
 
 export const homestayDto = Joi.object({
-  homeName: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
@@ -159,7 +158,8 @@ export const bookingSpaDto = Joi.object({
 });
 
 export const bookingHomeDto = Joi.object({
-  homeCode: Joi.string().required(),
+  masterDataCode: Joi.string().required(),
+  categoryCode: Joi.string().required(),
   quantity: Joi.number().integer().required(),
   customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerName: Joi.string().required(),

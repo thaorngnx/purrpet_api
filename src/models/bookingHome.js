@@ -15,7 +15,7 @@ export const bookingHomeSchema = new Schema(
       type: String,
       required: true,
     },
-    homeName:{
+    masterDataCode:{
       type: String,
       required: true,
     },

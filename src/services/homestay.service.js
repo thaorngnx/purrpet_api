@@ -29,8 +29,8 @@ export const createHomestay = async (data) =>
         data.purrPetCode,
         VALIDATE_DUPLICATE.CATEGORY_CODE,
         data.categoryCode,
-        VALIDATE_DUPLICATE.HOMESTAY_NAME,
-        data.homeName,
+        VALIDATE_DUPLICATE.MASTERDATA_CODE,
+        data.masterDataCode,
         COLLECTION.HOMESTAY
       );
       if (isExistHome.err !== 0) {
@@ -43,6 +43,14 @@ export const createHomestay = async (data) =>
         COLLECTION.HOMESTAY,
         PREFIX.HOMESTAY
       );
+      const existName = await db.masterData.findOne({
+        purrPetCode: data.masterDataCode});
+      if (!existName) {
+        resolve({
+          err: -1,
+          message: "Master data code is not exist",
+        });
+      }
       const category = await db.category.findOne({
         purrPetCode: data.categoryCode,
       });
@@ -52,7 +60,12 @@ export const createHomestay = async (data) =>
           message: "Category code is not exist",
         });
       }
-      const response = await db.homestay.create(data);
+      const response = await db.homestay.create(
+        {
+          ...data,
+          name: existName.name,
+        }
+      );
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -74,7 +87,7 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
         search = {
           ...search,
           $or: [
-            { homeName: { $regex: key, $options: "i" } }
+            { name: { $regex: key, $options: "i" } }
           ],
         };
       }
@@ -105,14 +118,14 @@ export const searchPrice = async ( data ) =>
   new Promise(async (resolve, reject) => {
     try {
       const existCategory = await db.category.findOne({purrPetCode: data.timeCode});
-      const response = await db.homestay.findOne({ homeName: data.homeName, categoryCode: data.timeCode });
+      const response = await db.homestay.findOne({ masterDataCode: data.masterDataCode, categoryCode: data.timeCode });
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Search price successfully"
           : "Search price failed",
         data: {
-          categoryName: response.homeName,
+          categoryName: response.name,
           time: existCategory.categoryName,
           price: response.price,
         },
@@ -127,12 +140,11 @@ export const searchAvailable = async (data) =>
     try {
       let booked = 0;
       const response = await db.bookingHome.find({
-        homeName: data.homeName,
+        masterDataCode: data.masterDataCode,
         date: data.date,
       });
       response.forEach((element) => { booked += element.quantity; });
-      const existHome = await db.homestay.findOne({ homeName: data.homeName });
-      const isSlot = await db.masterData.findOne({ purrPetCode: existHome.masterDataCode });
+      const isSlot = await db.masterData.findOne({ purrPetCode: data.masterDataCode });
       const available = isSlot.value - booked;
       if(available < 0) {
         resolve({
@@ -183,8 +195,8 @@ export const updateHomestay = async (data, purrPetCode) =>
         purrPetCode,
         VALIDATE_DUPLICATE.CATEGORY_CODE,
         data.categoryCode,
-        VALIDATE_DUPLICATE.HOMESTAY_NAME,
-        data.homeName,
+        VALIDATE_DUPLICATE.MASTERDATA_CODE,
+        data.masterDataCode,
         COLLECTION.HOMESTAY
       );
       if (isExistHome.err !== 0) {

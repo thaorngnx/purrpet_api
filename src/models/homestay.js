@@ -11,12 +11,11 @@ export const homestaySchema = new Schema(
       type: String,
       required: true,
     },
-    homeName: {
+    name: {
       type: String,
       required: true,
-      trim: true,
     },
-    masterDataCode: {
+    masterDataCode:{
       type: String,
       required: true,
     },

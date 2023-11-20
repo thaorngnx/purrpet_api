@@ -100,6 +100,7 @@ export const VALIDATE_DUPLICATE = {
   GROUP_CODE: "groupCode",
   CATEGORY_CODE: "categoryCode",
   MASTERDATA_NAME: "name",
+  MASTERDATA_CODE: "masterDataCode",
 };
 
 export const RESPONSE_MESSAGE = {

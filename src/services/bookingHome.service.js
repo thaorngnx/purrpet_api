@@ -23,18 +23,23 @@ export const createBookingHome = async (data) =>
         PREFIX.BOOKING_HOME
       );
       // check homestay
-      const existHome = await db.homestay.findOne({purrPetCode: data.homeCode, });
+      const existHome = await db.homestay.findOne({
+        masterDataCode: data.masterDataCode,
+        categoryCode: data.categoryCode,
+       });
       if (!existHome) {
         resolve({
           err: -1,
-          message: "Homestay code is not exist",
+          message: "Homestay is not exist",
         });
       }
       else{
-        const existSlot = await db.masterData.findOne({purrPetCode: existHome.masterDataCode});
+        const existSlot = await db.masterData.findOne({
+          purrPetCode: data.masterDataCode,
+        });
         const existBooking = await db.bookingHome.find({
-            homeName: existHome.homeName,
-            date: data.date,
+          masterDataCode: data.masterDataCode,
+          date: data.date,
          });
           let count =0;
         existBooking.forEach((element) => {
@@ -46,12 +51,12 @@ export const createBookingHome = async (data) =>
             message: "Homestay is full",
           });
           }else{
-            const  dateNext = await hadelDateinBookHome(existHome.categoryCode, data.date);
+            const  dateNext = await hadelDateinBookHome(data.categoryCode, data.date);
             data.bookingHomePrice = existHome.price * data.quantity;
             const response = await db.bookingHome.create({
               ...data,
               date: [data.date, dateNext],
-              homeName: existHome.homeName,
+              homeCode: existHome.purrPetCode,
             });
             resolve({
               err: response ? 0 : -1,

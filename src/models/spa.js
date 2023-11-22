@@ -16,9 +16,12 @@ export const spaSchema = new Schema(
       required: true,
       trim: true,
     },
-    spaType:{
+    spaType: {
       type: String,
-      enum: { values: [SPA_TYPE.DOG, SPA_TYPE.CAT], message: "{VALUE} is not supported" },
+      enum: {
+        values: [SPA_TYPE.DOG, SPA_TYPE.CAT],
+        message: "{VALUE} is not supported",
+      },
       default: SPA_TYPE.DOG,
     },
     description: {
@@ -37,10 +40,6 @@ export const spaSchema = new Schema(
     images: {
       type: Array,
     },
-//     inventory: {
-//       type: Number,
-//      required: true,
-//     },
     status: {
       type: String,
       enum: {

@@ -3,8 +3,8 @@ import express from "express";
 import { verifyToken } from "../middlewares/verify_token";
 
 const router = express.Router();
-router.use(verifyToken);
 router.get("/query", controllers.getAllMasterData);
+router.use(verifyToken);
 router.get("/:purrPetCode", controllers.getMasterDataByCode);
 router.post("/create", controllers.createMasterData);
 router.put("/update/:purrPetCode", controllers.updateMasterData);

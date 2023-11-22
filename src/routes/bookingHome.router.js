@@ -4,6 +4,7 @@ import express from "express";
 const router = express.Router();
 
 router.get("/query", controllers.getAllBookingHome);
+router.get("/get-unavailable-day", controllers.getUnavailableDay);
 router.get("/:purrPetCode", controllers.getBookingHomeByCode);
 router.post("/create", controllers.createBookingHome);
 router.put("/update/:purrPetCode", controllers.updateBookingHome);

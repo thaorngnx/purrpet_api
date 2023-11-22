@@ -30,9 +30,15 @@ export const getHomestayByCode = async (req, res) => {
 
 export const createHomestay = async (req, res) => {
   try {
-    const { error } = homestayDto.validate(req.body);
-    if (error) return badRequest(error.message, res);
-    const response = await services.createHomestay(req.body);
+    const images = req.files;
+    const { error } = homestayDto.validate({ images, ...req.body });
+    if (error) {
+      if (images) {
+        images.forEach((image) => cloudinary.uploader.destroy(image.filename));
+      }
+      return badRequest(error.message, res);
+    }
+    const response = await services.createHomestay({ images, ...req.body });
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
@@ -42,17 +48,25 @@ export const createHomestay = async (req, res) => {
 
 export const updateHomestay = async (req, res) => {
   try {
+    const images = req.files;
     const { error } = updateHomestayDto.validate({
       purrPetCode: req.params.purrPetCode,
+      images,
       ...req.body,
     });
-    if (error) return badRequest(error.message, res);
+    if (error) {
+      if (images) {
+        images.forEach((image) => cloudinary.uploader.destroy(image.filename));
+      }
+      return badRequest(error.message, res);
+    }
     const response = await services.updateHomestay(
-      req.body,
+      { ...req.body, images },
       req.params.purrPetCode
     );
     return res.status(200).json(response);
   } catch (error) {
+    console.log(error);
     return internalServerError(res);
   }
 };

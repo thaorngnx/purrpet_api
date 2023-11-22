@@ -38,10 +38,10 @@ export const createMasterData = async (data) =>
     }
   });
 
-export const getAllMasterData = async () =>
+export const getAllMasterData = async (query) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.masterData.find();
+      const response = await db.masterData.find(query);
       resolve({
         err: response ? 0 : -1,
         message: response

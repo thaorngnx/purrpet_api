@@ -41,15 +41,7 @@ export const createCategory = async (data) =>
     }
   });
 
-export const getAllCategory = async ({
-  page,
-  limit,
-  order,
-  key,
-  categoryType,
-  status,
-  ...query
-}) =>
+export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
       // Tạo object truy vấn
@@ -61,16 +53,6 @@ export const getAllCategory = async ({
           { purrPetCode: { $regex: key, $options: "i" } },
           { categoryName: { $regex: key, $options: "i" } },
         ];
-      }
-
-      // Tạo điều kiện tìm kiếm theo status (nếu có)
-      if (status) {
-        search.status = status;
-      }
-
-      // Tạo điều kiện tìm kiếm theo categoryType (nếu có)
-      if (categoryType) {
-        search.categoryType = categoryType;
       }
 
       // Phân trang

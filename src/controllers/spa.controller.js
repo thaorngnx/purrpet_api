@@ -26,9 +26,15 @@ export const getSpaByCode = async (req, res) => {
 
 export const createSpa = async (req, res) => {
   try {
-    const { error } = spaDto.validate(req.body);
-    if (error) return badRequest(error.message, res);
-    const response = await services.createSpa(req.body);
+    const images = req.files;
+    const { error } = spaDto.validate({ images, ...req.body });
+    if (error) {
+      if (images) {
+        images.forEach((image) => cloudinary.uploader.destroy(image.filename));
+      }
+      return badRequest(error.message, res);
+    }
+    const response = await services.createSpa({ images, ...req.body });
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
@@ -38,12 +44,22 @@ export const createSpa = async (req, res) => {
 
 export const updateSpa = async (req, res) => {
   try {
+    const images = req.files;
     const { error } = updateSpaDto.validate({
       purrPetCode: req.params.purrPetCode,
+      images,
       ...req.body,
     });
-    if (error) return badRequest(error.message, res);
-    const response = await services.updateSpa(req.body, req.params.purrPetCode);
+    if (error) {
+      if (images) {
+        images.forEach((image) => cloudinary.uploader.destroy(image.filename));
+      }
+      return badRequest(error.message, res);
+    }
+    const response = await services.updateSpa(
+      { ...req.body, images },
+      req.params.purrPetCode
+    );
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

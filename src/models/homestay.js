@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { STATUS_HOME } from "../utils/constants";
+import { STATUS_HOME, HOME_TYPE } from "../utils/constants";
 
 mongoose.set("runValidators", true);
 
@@ -11,10 +11,13 @@ export const homestaySchema = new Schema(
       type: String,
       required: true,
     },
-    homeName: {
+    homeType: {
       type: String,
-      required: true,
-      trim: true,
+      enum: {
+        values: [HOME_TYPE.DOG, HOME_TYPE.CAT],
+        message: "{VALUE} is not supported",
+      },
+      default: HOME_TYPE.DOG,
     },
     description: {
       type: String,
@@ -29,12 +32,12 @@ export const homestaySchema = new Schema(
       type: String,
       required: true,
     },
-    images: {
-      type: Array,
+    masterDataCode: {
+      type: String,
       required: true,
     },
-    inventory: {
-      type: Number,
+    images: {
+      type: Array,
       required: true,
     },
     status: {

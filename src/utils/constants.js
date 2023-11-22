@@ -70,8 +70,8 @@ export const COLLECTION = {
   SPA: "spa",
   HOMESTAY: "homestay",
   ORDER: "order",
-  BOOKINGHOME: "bookingHome",
-  BOOKINGSPA: "bookingSpa",
+  BOOKING_HOME: "bookingHome",
+  BOOKING_SPA: "bookingSpa",
   CATEGORY: "category",
   ACCOUNT: "account",
   CUSTOMER: "customer",
@@ -79,6 +79,11 @@ export const COLLECTION = {
 };
 
 export const SPA_TYPE = {
+  DOG: "Chó",
+  CAT: "Mèo",
+};
+
+export const HOME_TYPE = {
   DOG: "Chó",
   CAT: "Mèo",
 };
@@ -99,6 +104,19 @@ export const VALIDATE_DUPLICATE = {
   GROUP_CODE: "groupCode",
   CATEGORY_CODE: "categoryCode",
   MASTERDATA_NAME: "name",
+  MASTERDATA_CODE: "masterDataCode",
+  PHONE_NUMBER: "phoneNumber",
+};
+
+export const GROUP_CODE = {
+  SPA: "SPA",
+};
+
+export const GROUP_SPA = {
+  QUANTITY: "quantity",
+  TIME_START: "timeStart",
+  TIME_END: "timeEnd",
+  MINUTE_STEP: "minutesStep",
 };
 
 export const RESPONSE_MESSAGE = {

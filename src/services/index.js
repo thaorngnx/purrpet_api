@@ -8,3 +8,5 @@ export * from "./spa.service";
 export * from "./product.service";
 export * from "./login.service";
 export * from "./customer.service";
+export * from "./cart.service";
+export * from "./masterData.service";

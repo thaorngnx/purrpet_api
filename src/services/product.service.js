@@ -4,6 +4,7 @@ import {
   PREFIX,
   CATEGORY_TYPE,
   STATUS_PRODUCT,
+  VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
@@ -25,7 +26,8 @@ export const createProduct = async (data) =>
       data.purrPetCode = await generateCode(COLLECTION.PRODUCT, PREFIX.PRODUCT);
 
       const isExistProduct = await checkDuplicateValue(
-        "productName",
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.PRODUCT_NAME,
         data.productName,
         COLLECTION.PRODUCT
       );
@@ -155,7 +157,8 @@ export const updateProduct = async (data, purrPetCode) =>
       }
 
       const isExistProduct = await checkDuplicateValue(
-        "productName",
+        purrPetCode,
+        VALIDATE_DUPLICATE.PRODUCT_NAME,
         data.productName,
         COLLECTION.PRODUCT
       );

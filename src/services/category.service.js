@@ -1,6 +1,13 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_CATEGORY } from "../utils/constants";
+import {
+  COLLECTION,
+  PREFIX,
+  STATUS_CATEGORY,
+  VALIDATE_DUPLICATE,
+  CATEGORY_TYPE,
+} from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import { checkDuplicateValue } from "../utils/validationData";
 
 export const createCategory = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -9,6 +16,18 @@ export const createCategory = async (data) =>
         COLLECTION.CATEGORY,
         PREFIX.CATEGORY
       );
+      const isExistCategory = await checkDuplicateValue(
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.CATEGORY_NAME,
+        data.categoryName,
+        COLLECTION.CATEGORY
+      );
+      if (isExistCategory.err !== 0) {
+        return resolve({
+          err: -1,
+          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+        });
+      }
       const response = await db.category.create(data);
       resolve({
         err: response ? 0 : -1,
@@ -22,15 +41,7 @@ export const createCategory = async (data) =>
     }
   });
 
-export const getAllCategory = async ({
-  page,
-  limit,
-  order,
-  key,
-  categoryType,
-  status,
-  ...query
-}) =>
+export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
       // Tạo object truy vấn
@@ -42,16 +53,6 @@ export const getAllCategory = async ({
           { purrPetCode: { $regex: key, $options: "i" } },
           { categoryName: { $regex: key, $options: "i" } },
         ];
-      }
-
-      // Tạo điều kiện tìm kiếm theo status (nếu có)
-      if (status) {
-        search.status = status;
-      }
-
-      // Tạo điều kiện tìm kiếm theo categoryType (nếu có)
-      if (categoryType) {
-        search.categoryType = categoryType;
       }
 
       // Phân trang
@@ -67,11 +68,10 @@ export const getAllCategory = async ({
       }
 
       // Truy vấn MongoDB
-      const response = await db.category
-        .find({ ...query, ...search })
-        .limit(_limit)
-        .skip(_skip)
-        .sort(_sort);
+      const response = await db.category.find({ ...query, ...search });
+      // .limit(_limit)
+      // .skip(_skip)
+      // .sort(_sort);
 
       resolve({
         err: response ? 0 : -1,
@@ -104,6 +104,18 @@ export const getCategoryByCode = async (purrPetCode) =>
 export const updateCategory = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
+      const isExistCategory = await checkDuplicateValue(
+        purrPetCode,
+        VALIDATE_DUPLICATE.CATEGORY_NAME,
+        data.categoryName,
+        COLLECTION.CATEGORY
+      );
+      if (isExistCategory.err !== 0) {
+        return resolve({
+          err: -1,
+          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+        });
+      }
       const response = await db.category.findOneAndUpdate(
         { purrPetCode: purrPetCode },
         data

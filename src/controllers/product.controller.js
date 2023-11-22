@@ -71,7 +71,7 @@ export const updateProduct = async (req, res) => {
       return badRequest(error.message, res);
     }
     const response = await services.updateProduct(
-      req.body,
+      { ...req.body, images },
       req.params.purrPetCode
     );
     return res.status(200).json(response);

@@ -4,11 +4,12 @@ import {
   PREFIX,
   CATEGORY_TYPE,
   STATUS_HOME,
+  VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
-  checkDuplicateValue,
+  checkDuplicateValueV3,
 } from "../utils/validationData";
 
 export const createHomestay = async (data) =>
@@ -24,15 +25,19 @@ export const createHomestay = async (data) =>
 
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
-      const isExistHome = await checkDuplicateValue(
-        "homeName",
-        data.homeName,
+      const isExistHome = await checkDuplicateValueV3(
+        data.purrPetCode,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.MASTERDATA_CODE,
+        data.masterDataCode,
+        VALIDATE_DUPLICATE.HOMESTAY_TYPE,
+        data.homeType,
         COLLECTION.HOMESTAY
       );
       if (isExistHome.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên homestay đã tồn tại. Vui lòng chọn tên khác!",
+          message: "Homestay đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
 
@@ -128,9 +133,13 @@ export const updateHomestay = async (data, purrPetCode) =>
         return resolve(validCategory);
       }
 
-      const isExistHome = await checkDuplicateValue(
-        "homeName",
-        data.homeName,
+      const isExistHome = await checkDuplicateValueV3(
+        purrPetCode,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.MASTERDATA_CODE,
+        data.masterDataCode,
+        VALIDATE_DUPLICATE.HOMESTAY_TYPE,
+        data.homeType,
         COLLECTION.HOMESTAY
       );
       if (isExistHome.err !== 0) {

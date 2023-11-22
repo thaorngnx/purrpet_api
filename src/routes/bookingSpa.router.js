@@ -4,6 +4,7 @@ import express from "express";
 const router = express.Router();
 
 router.get("/query", controllers.getAllBookingSpa);
+router.get("/get-available-time", controllers.getAvailableTime);
 router.get("/:purrPetCode", controllers.getBookingSpaByCode);
 router.post("/create", controllers.createBookingSpa);
 router.put("/update/:purrPetCode", controllers.updateBookingSpa);

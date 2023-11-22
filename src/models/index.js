@@ -7,6 +7,7 @@ import homestay from "./homestay";
 import spa from "./spa";
 import product from "./product";
 import customer from "./customer";
+import masterData from "./masterData";
 
 export default {
   account,
@@ -18,4 +19,5 @@ export default {
   spa,
   product,
   customer,
+  masterData,
 };

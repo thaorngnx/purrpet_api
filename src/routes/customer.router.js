@@ -6,9 +6,10 @@ const router = express.Router();
 //router.use(verifyToken);
 router.get("/query", controllers.getAllCustomer);
 router.get("/:purrPetCode", controllers.getCustomerByCode);
+router.post("/find-by-phone", controllers.getCustomerByPhone);
 router.post("/look-up-orders", controllers.lookUpOrders);
-router.use(verifyToken);
-router.put ("/update", controllers.updateCustomer);
-
+// router.use(verifyToken);
+router.post("/create", controllers.createCustomer);
+router.put("/update/:purrPetCode", controllers.updateCustomer);
 
 module.exports = router;

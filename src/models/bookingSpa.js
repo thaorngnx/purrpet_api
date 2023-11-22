@@ -11,8 +11,13 @@ export const bookingSpaSchema = new Schema(
       type: String,
       required: true,
     },
-    bookingSpaItems: {
-      type: Array,
+    petName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    spaCode: {
+      type: String,
       required: true,
     },
     bookingSpaPrice: {
@@ -27,6 +32,14 @@ export const bookingSpaSchema = new Schema(
     customerNote: {
       type: String,
       trim: true,
+    },
+    bookingDate: {
+      type: Date,
+      required: true,
+    },
+    bookingTime: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,

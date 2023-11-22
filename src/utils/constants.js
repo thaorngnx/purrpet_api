@@ -62,6 +62,7 @@ export const PREFIX = {
   CATEGORY: "CAT_",
   ACCOUNT: "ACC_",
   CUSTOMER: "CUS_",
+  MASTERDATA: "MD_",
 };
 
 export const COLLECTION = {
@@ -69,14 +70,20 @@ export const COLLECTION = {
   SPA: "spa",
   HOMESTAY: "homestay",
   ORDER: "order",
-  BOOKINGHOME: "bookinghome",
-  BOOKINGSPA: "bookingspa",
+  BOOKING_HOME: "bookingHome",
+  BOOKING_SPA: "bookingSpa",
   CATEGORY: "category",
   ACCOUNT: "account",
   CUSTOMER: "customer",
+  MASTERDATA: "masterData",
 };
 
-export const PRODUCT_TYPE = {
+export const SPA_TYPE = {
+  DOG: "Chó",
+  CAT: "Mèo",
+};
+
+export const HOME_TYPE = {
   DOG: "Chó",
   CAT: "Mèo",
 };
@@ -84,6 +91,32 @@ export const PRODUCT_TYPE = {
 export const RESPONSE_STATUS = {
   SUCCESS: 0,
   ERROR: -1,
+};
+
+export const VALIDATE_DUPLICATE = {
+  CATEGORY_NAME: "categoryName",
+  PRODUCT_NAME: "productName",
+  SPA_NAME: "spaName",
+  SPA_TYPE: "spaType",
+  HOMESTAY_NAME: "homeName",
+  HOMESTAY_TYPE: "homeType",
+  USERNAME: "username",
+  GROUP_CODE: "groupCode",
+  CATEGORY_CODE: "categoryCode",
+  MASTERDATA_NAME: "name",
+  MASTERDATA_CODE: "masterDataCode",
+  PHONE_NUMBER: "phoneNumber",
+};
+
+export const GROUP_CODE = {
+  SPA: "SPA",
+};
+
+export const GROUP_SPA = {
+  QUANTITY: "quantity",
+  TIME_START: "timeStart",
+  TIME_END: "timeEnd",
+  MINUTE_STEP: "minutesStep",
 };
 
 export const RESPONSE_MESSAGE = {

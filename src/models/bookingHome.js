@@ -11,8 +11,13 @@ export const bookingHomeSchema = new Schema(
       type: String,
       required: true,
     },
-    bookingHomeItems: {
-      type: Array,
+    petName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    homeCode: {
+      type: String,
       required: true,
     },
     bookingHomePrice: {
@@ -27,6 +32,14 @@ export const bookingHomeSchema = new Schema(
     customerNote: {
       type: String,
       trim: true,
+    },
+    dateCheckIn: {
+      type: Date,
+      required: true,
+    },
+    dateCheckOut: {
+      type: Date,
+      required: true,
     },
     status: {
       type: String,

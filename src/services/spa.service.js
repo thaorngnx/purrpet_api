@@ -4,11 +4,12 @@ import {
   PREFIX,
   CATEGORY_TYPE,
   STATUS_SPA,
+  VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
-  checkDuplicateValue,
+  checkDuplicateValueV3,
 } from "../utils/validationData";
 
 export const createSpa = async (data) =>
@@ -21,9 +22,13 @@ export const createSpa = async (data) =>
 
       data.purrPetCode = await generateCode(COLLECTION.SPA, PREFIX.SPA);
 
-      const isExistSpa = await checkDuplicateValue(
-        "spaName",
+      const isExistSpa = await checkDuplicateValueV3(
+        data.purrPetCode,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.SPA_NAME,
         data.spaName,
+        VALIDATE_DUPLICATE.SPA_TYPE,
+        data.spaType,
         COLLECTION.SPA
       );
       if (isExistSpa.err !== 0) {
@@ -46,29 +51,28 @@ export const createSpa = async (data) =>
 export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      //search
-      let search = {};
+      const search = {};
       if (key) {
-        search = {
-          ...search,
-          $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { spaName: { $regex: key, $options: "i" } },
-            { description: { $regex: key, $options: "i" } },
-            { categoryName: { $regex: key, $options: "i" } },
-          ],
-        };
+        search.$or = [
+          { purrPetCode: { $regex: key, $options: "i" } },
+          { spaName: { $regex: key, $options: "i" } },
+          { description: { $regex: key, $options: "i" } },
+          { categoryName: { $regex: key, $options: "i" } },
+        ];
       }
-      //pagination
+
+      // Phân trang
       const _limit = parseInt(limit) || 10;
       const _page = parseInt(page) || 1;
       const _skip = (_page - 1) * _limit;
-      //sort
+
+      // Sắp xếp
       const _sort = {};
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
+
       const response = await db.spa.find({ ...query, ...search });
       resolve({
         error: response ? 0 : -1,
@@ -102,9 +106,13 @@ export const updateSpa = async (data, purrPetCode) =>
         return resolve(validCategory);
       }
 
-      const isExistSpa = await checkDuplicateValue(
-        "spaName",
+      const isExistSpa = await checkDuplicateValueV3(
+        purrPetCode,
+        data.categoryCode,
+        VALIDATE_DUPLICATE.SPA_NAME,
         data.spaName,
+        VALIDATE_DUPLICATE.SPA_TYPE,
+        data.spaType,
         COLLECTION.SPA
       );
       if (isExistSpa.err !== 0) {

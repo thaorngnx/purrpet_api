@@ -1,10 +1,25 @@
 import db from "../models";
 import { COLLECTION, PREFIX, STATUS_BOOKING } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import {
+  checkValidBookingDateOfHome,
+  getUnavailableDayByHome,
+} from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
+      const checkValidBookingDate = await checkValidBookingDateOfHome(
+        data.checkIn,
+        data.checkOut,
+        data.homeCode
+      );
+      if (checkValidBookingDate.err !== 0) {
+        resolve({
+          err: -1,
+          message: "Booking date is invalid",
+        });
+      }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_HOME,
         PREFIX.BOOKING_HOME
@@ -172,6 +187,16 @@ export const deleteBookingHome = async (purrPetCode) =>
           ? "Delete booking home successfully"
           : "Delete booking home failed",
       });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getUnavailableDay = async (query) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await getUnavailableDayByHome(query);
+      resolve(response);
     } catch (error) {
       reject(error);
     }

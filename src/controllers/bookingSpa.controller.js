@@ -4,12 +4,13 @@ import {
   updateBookingSpaDto,
   bookingSpaDto,
   updateBookingSpaStatusDto,
+  bookingDate,
 } from "../helpers/joi_schema";
 import { internalServerError, badRequest } from "../middlewares/handle_errors";
 
 export const getAllBookingSpa = async (req, res) => {
   try {
-    const response = await services.getAllBookingSpa();
+    const response = await services.getAllBookingSpa(req.query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
@@ -82,6 +83,18 @@ export const deleteBookingSpa = async (req, res) => {
     const { error } = purrPetCode.validate(req.params);
     if (error) return badRequest(error.message, res);
     const response = await services.deleteBookingSpa(req.params.purrPetCode);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
+export const getAvailableTime = async (req, res) => {
+  try {
+    const { error } = bookingDate.validate(req.query);
+    if (error) return badRequest(error.message, res);
+    const response = await services.getAvailableTime(req.query.bookingDate);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

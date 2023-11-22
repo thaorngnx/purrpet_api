@@ -4,6 +4,7 @@ import {
   updateBookingHomeDto,
   bookingHomeDto,
   updateOrderStatusDto,
+  getUnavailableDayDto,
 } from "../helpers/joi_schema";
 import { internalServerError, badRequest } from "../middlewares/handle_errors";
 
@@ -84,6 +85,18 @@ export const deleteBookingHome = async (req, res) => {
     const { error } = purrPetCode.validate(req.params);
     if (error) return badRequest(error.message, res);
     const response = await services.deleteBookingHome(req.params.purrPetCode);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
+export const getUnavailableDay = async (req, res) => {
+  try {
+    const { error } = getUnavailableDayDto.validate(req.query);
+    if (error) return badRequest(error.message, res);
+    const response = await services.getUnavailableDay(req.query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

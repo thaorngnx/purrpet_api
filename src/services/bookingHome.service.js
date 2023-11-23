@@ -4,7 +4,7 @@ import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
-  checkUpdateStatus
+  checkValidStatus
 } from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
@@ -102,11 +102,11 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        const checkValid = await checkUpdateStatus(
+        const checkValid = await checkValidStatus(
           response.status,
           data.status
         );
-        if (checkValid.err !== 0) {
+        if (checkValid !== 0) {
           resolve({
             err: -1,
             message: "Không thể cập nhật trạng thái",

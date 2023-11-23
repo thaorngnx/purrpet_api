@@ -330,49 +330,31 @@ export const checkValidBookingDateOfHome = async (
     }
   });
 
-export const checkUpdateStatus = async (statusOld , statusNew) => new Promise(async (resolve, reject) => {
-  switch (statusOld) {
+export const checkValidStatus = async (statusOld , statusNew) => {
+  switch (statusOld) { 
     case STATUS_BOOKING.NEW:
       if (statusNew === STATUS_BOOKING.WAITING_FOR_PAY || statusNew === STATUS_BOOKING.CANCEL) {
-        return resolve({
-          err: 0,
-        });
+        return 0
       }
       break;
     case STATUS_BOOKING.WAITING_FOR_PAY:
       if (statusNew === STATUS_BOOKING.PAID || statusNew === STATUS_BOOKING.CANCEL) {
-        return resolve({
-          err: 0,
-        });
+        return 0
       }
-      resolve({
-        err: -1,
-      });
       break;
     case STATUS_BOOKING.PAID:
       if (statusNew === STATUS_BOOKING.CHECKIN) {
-          return resolve({
-            err: 0,
-          });
+          return 0
         }
-        resolve({
-          err: -1,
-        });
         break;
     case STATUS_BOOKING.CHECKIN:
       if (statusNew === STATUS_BOOKING.CHECKOUT) {
-          return resolve({
-              err: 0,
-        });
+          return 0
         }
-        resolve({
-          err: -1,
-        });
         break;
       default:
-        return resolve({
-          err: -1,
-        });
-      }
-});
+        break;
+  }
+};
+
 

@@ -2,6 +2,7 @@ import db from "../models";
 import { GROUP_CODE, GROUP_SPA } from "./constants";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {STATUS_BOOKING} from "./constants";
 dayjs.extend(customParseFormat);
 
 export const checkValidCategory = async (data, categoryType) =>
@@ -262,6 +263,7 @@ export const getUnavailableDayByHome = async (query) =>
         if (count == quantity && !printedDay.includes(item.valueOf())) {
           unavailableDay.push(item);
           printedDay.push(item.valueOf());
+          console.log(unavailableDay);
         }
       });
       resolve({
@@ -327,3 +329,50 @@ export const checkValidBookingDateOfHome = async (
       reject(error);
     }
   });
+
+export const checkUpdateStatus = async (statusOld , statusNew) => new Promise(async (resolve, reject) => {
+  switch (statusOld) {
+    case STATUS_BOOKING.NEW:
+      if (statusNew === STATUS_BOOKING.WAITING_FOR_PAY || statusNew === STATUS_BOOKING.CANCEL) {
+        return resolve({
+          err: 0,
+        });
+      }
+      break;
+    case STATUS_BOOKING.WAITING_FOR_PAY:
+      if (statusNew === STATUS_BOOKING.PAID || statusNew === STATUS_BOOKING.CANCEL) {
+        return resolve({
+          err: 0,
+        });
+      }
+      resolve({
+        err: -1,
+      });
+      break;
+    case STATUS_BOOKING.PAID:
+      if (statusNew === STATUS_BOOKING.CHECKIN) {
+          return resolve({
+            err: 0,
+          });
+        }
+        resolve({
+          err: -1,
+        });
+        break;
+    case STATUS_BOOKING.CHECKIN:
+      if (statusNew === STATUS_BOOKING.CHECKOUT) {
+          return resolve({
+              err: 0,
+        });
+        }
+        resolve({
+          err: -1,
+        });
+        break;
+      default:
+        return resolve({
+          err: -1,
+        });
+      }
+});
+

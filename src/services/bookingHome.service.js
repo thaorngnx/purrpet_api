@@ -4,6 +4,7 @@ import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
+  checkUpdateStatus
 } from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
@@ -101,72 +102,25 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        if (response.status === STATUS_BOOKING.NEW) {
-          if (
-            data.status === STATUS_BOOKING.WAITING_FOR_PAY ||
-            data.status === STATUS_BOOKING.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.WAITING_FOR_PAY) {
-          if (
-            data.status === STATUS_BOOKING.PAID ||
-            data.status === STATUS_BOOKING.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.PAID) {
-          if (data.status === STATUS_BOOKING.CHECKIN) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.CHECKIN) {
-          if (data.status === STATUS_BOOKING.CHECKOUT) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else {
+        const checkValid = await checkUpdateStatus(
+          response.status,
+          data.status
+        );
+        if (checkValid.err !== 0) {
           resolve({
             err: -1,
-            message: "You cannot change the order status",
+            message: "Không thể cập nhật trạng thái",
+          });
+        } else {
+          const updateStatus = await db.bookingHome.findOneAndUpdate(
+            { purrPetCode: purrPetCode },
+            { status: data.status }
+          );
+          resolve({
+            err: updateStatus ? 0 : -1,
+            message: updateStatus
+              ? "Update status booking home successfully"
+              : "Update status booking home failed",
           });
         }
       }

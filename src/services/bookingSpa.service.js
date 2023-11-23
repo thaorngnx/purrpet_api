@@ -6,6 +6,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   getAvailableTimeInDayOfSpa,
   checkValidBookingDateTimeOfSpa,
+  checkUpdateStatus,
 } from "../utils/validationData";
 dayjs.extend(customParseFormat);
 
@@ -96,7 +97,7 @@ export const updateBookingSpa = async (data, purrPetCode) =>
 export const updateStatusBookingSpa = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.bookingHome.findOne({
+      const response = await db.bookingSpa.findOne({
         purrPetCode: purrPetCode,
       });
       if (!response) {
@@ -105,74 +106,22 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        if (response.status === STATUS_BOOKING.NEW) {
-          if (
-            data.status === STATUS_BOOKING.WAITING_FOR_PAY ||
-            data.status === STATUS_BOOKING.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.WAITING_FOR_PAY) {
-          if (
-            data.status === STATUS_BOOKING.PAID ||
-            data.status === STATUS_BOOKING.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.PAID) {
-          if (data.status === STATUS_BOOKING.CHECKIN) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_BOOKING.CHECKIN) {
-          if (data.status === STATUS_BOOKING.CHECKOUT) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else {
+        const checkUpdate = await checkUpdateStatus(
+          response.status,
+          data.status
+        );
+        if (checkUpdate.err !== 0) {
           resolve({
             err: -1,
-            message: "You cannot change the order status",
+            message: "Không thể cập nhật trạng thái",
           });
         }
+        response.status = data.status;
+        await response.save();
+        resolve({
+          err: 0,
+          message: "Update status booking spa success",
+        });
       }
     } catch (error) {
       reject(error);

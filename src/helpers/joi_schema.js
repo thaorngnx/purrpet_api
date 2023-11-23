@@ -313,12 +313,12 @@ export const updateOrderStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_ORDER.NEW,
-      Constant.STATUS_ORDER.WAITING_FOR_PAY,
-      Constant.STATUS_ORDER.PAID,
-      Constant.STATUS_ORDER.DELIVERING,
-      Constant.STATUS_ORDER.CANCEL,
-      Constant.STATUS_ORDER.DONE
+      Constant.STATUS_BOOKING.NEW,
+      Constant.STATUS_BOOKING.WAITING_FOR_PAY,
+      Constant.STATUS_BOOKING.PAID,
+      Constant.STATUS_BOOKING.CHECKIN,
+      Constant.STATUS_BOOKING.CHECKOUT,
+      Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),
 });

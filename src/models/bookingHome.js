@@ -54,7 +54,7 @@ export const bookingHomeSchema = new Schema(
         ],
         message: "{VALUE} is not supported",
       },
-      default: Object[STATUS_BOOKING.NEW],
+      default: STATUS_BOOKING.NEW,
     },
     createBy: {
       type: String,

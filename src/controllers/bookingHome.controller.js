@@ -4,7 +4,7 @@ import {
   updateBookingHomeDto,
   bookingHomeDto,
   updateOrderStatusDto,
-  getUnavailableDayDto,
+  masterDataCode,
 } from "../helpers/joi_schema";
 import { internalServerError, badRequest } from "../middlewares/handle_errors";
 
@@ -94,7 +94,7 @@ export const deleteBookingHome = async (req, res) => {
 
 export const getUnavailableDay = async (req, res) => {
   try {
-    const { error } = getUnavailableDayDto.validate(req.query);
+    const { error } = masterDataCode.validate(req.query);
     if (error) return badRequest(error.message, res);
     const response = await services.getUnavailableDay(req.query);
     return res.status(200).json(response);

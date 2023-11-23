@@ -218,15 +218,26 @@ export const getUnavailableDayByHome = async (query) =>
       console.log(masterData);
       const quantity = masterData.value; // quantity is num of home
       //find home which masterDataCode = masterDataCode
-      const home = await db.homestay.findOne({
+      const listHome = await db.homestay.find({
         masterDataCode: query.masterDataCode,
-        homeType: query.homeType,
-        categoryCode: query.categoryCode,
       });
       //find booking home which homeCode = home.purrPetCode
-      const listBookingHome = await db.bookingHome.find({
-        homeCode: home.purrPetCode,
-      });
+      const listBookingHome = [];
+      for (const home of listHome) {
+        const booking = await db.bookingHome.find({
+          homeCode: home.purrPetCode,
+        });
+        if (booking.length !== 0) {
+          listBookingHome.push(...booking);
+        }
+      }
+      if (listBookingHome.length === 0) {
+        return resolve({
+          err: 0,
+          message: "Get unavailable day successfully",
+          data: [],
+        });
+      }
       //find day has booking
       let listBookingDay = [];
       listBookingHome.forEach((item) => {
@@ -294,8 +305,6 @@ export const checkValidBookingDateOfHome = async (
       });
       const unavailableDay = await getUnavailableDayByHome({
         masterDataCode: home.masterDataCode,
-        homeType: home.homeType,
-        categoryCode: home.categoryCode,
       });
       if (unavailableDay.err !== 0) {
         return resolve({

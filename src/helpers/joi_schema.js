@@ -21,10 +21,8 @@ export const bookingDate = Joi.object({
   bookingDate: Joi.date().required(),
 });
 
-export const getUnavailableDayDto = Joi.object({
+export const masterDataCode = Joi.object({
   masterDataCode: Joi.string().required(),
-  homeType: Joi.string().required(),
-  categoryCode: Joi.string().required(),
 });
 
 export const images = Joi.object({
@@ -128,7 +126,7 @@ export const orderDto = Joi.object({
   customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerName: Joi.string().allow(null),
   customerAddress: Joi.string().allow(null),
-  customerNote: Joi.string(),
+  customerNote: Joi.string().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.NEW,
@@ -170,7 +168,7 @@ export const bookingHomeDto = Joi.object({
   homeCode: Joi.string().required(),
   bookingHomePrice: Joi.number().required(),
   customerCode: Joi.string().required(),
-  customerNote: Joi.string(),
+  customerNote: Joi.string().allow(null),
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
   status: Joi.string()

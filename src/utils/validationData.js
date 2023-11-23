@@ -2,7 +2,7 @@ import db from "../models";
 import { GROUP_CODE, GROUP_SPA } from "./constants";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import {STATUS_BOOKING} from "./constants";
+import { STATUS_BOOKING } from "./constants";
 dayjs.extend(customParseFormat);
 
 export const checkValidCategory = async (data, categoryType) =>
@@ -330,31 +330,35 @@ export const checkValidBookingDateOfHome = async (
     }
   });
 
-export const checkValidStatus = async (statusOld , statusNew) => {
-  switch (statusOld) { 
+export const checkValidStatus = async (statusOld, statusNew) => {
+  switch (statusOld) {
     case STATUS_BOOKING.NEW:
-      if (statusNew === STATUS_BOOKING.WAITING_FOR_PAY || statusNew === STATUS_BOOKING.CANCEL) {
-        return 0
+      if (
+        statusNew === STATUS_BOOKING.WAITING_FOR_PAY ||
+        statusNew === STATUS_BOOKING.CANCEL
+      ) {
+        return 0;
       }
       break;
     case STATUS_BOOKING.WAITING_FOR_PAY:
-      if (statusNew === STATUS_BOOKING.PAID || statusNew === STATUS_BOOKING.CANCEL) {
-        return 0
+      if (
+        statusNew === STATUS_BOOKING.PAID ||
+        statusNew === STATUS_BOOKING.CANCEL
+      ) {
+        return 0;
       }
       break;
     case STATUS_BOOKING.PAID:
       if (statusNew === STATUS_BOOKING.CHECKIN) {
-          return 0
-        }
-        break;
+        return 0;
+      }
+      break;
     case STATUS_BOOKING.CHECKIN:
       if (statusNew === STATUS_BOOKING.CHECKOUT) {
-          return 0
-        }
-        break;
-      default:
-        break;
+        return 0;
+      }
+      break;
+    default:
+      break;
   }
 };
-
-

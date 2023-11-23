@@ -8,6 +8,6 @@ router.post("/staff/login", controllers.loginAccount);
 router.post("/admin/login", controllers.loginAccountAdmin);
 router.post("/refresh-token", controllers.refreshToken);
 router.use(verifyToken);
-router.put("/logout", controllers.logout);
+router.post("/logout", controllers.logout);
 
 module.exports = router;

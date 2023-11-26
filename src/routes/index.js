@@ -10,6 +10,7 @@ import login from "./login.router";
 import customer from "./customer.router";
 import cart from "./cart.router";
 import masterData from "./masterData.router";
+import pay from "./pay.router";
 import { notFound } from "../middlewares/handle_errors";
 
 const initRoutes = (app) => {
@@ -25,6 +26,8 @@ const initRoutes = (app) => {
   app.use("/api/customer", customer);
   app.use("/api/cart", cart);
   app.use("/api/masterData", masterData);
+  app.use("/api/pay", pay);
+
   app.use(notFound);
 };
 

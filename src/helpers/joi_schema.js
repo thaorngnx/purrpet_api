@@ -37,7 +37,13 @@ export const images = Joi.object({
   filename: Joi.string().required(),
 });
 
+
 //#region Create
+export const payDto = Joi.object({
+  idOrder: Joi.string().required(),
+  vnp_BankCode: Joi.string().allow(null),
+});
+
 export const loginDto = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().required(),

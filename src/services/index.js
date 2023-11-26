@@ -10,3 +10,4 @@ export * from "./login.service";
 export * from "./customer.service";
 export * from "./cart.service";
 export * from "./masterData.service";
+export * from "./pay.service";

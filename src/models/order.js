@@ -52,7 +52,7 @@ export const orderSchema = new Schema(
         ],
         message: "{VALUE} is not supported",
       },
-      default: STATUS_ORDER.NEW,
+      default: STATUS_ORDER.WAITING_FOR_PAY,
     },
     createBy: {
       type: String,

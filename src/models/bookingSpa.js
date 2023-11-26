@@ -54,7 +54,7 @@ export const bookingSpaSchema = new Schema(
         ],
         message: "{VALUE} is not supported",
       },
-      default: STATUS_BOOKING.NEW,
+      default: STATUS_BOOKING.WAITING_FOR_PA,
     },
     createBy: {
       type: String,

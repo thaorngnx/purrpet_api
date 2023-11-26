@@ -12,6 +12,16 @@ export const getAllSpa = async (req, res) => {
   }
 };
 
+export const getAllSpaCustomer = async (req, res) => {
+  try {
+    const response = await services.getAllSpaCustomer(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
 export const getSpaByCode = async (req, res) => {
   try {
     const { error } = purrPetCode.validate(req.params);

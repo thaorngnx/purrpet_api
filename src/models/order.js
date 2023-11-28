@@ -31,9 +31,8 @@ export const orderSchema = new Schema(
       trim: true,
     },
     customerAddress: {
-      type: String,
+      type: Object,
       required: true,
-      trim: true,
     },
     customerNote: {
       type: String,

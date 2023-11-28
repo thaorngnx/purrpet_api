@@ -19,8 +19,7 @@ export const customerSchema = new Schema({
         unique: true
     },
     address: {
-        type: String,
-        required: false,
+    type: Object
     },
     refreshToken: {
         type: String,

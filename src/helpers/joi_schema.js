@@ -131,7 +131,12 @@ export const orderDto = Joi.object({
   orderItems: Joi.array().items(orderItemDto).required(),
   customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerName: Joi.string().allow(null),
-  customerAddress: Joi.string().allow(null),
+  customerAddress: Joi.object({
+    street: Joi.string().required(),
+    ward: Joi.string().required(),
+    district: Joi.string().required(),
+    city: Joi.string().required(),
+  }).allow(null),
   customerNote: Joi.string().allow(null),
   status: Joi.string()
     .valid(
@@ -219,10 +224,16 @@ export const addCartDto = Joi.object({
 export const customerDto = Joi.object({
   phoneNumber: Joi.string().required().custom(checkNumberPhone),
   name: Joi.string().required(),
-  address: Joi.string().allow(null),
+  address: Joi.object({
+    street: Joi.string().required(),
+    ward: Joi.string().required(),
+    district: Joi.string().required(),
+    city: Joi.string().required(),
+  }).allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
+
 //#endregion
 
 //#region Update

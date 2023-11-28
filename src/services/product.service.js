@@ -103,10 +103,10 @@ export const getAllProductCustomer = async ({
 
       // Tạo điều kiện tìm kiếm theo key (nếu có)
       const status = STATUS_PRODUCT.ACTIVE;
-      if (key) {
+      if (key && key.length > 0) {
         search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
+          { purrPetCode: { $in: key } },
+          { categoryCode: { $in: key } }
         ];
       }
 

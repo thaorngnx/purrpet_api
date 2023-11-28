@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllSpa);
 router.get("/:purrPetCode", controllers.getSpaByCode);
+router.get("/query-customer", controllers.getAllSpaCustomer);
 router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createSpa);
 router.put(

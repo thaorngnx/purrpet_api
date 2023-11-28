@@ -85,6 +85,58 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
     }
   });
 
+  export const getAllCategoryCustomer = async ({
+    page,
+    limit,
+    order,
+    key,
+    ...query
+  }) =>
+    new Promise(async (resolve, reject) => {
+      try {
+           // Tạo object truy vấn
+           const search = {};
+  
+           // Tạo điều kiện tìm kiếm theo key (nếu có)
+           const status = STATUS_CATEGORY.ACTIVE;
+           if (key) {
+             search.$or = [
+               { purrPetCode: { $regex: key, $options: "i" } },
+               { categoryName: { $regex: key, $options: "i" } },
+             ];
+           }
+     
+           // Phân trang
+           const _limit = parseInt(limit) || 10;
+           const _page = parseInt(page) || 1;
+           const _skip = (_page - 1) * _limit;
+     
+           // Sắp xếp
+           const _sort = {};
+           if (order) {
+             const [key, value] = order.split(".");
+             _sort[key] = value === "asc" ? 1 : -1;
+           }
+     
+           // Truy vấn MongoDB
+           const response = await db.category.find({ ...query, ...search, status: status })
+           .limit(_limit)
+           .skip(_skip)
+           .sort(_sort);
+           resolve({
+             err: response ? 0 : -1,
+             message: response
+               ? "Get all category successfully"
+               : "Get all category failed",
+             data: response,
+     
+           });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  
+
 export const getCategoryByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {

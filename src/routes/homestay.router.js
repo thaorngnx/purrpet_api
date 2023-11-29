@@ -6,6 +6,7 @@ import { verifyToken } from "../middlewares/verify_token";
 const router = express.Router();
 
 router.get("/query", controllers.getAllHomestay);
+router.get("/query-customer", controllers.getAllHomestayCustomer);
 router.get("/:purrPetCode", controllers.getHomestayByCode);
 router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createHomestay);

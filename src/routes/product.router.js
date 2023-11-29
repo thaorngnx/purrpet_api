@@ -6,9 +6,10 @@ import { verifyToken } from "../middlewares/verify_token";
 const router = express.Router();
 
 router.get("/query", controllers.getAllProduct);
+router.get("/query-customer", controllers.getAllProductCustomer);
 router.get("/search", controllers.searchProduct);
 router.get("/:purrPetCode", controllers.getProductByCode);
-router.use(verifyToken);
+//router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createProduct);
 router.put(
   "/update/:purrPetCode",

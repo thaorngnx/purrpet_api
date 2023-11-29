@@ -15,6 +15,15 @@ export const getAllCategory = async (req, res) => {
     return internalServerError(res);
   }
 };
+export const getAllCategoryCustomer = async (req, res) => {
+  try {
+    const response = await services.getAllCategoryCustomer(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}
 
 export const getAllCategoryCustomer = async (req, res) => {
   try {

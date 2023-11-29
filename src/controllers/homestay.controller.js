@@ -16,6 +16,16 @@ export const getAllHomestay = async (req, res) => {
   }
 };
 
+export const getAllHomestayCustomer = async (req, res) => {
+  try {
+    const response = await services.getAllHomestayCustomer(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
 export const getHomestayByCode = async (req, res) => {
   try {
     const { error } = purrPetCode.validate(req.params);

@@ -5,7 +5,7 @@ import { verifyToken } from "../middlewares/verify_token";
 const router = express.Router();
 
 router.get("/query", controllers.getAllCategory);
-router.get("/query-customer", controllers.getAllCategoryCustomer);  
+router.get("/query-customer", controllers.getAllCategoryCustomer);
 router.get("/:purrPetCode", controllers.getCategoryByCode);
 router.use(verifyToken);
 router.post("/create", controllers.createCategory);

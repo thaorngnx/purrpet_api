@@ -17,6 +17,16 @@ export const getAllProduct = async (req, res) => {
   }
 };
 
+export const getAllProductCustomer = async (req, res) => {
+  try {
+    const response = await services.getAllProductCustomer(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}
+
 export const getProductByCode = async (req, res) => {
   try {
     const { error } = purrPetCode.validate(req.params);

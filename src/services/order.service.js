@@ -1,21 +1,16 @@
 import db from "../models";
 import { COLLECTION, PREFIX, STATUS_ORDER } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import {
+  checkValidCustomer
+} from "../utils/validationData";
 
 export const createOrder = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       let isOutOfStock = false;
-      const isCustomer = await db.customer.findOne({phoneNumber: data.customerPhone});
-      if (!isCustomer) {
-        const customer = await db.customer.create({
-          purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
-          name: data.customerName,
-          phoneNumber: data.customerPhone,
-          address: data.customerAddress,
-        });
-        data.customerCode = customer.purrPetCode;
-      }
+      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone, data.customerAddress);
+      data.customerCode = isCustomer;
       data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
       const priceItems = data.orderItems.map((item) => item.producCode);
       const price = await db.product.find({ purrPetCode: { $in: priceItems } });

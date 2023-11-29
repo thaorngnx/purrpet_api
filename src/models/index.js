@@ -8,6 +8,7 @@ import spa from "./spa";
 import product from "./product";
 import customer from "./customer";
 import masterData from "./masterData";
+import otp from "./otp";
 
 export default {
   account,
@@ -20,4 +21,5 @@ export default {
   product,
   customer,
   masterData,
+  otp,
 };

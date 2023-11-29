@@ -63,6 +63,7 @@ export const PREFIX = {
   ACCOUNT: "ACC_",
   CUSTOMER: "CUS_",
   MASTERDATA: "MD_",
+  OTP: "OTP_",
 };
 
 export const COLLECTION = {
@@ -76,6 +77,7 @@ export const COLLECTION = {
   ACCOUNT: "account",
   CUSTOMER: "customer",
   MASTERDATA: "masterData",
+  OTP: "otp",
 };
 
 export const SPA_TYPE = {

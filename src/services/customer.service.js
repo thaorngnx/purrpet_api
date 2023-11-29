@@ -129,7 +129,7 @@ export const createCustomer = async (data) =>
       const isExistCustomer = await checkDuplicateValue(
         data.purrPetCode,
         VALIDATE_DUPLICATE.PHONE_NUMBER,
-        data.phoneNumber,
+        data.email,
         COLLECTION.CUSTOMER
       );
       if (isExistCustomer.err !== 0)

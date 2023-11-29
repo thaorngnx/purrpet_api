@@ -1,5 +1,6 @@
 import * as Joi from "joi";
 import * as Constant from "../utils/constants";
+import * as EmailValidator from 'email-validator';
 
 const checkNumberPhone = (value, helpers) => {
   const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
@@ -8,6 +9,8 @@ const checkNumberPhone = (value, helpers) => {
   }
   return value;
 };
+
+
 
 export const purrPetCode = Joi.object({
   purrPetCode: Joi.string().required(),
@@ -130,6 +133,7 @@ export const homestayDto = Joi.object({
 export const orderDto = Joi.object({
   orderItems: Joi.array().items(orderItemDto).required(),
   customerPhone: Joi.string().required().custom(checkNumberPhone),
+  customerEmail: Joi.string().email().allow(null),
   customerName: Joi.string().allow(null),
   customerAddress: Joi.object({
     street: Joi.string().required(),
@@ -156,7 +160,10 @@ export const bookingSpaDto = Joi.object({
   petName: Joi.string().required(),
   spaCode: Joi.string().required(),
   bookingSpaPrice: Joi.number().required(),
-  customerCode: Joi.string().required(),
+  //customerCode: Joi.string().required(),
+  customerName: Joi.string().required(),
+  customerEmail: Joi.string().email().required(),
+  customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerNote: Joi.string().allow(null),
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
@@ -178,7 +185,10 @@ export const bookingHomeDto = Joi.object({
   petName: Joi.string().required(),
   homeCode: Joi.string().required(),
   bookingHomePrice: Joi.number().required(),
-  customerCode: Joi.string().required(),
+  //customerCode: Joi.string().required(),
+  customerName: Joi.string().required(),
+  customerEmail: Joi.string().email().required(),
+  customerPhone: Joi.string().required().custom(checkNumberPhone),
   customerNote: Joi.string().allow(null),
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
@@ -223,6 +233,7 @@ export const addCartDto = Joi.object({
 
 export const customerDto = Joi.object({
   phoneNumber: Joi.string().required().custom(checkNumberPhone),
+  email: Joi.string().email().allow(null),
   name: Joi.string().required(),
   address: Joi.object({
     street: Joi.string().required(),
@@ -232,6 +243,15 @@ export const customerDto = Joi.object({
   }).allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
+});
+
+export const sendOtpDto = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+export const verifyOtpDto = Joi.object({
+  email: Joi.string().email().required(),
+  otp: Joi.number().required(),
 });
 
 //#endregion

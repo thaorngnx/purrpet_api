@@ -1,12 +1,13 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_BOOKING } from "../utils/constants";
+import { COLLECTION, PREFIX } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   getAvailableTimeInDayOfSpa,
   checkValidBookingDateTimeOfSpa,
-  checkValidStatus
+  checkValidStatus,
+  checkValidCustomer
 } from "../utils/validationData";
 dayjs.extend(customParseFormat);
 
@@ -23,6 +24,8 @@ export const createBookingSpa = async (data) =>
           message: "Booking date time is invalid",
         });
       }
+      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone);
+      data.customerCode = isCustomer;
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
         PREFIX.BOOKING_SPA

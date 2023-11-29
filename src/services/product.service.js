@@ -6,6 +6,7 @@ import {
   STATUS_PRODUCT,
   VALIDATE_DUPLICATE,
 } from "../utils/constants";
+import { pagination } from "../utils/pagination";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidCategory,
@@ -109,31 +110,25 @@ export const getAllProductCustomer = async ({
           { categoryCode: { $in: key } }
         ];
       }
-
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
-      // Sắp xếp
+      //Săp xếp
       const _sort = {};
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-
-      // Truy vấn MongoDB
-      const response = await db.product.find({ ...query, ...search, status: status })
-      .limit(_limit)
-      .skip(_skip)
-      .sort(_sort);
+      
+      const response = await db.product.find({ ...query, ...search, status: status }).sort(_sort);
+      const count  = response.length;
+     const result = pagination({ data: response, total: count, limit: limit, page: page });
+    
+      
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Get all category successfully"
           : "Get all category failed",
-        data: response,
-
+        data: result.dataInOnePage,
+        totalPage: result.totalPage,
       });
       }
       catch (error) {

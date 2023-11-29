@@ -58,7 +58,6 @@ export const sendOtp = async (data) =>new Promise(async (resolve, reject) => {
       resolve({
         err: response ? 0 : -1,
         message: response ? "Send otp successfully" : "Send otp failed",
-        data: response,
       });
     }
     } catch (error) {
@@ -81,9 +80,11 @@ export const verifyOtp = async (data) =>new Promise(async (resolve, reject) => {
         if (response.otp == data.otp) {
           response.otp = 0;
           await response.save();
+          const existCus = await db.customer.findOne({email: data.email});
           resolve({
             err: 0,
             message: "Verify otp successfully",
+            data: existCus,
           });
         }else{
           resolve({

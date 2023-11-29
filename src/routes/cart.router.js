@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.use(express.json());
 router.use(cookieParser());
-router.post('/add', controllers.addCart);
-router.get('/get', controllers.getCart);
-router.put ('/update', controllers.updateCart);
-router.delete('/delete', controllers.deleteCart);
+router.post("/add", controllers.addCart);
+router.get("/get", controllers.getCart);
+router.put("/update", controllers.updateCart);
+router.delete("/delete", controllers.deleteCart);
 
 module.exports = router;

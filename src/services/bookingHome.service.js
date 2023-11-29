@@ -4,7 +4,8 @@ import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
-  checkValidStatus
+  checkValidStatus,
+  checkValidCustomer
 } from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
@@ -21,6 +22,8 @@ export const createBookingHome = async (data) =>
           message: "Booking date is invalid",
         });
       }
+      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone);
+      data.customerCode = isCustomer;
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_HOME,
         PREFIX.BOOKING_HOME

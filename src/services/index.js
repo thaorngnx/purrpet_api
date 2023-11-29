@@ -11,3 +11,4 @@ export * from "./customer.service";
 export * from "./cart.service";
 export * from "./masterData.service";
 export * from "./pay.service";
+export * from "./otp.service";

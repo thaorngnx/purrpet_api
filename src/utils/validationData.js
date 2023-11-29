@@ -1,8 +1,8 @@
 import db from "../models";
-import { GROUP_CODE, GROUP_SPA } from "./constants";
+import { GROUP_CODE, GROUP_SPA, COLLECTION, PREFIX, STATUS_BOOKING } from "./constants";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { STATUS_BOOKING } from "./constants";
+import { generateCode } from "../utils/generateCode";
 dayjs.extend(customParseFormat);
 
 export const checkValidCategory = async (data, categoryType) =>
@@ -360,5 +360,34 @@ export const checkValidStatus = async (statusOld, statusNew) => {
       break;
     default:
       break;
+  }
+};
+
+export const checkValidCustomer = async (
+ customerEmail,
+ customerName,
+ customerPhone,
+ customerAddress
+) =>{
+  try {
+    const customer = await db.customer.findOne({
+      email : customerEmail,
+    });
+    if(customer){
+      return customer.purrPetCode;
+    }
+    else{
+      const infoNew = await db.customer.create({
+        purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
+        name: customerName,
+        phoneNumber: customerPhone,
+        email: customerEmail,
+        address: customerAddress,
+      });
+      return infoNew.purrPetCode;
+    }
+  }
+  catch (error) {
+    reject(error);
   }
 };

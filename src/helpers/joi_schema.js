@@ -129,14 +129,15 @@ export const homestayDto = Joi.object({
 
 export const orderDto = Joi.object({
   orderItems: Joi.array().items(orderItemDto).required(),
-  customerPhone: Joi.string().required().custom(checkNumberPhone),
-  customerEmail: Joi.string().email().allow(null),
-  customerName: Joi.string().allow(null),
+  customerCode: Joi.string().required(),
+  // customerPhone: Joi.string().required().custom(checkNumberPhone),
+  // customerEmail: Joi.string().email().allow(null),
+  // customerName: Joi.string().allow(null),
   customerAddress: Joi.object({
     street: Joi.string().required(),
     ward: Joi.string().required(),
     district: Joi.string().required(),
-    city: Joi.string().required(),
+    province: Joi.string().required(),
   }).allow(null),
   customerNote: Joi.string().allow(null),
   status: Joi.string()
@@ -236,7 +237,7 @@ export const customerDto = Joi.object({
     street: Joi.string().required(),
     ward: Joi.string().required(),
     district: Joi.string().required(),
-    city: Joi.string().required(),
+    province: Joi.string().required(),
   }).allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
@@ -258,7 +259,12 @@ export const updateCustomerDto = Joi.object({
   purrPetCode: Joi.string().required(),
   phoneNumber: Joi.string().allow(null).custom(checkNumberPhone),
   name: Joi.string().allow(null),
-  address: Joi.string().allow(null),
+  address: Joi.object({
+    street: Joi.string().required(),
+    ward: Joi.string().required(),
+    district: Joi.string().required(),
+    province: Joi.string().required(),
+  }).allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });

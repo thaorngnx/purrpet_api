@@ -25,11 +25,6 @@ export const orderSchema = new Schema(
       required: true,
       trim: true,
     },
-    customerName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     customerAddress: {
       type: Object,
       required: true,

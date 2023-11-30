@@ -135,7 +135,7 @@ export const createCustomer = async (data) =>
       if (isExistCustomer.err !== 0)
         return resolve({
           err: -1,
-          message: "Số điện thoại đã tồn tại",
+          message: "Email đã tồn tại",
           data: null,
         });
       const response = await db.customer.create(data);
@@ -154,7 +154,7 @@ export const createCustomer = async (data) =>
 export const updateCustomer = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      if (data.phoneNumber) {
+      if (data.email) {
         const isExistCustomer = await checkDuplicateValue(
           purrPetCode,
           VALIDATE_DUPLICATE.EMAIL,
@@ -164,7 +164,7 @@ export const updateCustomer = async (data, purrPetCode) =>
         if (isExistCustomer.err !== 0)
           return resolve({
             err: -1,
-            message: "Số điện thoại hoặc email đã tồn tại",
+            message: "Email đã tồn tại",
             data: null,
           });
       }

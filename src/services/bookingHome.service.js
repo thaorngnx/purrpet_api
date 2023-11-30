@@ -5,7 +5,6 @@ import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
   checkValidStatus,
-  checkValidCustomer
 } from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
@@ -22,8 +21,15 @@ export const createBookingHome = async (data) =>
           message: "Booking date is invalid",
         });
       }
-      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone);
-      data.customerCode = isCustomer;
+      const customer = await db.customer.findOne({
+        purrPetCode: data.customerCode,
+      });
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_HOME,
         PREFIX.BOOKING_HOME
@@ -105,10 +111,7 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        const checkValid = await checkValidStatus(
-          response.status,
-          data.status
-        );
+        const checkValid = await checkValidStatus(response.status, data.status);
         if (checkValid !== 0) {
           resolve({
             err: -1,

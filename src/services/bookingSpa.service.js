@@ -7,7 +7,6 @@ import {
   getAvailableTimeInDayOfSpa,
   checkValidBookingDateTimeOfSpa,
   checkValidStatus,
-  checkValidCustomer
 } from "../utils/validationData";
 dayjs.extend(customParseFormat);
 
@@ -24,8 +23,15 @@ export const createBookingSpa = async (data) =>
           message: "Booking date time is invalid",
         });
       }
-      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone);
-      data.customerCode = isCustomer;
+      const customer = await db.customer.findOne({
+        purrPetCode: data.customerCode,
+      });
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
         PREFIX.BOOKING_SPA
@@ -117,15 +123,14 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
             err: -1,
             message: "Không thể cập nhật trạng thái",
           });
+        } else {
+          response.status = data.status;
+          await response.save();
+          resolve({
+            err: 0,
+            message: "Update status booking spa success",
+          });
         }
-        else {
-        response.status = data.status;
-        await response.save();
-        resolve({
-          err: 0,
-          message: "Update status booking spa success",
-        });
-      }
       }
     } catch (error) {
       reject(error);

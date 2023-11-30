@@ -108,6 +108,7 @@ export const VALIDATE_DUPLICATE = {
   MASTERDATA_NAME: "name",
   MASTERDATA_CODE: "masterDataCode",
   PHONE_NUMBER: "phoneNumber",
+  EMAIL: "email",
 };
 
 export const GROUP_CODE = {

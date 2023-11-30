@@ -1,6 +1,6 @@
 import * as Joi from "joi";
 import * as Constant from "../utils/constants";
-import * as EmailValidator from 'email-validator';
+import * as EmailValidator from "email-validator";
 
 const checkNumberPhone = (value, helpers) => {
   const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
@@ -9,8 +9,6 @@ const checkNumberPhone = (value, helpers) => {
   }
   return value;
 };
-
-
 
 export const purrPetCode = Joi.object({
   purrPetCode: Joi.string().required(),
@@ -39,7 +37,6 @@ export const images = Joi.object({
   size: Joi.number().integer().required(),
   filename: Joi.string().required(),
 });
-
 
 //#region Create
 export const payDto = Joi.object({
@@ -160,11 +157,11 @@ export const bookingSpaDto = Joi.object({
   petName: Joi.string().required(),
   spaCode: Joi.string().required(),
   bookingSpaPrice: Joi.number().required(),
-  //customerCode: Joi.string().required(),
-  customerName: Joi.string().required(),
-  customerEmail: Joi.string().email().required(),
-  customerPhone: Joi.string().required().custom(checkNumberPhone),
-  customerNote: Joi.string().allow(null),
+  customerCode: Joi.string().required(),
+  // customerName: Joi.string().required(),
+  // customerEmail: Joi.string().email().required(),
+  // customerPhone: Joi.string().required().custom(checkNumberPhone),
+  customerNote: Joi.string().allow(null, ""),
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
   status: Joi.string()
@@ -185,11 +182,11 @@ export const bookingHomeDto = Joi.object({
   petName: Joi.string().required(),
   homeCode: Joi.string().required(),
   bookingHomePrice: Joi.number().required(),
-  //customerCode: Joi.string().required(),
-  customerName: Joi.string().required(),
-  customerEmail: Joi.string().email().required(),
-  customerPhone: Joi.string().required().custom(checkNumberPhone),
-  customerNote: Joi.string().allow(null),
+  customerCode: Joi.string().required(),
+  // customerName: Joi.string().required(),
+  // customerEmail: Joi.string().email().required(),
+  // customerPhone: Joi.string().required().custom(checkNumberPhone),
+  customerNote: Joi.string().allow(null, ""),
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
   status: Joi.string()
@@ -232,9 +229,9 @@ export const addCartDto = Joi.object({
 });
 
 export const customerDto = Joi.object({
-  phoneNumber: Joi.string().required().custom(checkNumberPhone),
-  email: Joi.string().email().allow(null),
-  name: Joi.string().required(),
+  phoneNumber: Joi.string().allow(null).custom(checkNumberPhone),
+  email: Joi.string().email().required(),
+  name: Joi.string().allow(null),
   address: Joi.object({
     street: Joi.string().required(),
     ward: Joi.string().required(),
@@ -341,7 +338,7 @@ export const updateOrderDto = Joi.object({
   customerEmail: Joi.string().email().allow(null),
   customerName: Joi.string().allow(null),
   customerAddress: Joi.string().allow(null),
-  customerNote: Joi.string().allow(null),
+  customerNote: Joi.string().allow(null, ""),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
@@ -366,7 +363,7 @@ export const updateBookingSpaDto = Joi.object({
   spaCode: Joi.string().allow(null),
   bookingSpaPrice: Joi.number().allow(null),
   customerCode: Joi.string().allow(null),
-  customerNote: Joi.string().allow(null),
+  customerNote: Joi.string().allow(null, ""),
   bookingDate: Joi.date().allow(null),
   bookingTime: Joi.string().allow(null),
   createBy: Joi.string().allow(null),
@@ -393,7 +390,7 @@ export const updateBookingHomeDto = Joi.object({
   homeCode: Joi.string().allow(null),
   bookingHomePrice: Joi.number().allow(null),
   customerCode: Joi.string().allow(null),
-  customerNote: Joi.string(),
+  customerNote: Joi.string().allow(null, ""),
   dateCheckIn: Joi.date().allow(null),
   dateCheckOut: Joi.date().allow(null),
   createBy: Joi.string().allow(null),

@@ -1,16 +1,21 @@
 import db from "../models";
 import { COLLECTION, PREFIX, STATUS_ORDER } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
-import {
-  checkValidCustomer
-} from "../utils/validationData";
 
 export const createOrder = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       let isOutOfStock = false;
-      const isCustomer = await checkValidCustomer(data.customerEmail, data.customerName, data.customerPhone, data.customerAddress);
-      data.customerCode = isCustomer;
+      const customer = await db.customer.findOne({
+        purrPetCode: data.customerCode,
+      });
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
+      data.customerAddress = customer.address;
       data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
       const priceItems = data.orderItems.map((item) => item.producCode);
       const price = await db.product.find({ purrPetCode: { $in: priceItems } });
@@ -44,8 +49,8 @@ export const createOrder = async (data) =>
       if (!isOutOfStock) {
         const response = await db.order.create({
           ...data,
-          customerName:  data.customerName ?? isCustomer.name,
-          customerAddress:  data.customerAddress ?? isCustomer.address,
+          customerName: data.customerName ?? isCustomer.name,
+          customerAddress: data.customerAddress ?? isCustomer.address,
           customerCode: isCustomer.purrPetCode ?? data.customerCode,
         });
         resolve({

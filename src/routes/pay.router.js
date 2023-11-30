@@ -4,7 +4,7 @@ import { verifyToken } from "../middlewares/verify_token";
 
 const router = express.Router();
 
-router.post("/create_payment_url", controllers.create_payment_url);
-router.get("/vnpay_return", controllers.vnpay_return);
+router.post("/createPaymentUrl", controllers.createPaymentUrl);
+router.get("/vnpayReturn", controllers.vnpayReturn);
 
 module.exports = router;

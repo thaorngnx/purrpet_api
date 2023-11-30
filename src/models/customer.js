@@ -1,40 +1,42 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-mongoose.set('runValidators', true);
+mongoose.set("runValidators", true);
 
 const Schema = mongoose.Schema;
 
-export const customerSchema = new Schema({
+export const customerSchema = new Schema(
+  {
     purrPetCode: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        required: false,
+      type: String,
+      required: false,
     },
     address: {
-    type: Object
+      type: Object,
     },
     refreshToken: {
-        type: String,
+      type: String,
     },
     createBy: {
-        type: String,
-      },
-      updateBy: {
-        type: String,
-      },
-},
-{ timestamps: true });
+      type: String,
+    },
+    updateBy: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model('customer', customerSchema);
+export default mongoose.model("customer", customerSchema);

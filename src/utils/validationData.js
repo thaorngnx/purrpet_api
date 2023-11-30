@@ -1,5 +1,11 @@
 import db from "../models";
-import { GROUP_CODE, GROUP_SPA, COLLECTION, PREFIX, STATUS_BOOKING } from "./constants";
+import {
+  GROUP_CODE,
+  GROUP_SPA,
+  COLLECTION,
+  PREFIX,
+  STATUS_BOOKING,
+} from "./constants";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { generateCode } from "../utils/generateCode";
@@ -110,11 +116,9 @@ export const checkDuplicateValueV2 = async (
 export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(bookingDate);
       const bookingInDay = await db.bookingSpa.find({
         bookingDate: bookingDate,
       });
-      console.log(bookingInDay);
       //find in master data start time, end time, minuteStep, quantity is max booking in 1 time slot
       const masterData = await db.masterData.find({
         groupCode: GROUP_CODE.SPA,
@@ -124,13 +128,27 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
       let minuteStep = 0;
       let quantity = 0;
       masterData.forEach((element) => {
-        element.name === GROUP_SPA.QUANTITY && (quantity = element.value);
-        element.name === GROUP_SPA.TIME_START && (timeStart = element.value);
-        element.name === GROUP_SPA.TIME_END && (timeEnd = element.value);
-        element.name === GROUP_SPA.MINUTE_STEP && (minuteStep = element.value);
+        // element.name === GROUP_SPA.QUANTITY && (quantity = element.value);
+        // element.name === GROUP_SPA.TIME_START && (timeStart = element.value);
+        // element.name === GROUP_SPA.TIME_END && (timeEnd = element.value);
+        // element.name === GROUP_SPA.MINUTE_STEP && (minuteStep = element.value);
+        switch (element.name) {
+          case GROUP_SPA.QUANTITY:
+            quantity = element.value;
+            break;
+          case GROUP_SPA.TIME_START:
+            timeStart = element.value;
+            break;
+          case GROUP_SPA.TIME_END:
+            timeEnd = element.value;
+            break;
+          case GROUP_SPA.MINUTE_STEP:
+            minuteStep = element.value;
+            break;
+          default:
+            break;
+        }
       });
-
-      console.log(timeStart, timeEnd, minuteStep, quantity);
 
       //create array time slot in 1 day
       const validTime = [];
@@ -162,7 +180,6 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
           availableTime.push(time);
         }
       });
-      console.log(availableTime);
       resolve({
         err: 0,
         data: availableTime,
@@ -216,7 +233,6 @@ export const getUnavailableDayByHome = async (query) =>
       const masterData = await db.masterData.findOne({
         purrPetCode: query.masterDataCode,
       });
-      console.log(masterData);
       const quantity = masterData.value; // quantity is num of home
       //find home which masterDataCode = masterDataCode
       const listHome = await db.homestay.find({
@@ -263,7 +279,6 @@ export const getUnavailableDayByHome = async (query) =>
         if (count == quantity && !printedDay.includes(item.valueOf())) {
           unavailableDay.push(item);
           printedDay.push(item.valueOf());
-          console.log(unavailableDay);
         }
       });
       resolve({
@@ -363,31 +378,29 @@ export const checkValidStatus = async (statusOld, statusNew) => {
   }
 };
 
-export const checkValidCustomer = async (
- customerEmail,
- customerName,
- customerPhone,
- customerAddress
-) =>{
-  try {
-    const customer = await db.customer.findOne({
-      email : customerEmail,
-    });
-    if(customer){
-      return customer.purrPetCode;
-    }
-    else{
-      const infoNew = await db.customer.create({
-        purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
-        name: customerName,
-        phoneNumber: customerPhone,
-        email: customerEmail,
-        address: customerAddress,
-      });
-      return infoNew.purrPetCode;
-    }
-  }
-  catch (error) {
-    reject(error);
-  }
-};
+// export const checkValidCustomer = async (
+//   customerEmail,
+//   customerName,
+//   customerPhone,
+//   customerAddress
+// ) => {
+//   try {
+//     const customer = await db.customer.findOne({
+//       email: customerEmail,
+//     });
+//     if (customer) {
+//       return customer.purrPetCode;
+//     } else {
+//       const infoNew = await db.customer.create({
+//         purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
+//         name: customerName,
+//         phoneNumber: customerPhone,
+//         email: customerEmail,
+//         address: customerAddress,
+//       });
+//       return infoNew.purrPetCode;
+//     }
+//   } catch (error) {
+//     reject(error);
+//   }
+// };

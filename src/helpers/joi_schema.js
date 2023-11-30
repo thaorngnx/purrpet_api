@@ -57,6 +57,7 @@ export const orderItemDto = Joi.object({
   producCode: Joi.string().required(),
   //  unitPrice: Joi.number().required(),
   quantity: Joi.number().integer().required(),
+ // totalPriceItems: Joi.number().required(),
   //   totalPrice: Joi.number().required()
 });
 

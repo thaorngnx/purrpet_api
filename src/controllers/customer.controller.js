@@ -19,7 +19,6 @@ export const getAllCustomer = async (req, res) => {
 
 export const getCustomerByCode = async (req, res) => {
   try {
-    console.log("getCustomerByCode");
     const { error } = purrPetCode.validate(req.params);
     if (error) return badRequest(error.message, res);
     const response = await services.getCustomerByCode(req.params.purrPetCode);
@@ -44,7 +43,8 @@ export const getCustomerByPhone = async (req, res) => {
 
 export const lookUpOrders = async (req, res) => {
   try {
-    const response = await services.lookUpOrders(req.body);
+    const userId = req.userId;
+    const response = await services.lookUpOrders(userId);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

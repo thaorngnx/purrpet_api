@@ -1,5 +1,4 @@
 import db from "../models";
-import jwt from "jsonwebtoken";
 import { checkDuplicateValue } from "../utils/validationData";
 import { generateCode } from "../utils/generateCode";
 import { COLLECTION, PREFIX, VALIDATE_DUPLICATE } from "../utils/constants";
@@ -60,43 +59,22 @@ export const getCustomerByPhone = async (phoneNumber) =>
     }
   });
 
-export const lookUpOrders = async (data) =>
+export const lookUpOrders = async (userId) =>
   new Promise(async (resolve, reject) => {
     try {
-      //Chưa gửi SMS OTP
+      const colectionOtp = await db.otp.findById(userId);
+
       const response = await db.customer.findOne({
-        phoneNumber: data.phoneNumber,
+        email: colectionOtp.email,
       });
       if (!response)
+      {
         return resolve({
           err: -1,
           message: "Bạn chưa có đơn đặt hàng nào !!",
           data: null,
-        });
-      // Create JWT
-      const accessToken = jwt.sign(
-        {
-          id: response.id.toString(),
-          username: response.name,
-          phone: response.phoneNumber,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "2h" }
-      );
-      // refresh token
-      const refreshToken = jwt.sign(
-        {
-          id: response.id.toString(),
-          username: response.name,
-          phoneNumber: response.phoneNumber,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "3m" }
-      );
-      //save refresh token
-      await db.account.findByIdAndUpdate(response.id, {
-        refreshToken: refreshToken,
-      });
+        });;
+      }else{
       const customerCode = response.purrPetCode;
       const isHomestay = await db.bookingHome.find({
         purrPetCode: customerCode,
@@ -108,12 +86,11 @@ export const lookUpOrders = async (data) =>
         message: response
           ? "Look up orders successfully"
           : "Look up orders failed",
-        access_token: accessToken,
-        refresh_token: refreshToken,
         Oder_Product: isOder,
         Homestay: isHomestay,
         Spa: isSpa,
       });
+    }
     } catch (error) {
       reject(error);
     }

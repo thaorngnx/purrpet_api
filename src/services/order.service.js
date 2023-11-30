@@ -18,6 +18,7 @@ export const createOrder = async (data) =>
       data.customerAddress = customer.address;
       data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
       const priceItems = data.orderItems.map((item) => item.producCode);
+
       const price = await db.product.find({ purrPetCode: { $in: priceItems } });
       if (price.length !== priceItems.length) {
         isOutOfStock = true;
@@ -26,17 +27,24 @@ export const createOrder = async (data) =>
           message: "Product not found",
         });
       }
+      
+       
       data.orderPrice = 0;
+      
+      let totalPriceItems = 0;
 
       price.forEach((item) => {
-        data.orderPrice +=
-          item.price *
-          data.orderItems.find((i) => i.producCode === item.purrPetCode)
-            .quantity;
+        totalPriceItems = item.price * data.orderItems.find((i) => i.producCode === item.purrPetCode).quantity;
+        data.orderPrice += totalPriceItems;
         item.inventory -= data.orderItems.find(
           (i) => i.producCode === item.purrPetCode
         ).quantity;
-      });
+        data.orderItems.find(
+          (i) => i.producCode === item.purrPetCode
+        ).price = totalPriceItems;
+
+    });
+    
       const inventoryCheck = price.map((item) => item.inventory);
       const inventory = inventoryCheck.every((item) => item > 0);
       if (!inventory) {
@@ -49,9 +57,6 @@ export const createOrder = async (data) =>
       if (!isOutOfStock) {
         const response = await db.order.create({
           ...data,
-          customerName: data.customerName ?? isCustomer.name,
-          customerAddress: data.customerAddress ?? isCustomer.address,
-          customerCode: isCustomer.purrPetCode ?? data.customerCode,
         });
         resolve({
           err: response ? 0 : -1,

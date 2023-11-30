@@ -1,4 +1,5 @@
 import db from "../models";
+import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { COLLECTION, PREFIX } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
@@ -69,7 +70,6 @@ export const sendOtp = async (data) =>
         resolve({
           err: 0,
           message: "Send otp successfully",
-          data: response,
         });
       } else {
         const response = await db.otp.create({
@@ -90,7 +90,6 @@ export const sendOtp = async (data) =>
 export const verifyOtp = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(data);
       const response = await db.otp.findOne({ email: data.email });
       if (response) {
         if (data.otp == 0) {
@@ -100,14 +99,37 @@ export const verifyOtp = async (data) =>
           });
         } else {
           if (response.otp == data.otp) {
-            response.otp = 0;
-            await response.save();
-            const existCus = await db.customer.findOne({ email: data.email });
-            console.log(existCus);
+                    // Create JWT
+            const accessToken = jwt.sign(
+              {
+                id: response.id.toString(),
+                username: response.purrPetCode,
+                phone: response.email,
+              },
+              process.env.ACCESS_TOKEN_SECRET,
+              { expiresIn: "2h" }
+            );
+            // refresh token
+            const refreshToken = jwt.sign(
+              {
+                id: response.id.toString(),
+                username: response.purrPetCode,
+                phone: response.email,
+              },
+              process.env.REFRESH_TOKEN_SECRET,
+              { expiresIn: "3m" }
+            );
+            //save refresh token
+            await db.otp.findByIdAndUpdate(response.id, {
+              otp: 0,
+              refreshToken: refreshToken,
+
+            });
             resolve({
               err: 0,
               message: "Verify otp successfully",
-              data: existCus,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
             });
           } else {
             resolve({

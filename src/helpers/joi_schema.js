@@ -54,15 +54,15 @@ export const refreshDto = Joi.object({
 });
 
 export const orderItemDto = Joi.object({
-  producCode: Joi.string().required(),
+  productCode: Joi.string().required(),
   //  unitPrice: Joi.number().required(),
   quantity: Joi.number().integer().required(),
- // totalPriceItems: Joi.number().required(),
+  // totalPriceItems: Joi.number().required(),
   //   totalPrice: Joi.number().required()
 });
 
 export const bookingHomeItemDto = Joi.object({
-  producCode: Joi.string().required(),
+  productCode: Joi.string().required(),
   unitPrice: Joi.number().required(),
   quantity: Joi.number().integer().required(),
   totalPrice: Joi.number().required(),

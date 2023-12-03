@@ -99,37 +99,42 @@ export const verifyOtp = async (data) =>
           });
         } else {
           if (response.otp == data.otp) {
-                    // Create JWT
-            const accessToken = jwt.sign(
-              {
-                id: response.id.toString(),
-                username: response.purrPetCode,
-                phone: response.email,
-              },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "2h" }
-            );
-            // refresh token
-            const refreshToken = jwt.sign(
-              {
-                id: response.id.toString(),
-                username: response.purrPetCode,
-                phone: response.email,
-              },
-              process.env.REFRESH_TOKEN_SECRET,
-              { expiresIn: "3m" }
-            );
             //save refresh token
             await db.otp.findByIdAndUpdate(response.id, {
               otp: 0,
-              refreshToken: refreshToken,
-
             });
+            //find customer info
+            const customer = await db.customer.findOne({
+              email: response.email,
+            });
+            //create access token
+            const accessToken = jwt.sign(
+              {
+                id: customer.purrPetCode,
+                email: customer.email,
+                name: customer.name,
+                phoneNumber: customer.phoneNumber,
+              },
+              process.env.ACCESS_TOKEN_SECRET,
+              { expiresIn: "30d" }
+            );
+            //create refresh token
+            const refreshToken = jwt.sign(
+              {
+                id: customer.purrPetCode,
+                email: customer.email,
+                name: customer.name,
+                phoneNumber: customer.phoneNumber,
+              },
+              process.env.REFRESH_TOKEN_SECRET,
+              { expiresIn: "365d" }
+            );
             resolve({
               err: 0,
               message: "Verify otp successfully",
-              accessToken: accessToken,
-              refreshToken: refreshToken,
+              data: customer,
+              access_token: accessToken,
+              refresh_token: refreshToken,
             });
           } else {
             resolve({

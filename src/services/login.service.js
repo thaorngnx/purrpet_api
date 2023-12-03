@@ -128,7 +128,7 @@ export const refreshToken = async (refresh_token) =>
                 {
                   id: response.id,
                   username: response.username,
-                  role_id: response.role,
+                  role: response.role,
                 },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "30d" }

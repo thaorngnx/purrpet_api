@@ -17,7 +17,7 @@ export const createOrder = async (data) =>
       }
       data.customerAddress = customer.address;
       data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
-      const priceItems = data.orderItems.map((item) => item.producCode);
+      const priceItems = data.orderItems.map((item) => item.productCode);
 
       const price = await db.product.find({ purrPetCode: { $in: priceItems } });
       if (price.length !== priceItems.length) {
@@ -27,24 +27,28 @@ export const createOrder = async (data) =>
           message: "Product not found",
         });
       }
-      
-       
+
       data.orderPrice = 0;
-      
+
       let totalPriceItems = 0;
 
       price.forEach((item) => {
-        totalPriceItems = item.price * data.orderItems.find((i) => i.producCode === item.purrPetCode).quantity;
+        totalPriceItems =
+          item.price *
+          data.orderItems.find((i) => i.productCode === item.purrPetCode)
+            .quantity;
         data.orderPrice += totalPriceItems;
         item.inventory -= data.orderItems.find(
-          (i) => i.producCode === item.purrPetCode
+          (i) => i.productCode === item.purrPetCode
         ).quantity;
         data.orderItems.find(
-          (i) => i.producCode === item.purrPetCode
-        ).price = totalPriceItems;
+          (i) => i.productCode === item.purrPetCode
+        ).productPrice = item.price;
+        data.orderItems.find(
+          (i) => i.productCode === item.purrPetCode
+        ).totalPrice = totalPriceItems;
+      });
 
-    });
-    
       const inventoryCheck = price.map((item) => item.inventory);
       const inventory = inventoryCheck.every((item) => item > 0);
       if (!inventory) {
@@ -141,13 +145,13 @@ export const updateOrder = async (data, purrPetCode) =>
       );
       if (data.status === "Đã hủy") {
         const order = await db.order.findOne({ purrPetCode: purrPetCode });
-        const priceItems = order.orderItems.map((item) => item.producCode);
+        const priceItems = order.orderItems.map((item) => item.productCode);
         const price = await db.product.find({
           purrPetCode: { $in: priceItems },
         });
         price.forEach((item) => {
           item.inventory += order.orderItems.find(
-            (i) => i.producCode === item.purrPetCode
+            (i) => i.productCode === item.purrPetCode
           ).quantity;
           item.save();
         });

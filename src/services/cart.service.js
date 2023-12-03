@@ -57,7 +57,7 @@ export const updateCart = async (data, cookies) =>
     }
   });
 
-export const deleteCart = async (data, cookies) =>
+export const deleteProductInCart = async (data, cookies) =>
   new Promise(async (resolve, reject) => {
     try {
       const productCode = data.productCode;
@@ -67,6 +67,18 @@ export const deleteCart = async (data, cookies) =>
       if (index === -1) return reject("Product not found");
       cart.splice(index, 1);
       resolve(cart);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+  export const deleteCart = async (cookies) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const cartData = cookies["cartData"];
+      const cart = JSON.parse(cartData || "[]");
+      console.log(cart);
+      resolve([]);
     } catch (error) {
       reject(error);
     }

@@ -106,8 +106,9 @@ export const getAllProductCustomer = async ({
       const status = STATUS_PRODUCT.ACTIVE;
       if (key && key.length > 0) {
         search.$or = [
-          { purrPetCode: { $in: key } },
-          { categoryCode: { $in: key } }
+          { purrPetCode: { $regex: key, $options: "i" } },
+          { categoryCode: { $regex: key, $options: "i" } },
+          { productName: { $regex: key, $options: "i" } }
         ];
       }
       //Săp xếp
@@ -145,44 +146,6 @@ export const getProductByCode = async (purrPetCode) =>
         message: response
           ? "Tìm thấy sản phẩm!"
           : "Đã có lỗi xảy ra. Vui lòng thử lại!",
-        data: response,
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-
-export const searchProduct = async ({ page, limit, order, key, ...query }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      //search
-      let search = {};
-      if (key) {
-        search = {
-          ...search,
-          $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { productName: { $regex: key, $options: "i" } },
-          ],
-          $and: [{ status: STATUS_PRODUCT.ACTIVE }],
-        };
-      }
-      //pagination
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-      //sort
-      const _sort = {};
-      if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
-      }
-      const response = await db.product.find({ ...query, ...search });
-      resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? "Get all product successfully"
-          : "Get all product failed",
         data: response,
       });
     } catch (error) {
@@ -273,3 +236,5 @@ export const updateProductStatus = async (purrPetCode) =>
       reject(error);
     }
   });
+
+  

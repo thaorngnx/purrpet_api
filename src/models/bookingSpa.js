@@ -45,7 +45,6 @@ export const bookingSpaSchema = new Schema(
       type: String,
       enum: {
         values: [
-          STATUS_BOOKING.NEW,
           STATUS_BOOKING.WAITING_FOR_PAY,
           STATUS_BOOKING.PAID,
           STATUS_BOOKING.CHECKIN,

@@ -345,16 +345,8 @@ export const checkValidBookingDateOfHome = async (
     }
   });
 
-export const checkValidStatus = async (statusOld, statusNew) => {
+export const checkValidStatusBooking = async (statusOld, statusNew) => {
   switch (statusOld) {
-    case STATUS_BOOKING.NEW:
-      if (
-        statusNew === STATUS_BOOKING.WAITING_FOR_PAY ||
-        statusNew === STATUS_BOOKING.CANCEL
-      ) {
-        return 0;
-      }
-      break;
     case STATUS_BOOKING.WAITING_FOR_PAY:
       if (
         statusNew === STATUS_BOOKING.PAID ||
@@ -377,30 +369,3 @@ export const checkValidStatus = async (statusOld, statusNew) => {
       break;
   }
 };
-
-// export const checkValidCustomer = async (
-//   customerEmail,
-//   customerName,
-//   customerPhone,
-//   customerAddress
-// ) => {
-//   try {
-//     const customer = await db.customer.findOne({
-//       email: customerEmail,
-//     });
-//     if (customer) {
-//       return customer.purrPetCode;
-//     } else {
-//       const infoNew = await db.customer.create({
-//         purrPetCode: await generateCode(COLLECTION.CUSTOMER, PREFIX.CUSTOMER),
-//         name: customerName,
-//         phoneNumber: customerPhone,
-//         email: customerEmail,
-//         address: customerAddress,
-//       });
-//       return infoNew.purrPetCode;
-//     }
-//   } catch (error) {
-//     reject(error);
-//   }
-// };

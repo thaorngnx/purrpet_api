@@ -6,7 +6,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   getAvailableTimeInDayOfSpa,
   checkValidBookingDateTimeOfSpa,
-  checkValidStatus,
+  checkValidStatusBooking,
 } from "../utils/validationData";
 dayjs.extend(customParseFormat);
 
@@ -114,7 +114,7 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        const checkUpdate = await checkValidStatus(
+        const checkUpdate = await checkValidStatusBooking(
           response.status,
           data.status
         );

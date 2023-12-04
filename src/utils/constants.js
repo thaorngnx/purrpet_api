@@ -24,7 +24,6 @@ export const STATUS_SPA = {
 };
 
 export const STATUS_ORDER = {
-  NEW: "Mới đặt",
   WAITING_FOR_PAY: "Chờ thanh toán",
   PAID: "Đã thanh toán",
   DELIVERING: "Đang giao hàng",
@@ -33,7 +32,6 @@ export const STATUS_ORDER = {
 };
 
 export const STATUS_BOOKING = {
-  NEW: "Mới đặt",
   WAITING_FOR_PAY: "Chờ thanh toán",
   PAID: "Đã thanh toán",
   CHECKIN: "Đã checkin",

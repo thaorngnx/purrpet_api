@@ -14,12 +14,14 @@ export const createPaymentUrl = async (data) =>
       let date = new Date();
       let createDate = moment(date).format("YYYYMMDDHHmmss");
       var ipAddr = "127.0.0.1";
-      const exsitOrder = await db.order.findOne({ purrPetCode: data.idOrder });
-      const exsitBooking = await db.bookingHome.findOne({
-        purrPetCode: data.idOrder,
+      const exsitOrder = await db.order.findOne({
+        purrPetCode: data.orderCode,
+      });
+      const exsitBookingHome = await db.bookingHome.findOne({
+        purrPetCode: data.orderCode,
       });
       const exsitBookingSpa = await db.bookingSpa.findOne({
-        purrPetCode: data.idOrder,
+        purrPetCode: data.orderCode,
       });
       // let ipAddr = req.headers['x-forwarded-for'] ||
       //     req.connection.remoteAddress ||
@@ -32,8 +34,8 @@ export const createPaymentUrl = async (data) =>
       let returnUrl = process.env.vnp_ReturnUrl;
       let amount = exsitOrder
         ? exsitOrder.orderPrice * 100
-        : exsitBooking
-        ? exsitBooking.bookingHomePrice * 100
+        : exsitBookingHome
+        ? exsitBookingHome.bookingHomePrice * 100
         : exsitBookingSpa.bookingSpaPrice * 100;
       let bankCode = "";
       let currCode = "VND";
@@ -64,8 +66,15 @@ export const createPaymentUrl = async (data) =>
       vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
       //Neu muon dung Redirect thi dong dong ben duoi
 
-      resolve(vnpUrl);
-      //res.redirect(vnpUrl)
+      resolve({
+        err: 0,
+        message: "Tạo url thanh toán thành công",
+        data: {
+          orderCode: data.orderCode,
+          paymentUrl: vnpUrl,
+        },
+      });
+      // res.redirect(vnpUrl);
     } catch (error) {
       reject(error);
     }

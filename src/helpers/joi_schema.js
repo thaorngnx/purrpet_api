@@ -40,7 +40,7 @@ export const images = Joi.object({
 
 //#region Create
 export const payDto = Joi.object({
-  idOrder: Joi.string().required(),
+  orderCode: Joi.string().required(),
   vnp_BankCode: Joi.string().allow(null),
 });
 
@@ -140,10 +140,9 @@ export const orderDto = Joi.object({
     district: Joi.string().required(),
     province: Joi.string().required(),
   }).allow(null),
-  customerNote: Joi.string().allow(null),
+  customerNote: Joi.string().allow(null, ""),
   status: Joi.string()
     .valid(
-      Constant.STATUS_ORDER.NEW,
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
@@ -168,7 +167,6 @@ export const bookingSpaDto = Joi.object({
   bookingTime: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_BOOKING.NEW,
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
@@ -193,7 +191,6 @@ export const bookingHomeDto = Joi.object({
   dateCheckOut: Joi.date().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_BOOKING.NEW,
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
@@ -341,11 +338,25 @@ export const updateHomestayDto = Joi.object({
 
 export const updateOrderDto = Joi.object({
   purrPetCode: Joi.string().required(),
-  customerPhone: Joi.string().allow(null),
-  customerEmail: Joi.string().email().allow(null),
-  customerName: Joi.string().allow(null),
-  customerAddress: Joi.string().allow(null),
+  orderItems: Joi.array().items(orderItemDto).allow(null),
+  orderPrice: Joi.number().allow(null),
+  customerCode: Joi.string().allow(null),
+  customerAddress: Joi.object({
+    street: Joi.string().required(),
+    ward: Joi.string().required(),
+    district: Joi.string().required(),
+    province: Joi.string().required(),
+  }).allow(null),
   customerNote: Joi.string().allow(null, ""),
+  status: Joi.string()
+    .valid(
+      Constant.STATUS_ORDER.WAITING_FOR_PAY,
+      Constant.STATUS_ORDER.PAID,
+      Constant.STATUS_ORDER.DELIVERING,
+      Constant.STATUS_ORDER.CANCEL,
+      Constant.STATUS_ORDER.DONE
+    )
+    .allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
 });
@@ -354,7 +365,6 @@ export const updateOrderStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_BOOKING.NEW,
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
@@ -381,7 +391,6 @@ export const updateBookingSpaStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_BOOKING.NEW,
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
@@ -408,7 +417,6 @@ export const updateBookingHomeStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_BOOKING.NEW,
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,

@@ -4,7 +4,7 @@ import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
-  checkValidStatus,
+  checkValidStatusBooking,
 } from "../utils/validationData";
 
 export const createBookingHome = async (data) =>
@@ -111,7 +111,10 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        const checkValid = await checkValidStatus(response.status, data.status);
+        const checkValid = await checkValidStatusBooking(
+          response.status,
+          data.status
+        );
         if (checkValid !== 0) {
           resolve({
             err: -1,

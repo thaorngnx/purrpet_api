@@ -9,7 +9,7 @@ router.use(cookieParser());
 router.post("/add", controllers.addCart);
 router.get("/get", controllers.getCart);
 router.put("/update", controllers.updateCart);
-router.delete("/delete-product-in-cart", controllers.deleteProductInCart);
-router.delete("/delete-cart", controllers.deleteCart);
+router.delete("/delete-product", controllers.deleteProductInCart);
+router.delete("/delete", controllers.deleteCart);
 
 module.exports = router;

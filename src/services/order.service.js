@@ -176,72 +176,40 @@ export const updateStatusOrder = async (data, purrPetCode) =>
           message: "Order not found",
         });
       } else {
-        if (response.status === STATUS_ORDER.NEW) {
-          if (
-            data.status === STATUS_ORDER.WAITING_FOR_PAY ||
-            data.status === STATUS_ORDER.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_ORDER.WAITING_FOR_PAY) {
-          if (
-            data.status === STATUS_ORDER.PAID ||
-            data.status === STATUS_ORDER.CANCEL
-          ) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_ORDER.PAID) {
-          if (data.status === STATUS_ORDER.DELIVERING) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
-        } else if (response.status === STATUS_ORDER.DELIVERING) {
-          if (data.status === STATUS_ORDER.DONE) {
-            response.status = data.status;
-            response.save();
-            resolve({
-              err: 0,
-              message: "Update status order successfully",
-            });
-          } else {
-            resolve({
-              err: -1,
-              message: "Status order is invalid",
-            });
-          }
+        let validStatus = false;
+        switch (response.status) {
+          case STATUS_ORDER.WAITING_FOR_PAY:
+            if (
+              data.status === STATUS_ORDER.PAID ||
+              data.status === STATUS_ORDER.CANCEL
+            ) {
+              validStatus = true;
+            }
+            break;
+          case STATUS_ORDER.PAID:
+            if (data.status === STATUS_ORDER.DELIVERING) {
+              validStatus = true;
+            }
+            break;
+          case STATUS_ORDER.DELIVERING:
+            if (data.status === STATUS_ORDER.DONE) {
+              validStatus = true;
+            }
+            break;
+          default:
+            break;
+        }
+        if (validStatus) {
+          response.status = data.status;
+          response.save();
+          resolve({
+            err: 0,
+            message: "Update status order successfully",
+          });
         } else {
           resolve({
             err: -1,
-            message: "You cannot change the order status",
+            message: "Status order is invalid",
           });
         }
       }

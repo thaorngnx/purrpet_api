@@ -2,9 +2,11 @@ import * as controllers from "../controllers";
 import express from "express";
 import upload from "../utils/cloudinary";
 import { verifyToken } from "../middlewares/verify_token";
+import { isAdmin, isCustomer, isStaff } from "../middlewares/verify_role";
 
 const router = express.Router();
 
+router.use(verifyToken);
 router.get("/query", controllers.getAllHomestay);
 router.get("/query-customer", controllers.getAllHomestayCustomer);
 router.get("/:purrPetCode", controllers.getHomestayByCode);

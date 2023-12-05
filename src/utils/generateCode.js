@@ -1,17 +1,8 @@
 import db from "../models";
+import jwt from "jsonwebtoken";
 
 export const generateCode = async (collectionName, prefix) => {
   const collection = await db[collectionName].find();
-  // const lastCode = collection.length
-  //   ? collection[collection.length - 1].purrPetCode
-  //   : 0;
-  // if (lastCode === 0) {
-  //   return (prefix + 1).toString();
-  // }
-  // const lastNumber = lastCode.slice(prefix.length);
-  // const newNumber = (parseInt(lastNumber) + 1).toString();
-  // const newCode = prefix + newNumber;
-  // return newCode;
   if (!collection.length) {
     return prefix + 1;
   }
@@ -20,4 +11,32 @@ export const generateCode = async (collectionName, prefix) => {
   const newNumber = parseInt(lastNumber) + 1;
   const newCode = prefix + newNumber;
   return newCode;
+};
+
+export const generateAccessToken = (user, path) => {
+  const accessToken = jwt.sign(
+    {
+      id: user.id,
+      path: path,
+      role: user.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "30d" }
+  );
+  console.log("accessToken", accessToken);
+  return accessToken;
+};
+
+export const generateRefreshToken = (user, path) => {
+  const refreshToken = jwt.sign(
+    {
+      id: user.id,
+      path: path,
+      role: user.role,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "365d" }
+  );
+  console.log("refreshToken", refreshToken);
+  return refreshToken;
 };

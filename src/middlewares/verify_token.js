@@ -1,16 +1,77 @@
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { unauthorized } from "./handle_errors";
+import db from "../models";
+import { ROLE } from "../utils/constants";
 
 export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
+  const token = req.headers.authorization;
   if (!token) return unauthorized("Required authorization!", res);
-  try {
-    const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.userId = decode.id;
-    next();
-  } catch (error) {
-    unauthorized("Access token is invalid!", res);
-  }
+  const access_token = token.split(" ")[1];
+  console.log("accessToken", access_token);
+  jwt.verify(
+    access_token,
+    process.env.ACCESS_TOKEN_SECRET,
+    async (err, user) => {
+      if (!user) return unauthorized("Access token is invalid!", res);
+      if (user.role === ROLE.CUSTOMER) {
+        const response = await db.customer.findOne({
+          accessToken: access_token,
+        });
+        if (!response) return unauthorized("Access token is invalid!", res);
+      } else {
+        const response = await db.account.findOne({
+          accessToken: access_token,
+        });
+        if (!response) return unauthorized("Access token is invalid!", res);
+      }
+      if (err) {
+        const isChecked = err instanceof TokenExpiredError;
+        console.log("isChecked", isChecked);
+        if (!isChecked)
+          return unauthorized("Access token is invalid!", res, isChecked);
+        if (isChecked) {
+          response.accessToken = null;
+          response.refreshToken = null;
+          await response.save();
+          return unauthorized("Access token is expired!", res, isChecked);
+        }
+      }
+      req.user = user;
+      next();
+    }
+  );
+};
+
+//verify refresh token
+export const verifyRefreshToken = (req, res, next) => {
+  const { refresh_token } = req.body;
+  if (!refresh_token) return unauthorized("Required refresh token!", res);
+  console.log("refresh_token", refresh_token);
+  jwt.verify(
+    refresh_token,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, user) => {
+      if (!user) return unauthorized("Refresh token is invalid!", res);
+      let response;
+      if (user.role === ROLE.CUSTOMER) {
+        response = await db.customer.findOne({ refreshToken: refresh_token });
+      } else {
+        response = await db.account.findOne({ refreshToken: refresh_token });
+      }
+      if (!response) return unauthorized("Refresh token is invalid!", res);
+      else if (err) {
+        const isChecked = err instanceof TokenExpiredError;
+        if (!isChecked)
+          return unauthorized("Refresh token is invalid!", res, isChecked);
+        if (isChecked) {
+          response.accessToken = null;
+          response.refreshToken = null;
+          await response.save();
+          return unauthorized("Refresh token is expired!", res, isChecked);
+        }
+      }
+      req.user = user;
+      next();
+    }
+  );
 };

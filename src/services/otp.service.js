@@ -1,8 +1,12 @@
 import db from "../models";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import { COLLECTION, PREFIX } from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
+import { COLLECTION, PREFIX, COOKIES_PATH, ROLE } from "../utils/constants";
+import {
+  generateCode,
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generateCode";
 
 export const sendOtp = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -108,27 +112,20 @@ export const verifyOtp = async (data) =>
               email: response.email,
             });
             //create access token
-            const accessToken = jwt.sign(
-              {
-                id: customer.purrPetCode,
-                email: customer.email,
-                name: customer.name,
-                phoneNumber: customer.phoneNumber,
-              },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "30d" }
+            const accessToken = generateAccessToken(
+              customer,
+              COOKIES_PATH.CUSTOMER
             );
             //create refresh token
-            const refreshToken = jwt.sign(
-              {
-                id: customer.purrPetCode,
-                email: customer.email,
-                name: customer.name,
-                phoneNumber: customer.phoneNumber,
-              },
-              process.env.REFRESH_TOKEN_SECRET,
-              { expiresIn: "365d" }
+            const refreshToken = generateRefreshToken(
+              customer,
+              COOKIES_PATH.CUSTOMER
             );
+            //save token
+            await db.customer.findByIdAndUpdate(customer.id, {
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            });
             resolve({
               err: 0,
               message: "Verify otp successfully",

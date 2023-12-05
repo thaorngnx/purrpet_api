@@ -29,11 +29,9 @@ export const getCustomerByCode = async (req, res) => {
   }
 };
 
-export const getCustomerByPhone = async (req, res) => {
+export const getCustomerById = async (req, res) => {
   try {
-    const { error } = phoneNumber.validate(req.body);
-    if (error) return badRequest(error.message, res);
-    const response = await services.getCustomerByPhone(req.body.phoneNumber);
+    const response = await services.getCustomerById(req.params.id);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
@@ -43,7 +41,7 @@ export const getCustomerByPhone = async (req, res) => {
 
 export const lookUpOrders = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user.id;
     const response = await services.lookUpOrders(userId);
     return res.status(200).json(response);
   } catch (error) {

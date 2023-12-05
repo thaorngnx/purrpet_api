@@ -16,9 +16,6 @@ export const otpSchema = new Schema(
       type: Number,
       required: true,
     },
-    refreshToken: {
-      type: String,
-    },
     createBy: {
       type: String,
     },

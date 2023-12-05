@@ -37,7 +37,6 @@ export const orderSchema = new Schema(
       type: String,
       enum: {
         values: [
-          STATUS_ORDER.NEW,
           STATUS_ORDER.WAITING_FOR_PAY,
           STATUS_ORDER.PAID,
           STATUS_ORDER.DELIVERING,

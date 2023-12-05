@@ -43,15 +43,15 @@ export const getCustomerByCode = async (purrPetCode) =>
     }
   });
 
-export const getCustomerByPhone = async (phoneNumber) =>
+export const getCustomerById = async (id) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.customer.findOne({ phoneNumber: phoneNumber });
+      const response = await db.customer.findById(id);
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get customer by phone successfully"
-          : "Get customer by phone failed",
+          ? "Get customer by id successfully"
+          : "Get customer by id failed",
         data: response,
       });
     } catch (error) {
@@ -67,30 +67,29 @@ export const lookUpOrders = async (userId) =>
       const response = await db.customer.findOne({
         email: colectionOtp.email,
       });
-      if (!response)
-      {
+      if (!response) {
         return resolve({
           err: -1,
           message: "Bạn chưa có đơn đặt hàng nào !!",
           data: null,
-        });;
-      }else{
-      const customerCode = response.purrPetCode;
-      const isHomestay = await db.bookingHome.find({
-        purrPetCode: customerCode,
-      });
-      const isSpa = await db.bookingSpa.find({ purrPetCode: customerCode });
-      const isOder = await db.order.find({ customerCode: customerCode });
-      resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? "Look up orders successfully"
-          : "Look up orders failed",
-        Oder_Product: isOder,
-        Homestay: isHomestay,
-        Spa: isSpa,
-      });
-    }
+        });
+      } else {
+        const customerCode = response.purrPetCode;
+        const isHomestay = await db.bookingHome.find({
+          purrPetCode: customerCode,
+        });
+        const isSpa = await db.bookingSpa.find({ purrPetCode: customerCode });
+        const isOder = await db.order.find({ customerCode: customerCode });
+        resolve({
+          err: response ? 0 : -1,
+          message: response
+            ? "Look up orders successfully"
+            : "Look up orders failed",
+          Oder_Product: isOder,
+          Homestay: isHomestay,
+          Spa: isSpa,
+        });
+      }
     } catch (error) {
       reject(error);
     }

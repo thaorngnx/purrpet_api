@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ROLE } from "../utils/constants";
 
 mongoose.set("runValidators", true);
 
@@ -25,6 +26,13 @@ export const customerSchema = new Schema(
     },
     address: {
       type: Object,
+    },
+    role: {
+      type: String,
+      default: ROLE.CUSTOMER,
+    },
+    accessToken: {
+      type: String,
     },
     refreshToken: {
       type: String,

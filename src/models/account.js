@@ -40,6 +40,9 @@ export const accountSchema = new Schema(
       },
       default: STATUS_ACCOUNT.ACTIVE,
     },
+    accessToken: {
+      type: String,
+    },
     refreshToken: {
       type: String,
     },

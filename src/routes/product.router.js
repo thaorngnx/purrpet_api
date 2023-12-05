@@ -8,7 +8,6 @@ const router = express.Router();
 router.get("/query", controllers.getAllProduct);
 router.get("/query-customer", controllers.getAllProductCustomer);
 router.get("/:purrPetCode", controllers.getProductByCode);
-
 //router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createProduct);
 router.put(
@@ -18,6 +17,5 @@ router.put(
 );
 router.put("/update-status/:purrPetCode", controllers.updateProductStatus);
 router.delete("/delete/:purrPetCode", controllers.deleteProduct);
-
 
 module.exports = router;

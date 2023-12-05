@@ -1,5 +1,5 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_ORDER } from "../utils/constants";
+import { COLLECTION, PREFIX, STATUS_ORDER, ROLE } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 
 export const createOrder = async (data) =>
@@ -120,17 +120,64 @@ export const getAllOrder = async ({ page, limit, order, key, ...query }) =>
     }
   });
 
-export const getOrderByCode = async (purrPetCode) =>
+export const getOrderByCode = async (user, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.order.findOne({ purrPetCode: purrPetCode });
+      const order = await db.order.findOne({ purrPetCode: purrPetCode });
+      if (!order) {
+        resolve({
+          err: -1,
+          message: "Order not found",
+        });
+      }
+      const customer = await db.customer.findOne({
+        purrPetCode: order.customerCode,
+      });
+      if (user.role === ROLE.CUSTOMER && customer.id !== user.id) {
+        resolve({
+          err: -1,
+          message: "You don't have permission to access this order",
+        });
+      }
+
+      const response = {
+        ...order._doc,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phoneNumber,
+      };
       resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? "Get order by code successfully"
-          : "Get order by code failed",
+        err: 0,
+        message: "Get order by code successfully",
         data: response,
       });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getOrderByCustomer = async (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const customer = await db.customer.findOne({ _id: id });
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
+      if (customer) {
+        const response = await db.order.find({
+          customerCode: customer.purrPetCode,
+        });
+        resolve({
+          err: response ? 0 : -1,
+          message: response
+            ? "Get order by customer code successfully"
+            : "Get order by customer code failed",
+          data: response,
+        });
+      }
     } catch (error) {
       reject(error);
     }

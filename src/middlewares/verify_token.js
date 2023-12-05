@@ -7,7 +7,6 @@ export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) return unauthorized("Required authorization!", res);
   const access_token = token.split(" ")[1];
-  console.log("accessToken", access_token);
   jwt.verify(
     access_token,
     process.env.ACCESS_TOKEN_SECRET,
@@ -26,7 +25,6 @@ export const verifyToken = (req, res, next) => {
       }
       if (err) {
         const isChecked = err instanceof TokenExpiredError;
-        console.log("isChecked", isChecked);
         if (!isChecked)
           return unauthorized("Access token is invalid!", res, isChecked);
         if (isChecked) {
@@ -46,7 +44,6 @@ export const verifyToken = (req, res, next) => {
 export const verifyRefreshToken = (req, res, next) => {
   const { refresh_token } = req.body;
   if (!refresh_token) return unauthorized("Required refresh token!", res);
-  console.log("refresh_token", refresh_token);
   jwt.verify(
     refresh_token,
     process.env.REFRESH_TOKEN_SECRET,

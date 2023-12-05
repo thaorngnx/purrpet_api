@@ -8,7 +8,6 @@ const oneYear = 365 * 24 * 60 * 60 * 1000;
 
 export const loginAccount = async (req, res) => {
   try {
-    console.log(req.body);
     const { error } = loginDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.loginAccount(req.body);
@@ -25,7 +24,6 @@ export const loginAccount = async (req, res) => {
 
 export const loginAccountAdmin = async (req, res) => {
   try {
-    console.log(req.body);
     const { error } = loginDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.loginAccountAdmin(req.body);

@@ -52,9 +52,24 @@ export const createProduct = async (data) =>
     }
   });
 
-export const getAllProduct = async ({ page, limit, order, key, ...query }) =>
+export const getAllProduct = async ({
+  productCodes,
+  page,
+  limit,
+  order,
+  key,
+  ...query
+}) =>
   new Promise(async (resolve, reject) => {
     try {
+      //split productCodes
+      if (productCodes) {
+        productCodes = productCodes.split(",");
+        query = {
+          ...query,
+          purrPetCode: { $in: productCodes },
+        };
+      }
       //search
       let search = {};
       if (key) {
@@ -98,8 +113,8 @@ export const getAllProductCustomer = async ({
   ...query
 }) =>
   new Promise(async (resolve, reject) => {
-      try {
-         // Tạo object truy vấn
+    try {
+      // Tạo object truy vấn
       const search = {};
 
       // Tạo điều kiện tìm kiếm theo key (nếu có)
@@ -108,7 +123,7 @@ export const getAllProductCustomer = async ({
         search.$or = [
           { purrPetCode: { $regex: key, $options: "i" } },
           { categoryCode: { $regex: key, $options: "i" } },
-          { productName: { $regex: key, $options: "i" } }
+          { productName: { $regex: key, $options: "i" } },
         ];
       }
       //Săp xếp
@@ -117,12 +132,18 @@ export const getAllProductCustomer = async ({
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-      
-      const response = await db.product.find({ ...query, ...search, status: status }).sort(_sort);
-      const count  = response.length;
-     const result = pagination({ data: response, total: count, limit: limit, page: page });
-    
-      
+
+      const response = await db.product
+        .find({ ...query, ...search, status: status })
+        .sort(_sort);
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
+
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -131,11 +152,10 @@ export const getAllProductCustomer = async ({
         data: result.dataInOnePage,
         totalPage: result.totalPage,
       });
-      }
-      catch (error) {
-        reject(error);
-      }
-});
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
@@ -236,5 +256,3 @@ export const updateProductStatus = async (purrPetCode) =>
       reject(error);
     }
   });
-
-  

@@ -72,12 +72,11 @@ export const deleteProductInCart = async (data, cookies) =>
     }
   });
 
-  export const deleteCart = async (cookies) =>
+export const deleteCart = async (cookies) =>
   new Promise(async (resolve, reject) => {
     try {
       const cartData = cookies["cartData"];
       const cart = JSON.parse(cartData || "[]");
-      console.log(cart);
       resolve([]);
     } catch (error) {
       reject(error);

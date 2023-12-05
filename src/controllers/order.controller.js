@@ -18,7 +18,20 @@ export const getAllOrder = async (req, res) => {
 
 export const getOrderByCode = async (req, res) => {
   try {
-    const response = await services.getOrderByCode(req.params.purrPetCode);
+    const response = await services.getOrderByCode(
+      req.user,
+      req.params.purrPetCode
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
+export const getOrderByCustomer = async (req, res) => {
+  try {
+    const response = await services.getOrderByCustomer(req.user.id);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

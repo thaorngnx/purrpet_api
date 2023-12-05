@@ -7,7 +7,13 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllBookingHome);
 router.get("/get-unavailable-day", controllers.getUnavailableDay);
-router.get("/:purrPetCode", controllers.getBookingHomeByCode);
+router.get(
+  "/get-by-customer",
+  verifyToken,
+  isCustomer,
+  controllers.getBookingHomeByCustomer
+);
+router.get("/:purrPetCode", verifyToken, controllers.getBookingHomeByCode);
 router.post("/create", controllers.createBookingHome);
 router.put("/update/:purrPetCode", controllers.updateBookingHome);
 router.put("/update-status/:purrPetCode", controllers.updateStatusBookingHome);

@@ -1,11 +1,12 @@
 import db from "../models";
-import { COLLECTION, PREFIX, STATUS_BOOKING } from "../utils/constants";
+import { COLLECTION, PREFIX, ROLE } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
   checkValidStatusBooking,
 } from "../utils/validationData";
+import dayjs from "dayjs";
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -63,17 +64,68 @@ export const getAllBookingHome = async () =>
     }
   });
 
-export const getBookingHomeByCode = async (purrPetCode) =>
+export const getBookingHomeByCode = async (user, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.bookingHome.findOne({
+      const bookingHome = await db.bookingHome.findOne({
         purrPetCode: purrPetCode,
       });
+      if (!bookingHome) {
+        resolve({
+          err: -1,
+          message: "Booking home not found",
+        });
+      }
+      const customer = await db.customer.findOne({
+        purrPetCode: bookingHome.customerCode,
+      });
+      if (user.role === ROLE.CUSTOMER && customer.id !== user.id) {
+        resolve({
+          err: -1,
+          message: "You don't have permission to get this booking home",
+        });
+      }
+      const numberOfDay = dayjs(bookingHome.dateCheckOut).diff(
+        dayjs(bookingHome.dateCheckIn),
+        "day"
+      );
+      const response = {
+        ...bookingHome._doc,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phoneNumber,
+        numberOfDay: numberOfDay,
+      };
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Get booking home by code successfully"
           : "Get booking home by code failed",
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getBookingHomeByCustomer = async (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const customer = await db.customer.findById(id);
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
+      const response = await db.bookingHome.find({
+        customerCode: customer.purrPetCode,
+      });
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Get booking home by customer successfully"
+          : "Get booking home by customer failed",
         data: response,
       });
     } catch (error) {

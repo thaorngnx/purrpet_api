@@ -7,10 +7,20 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllBookingSpa);
 router.get("/get-available-time", controllers.getAvailableTime);
-router.get("/:purrPetCode", controllers.getBookingSpaByCode);
+router.get(
+  "/get-by-customer",
+  verifyToken,
+  isCustomer,
+  controllers.getBookingSpaByCustomer
+);
+router.get("/:purrPetCode", verifyToken, controllers.getBookingSpaByCode);
 router.post("/create", controllers.createBookingSpa);
 router.put("/update/:purrPetCode", controllers.updateBookingSpa);
-router.put("/update-status/:purrPetCode", controllers.updateStatusBookingSpa);
+router.put(
+  "/update-status/:purrPetCode",
+  verifyToken,
+  controllers.updateStatusBookingSpa
+);
 router.delete("/delete/:purrPetCode", controllers.deleteBookingSpa);
 
 module.exports = router;

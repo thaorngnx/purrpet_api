@@ -23,8 +23,19 @@ export const getBookingHomeByCode = async (req, res) => {
     const { error } = purrPetCode.validate(req.params);
     if (error) return badRequest(error.message, res);
     const response = await services.getBookingHomeByCode(
+      req.user,
       req.params.purrPetCode
     );
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
+export const getBookingHomeByCustomer = async (req, res) => {
+  try {
+    const response = await services.getBookingHomeByCustomer(req.user.id);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

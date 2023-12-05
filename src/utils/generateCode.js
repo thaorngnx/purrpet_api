@@ -23,7 +23,6 @@ export const generateAccessToken = (user, path) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "30d" }
   );
-  console.log("accessToken", accessToken);
   return accessToken;
 };
 
@@ -37,6 +36,5 @@ export const generateRefreshToken = (user, path) => {
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "365d" }
   );
-  console.log("refreshToken", refreshToken);
   return refreshToken;
 };

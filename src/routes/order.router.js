@@ -1,12 +1,19 @@
 import * as controllers from "../controllers";
 import express from "express";
 import { verifyToken } from "../middlewares/verify_token";
+import { isCustomer } from "../middlewares/verify_role";
 
 const router = express.Router();
 
 //router.use(verifyToken);
 router.get("/query", controllers.getAllOrder);
-router.get("/:purrPetCode", controllers.getOrderByCode);
+router.get(
+  "/get-by-customer",
+  verifyToken,
+  isCustomer,
+  controllers.getOrderByCustomer
+);
+router.get("/:purrPetCode", verifyToken, controllers.getOrderByCode);
 router.post("/create", controllers.createOrder);
 router.put("/update/:purrPetCode", controllers.updateOrder);
 router.put("/update-status/:purrPetCode", controllers.updateStatusOrder);

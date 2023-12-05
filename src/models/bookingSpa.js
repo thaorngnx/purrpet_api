@@ -53,7 +53,7 @@ export const bookingSpaSchema = new Schema(
         ],
         message: "{VALUE} is not supported",
       },
-      default: STATUS_BOOKING.WAITING_FOR_PA,
+      default: STATUS_BOOKING.WAITING_FOR_PAY,
     },
     createBy: {
       type: String,

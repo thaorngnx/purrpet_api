@@ -24,7 +24,6 @@ export const createMasterData = async (data) =>
           message: "Dữ liệu đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
-      console.log("data", data);
       const response = await db.masterData.create(data);
       resolve({
         err: response ? 0 : -1,

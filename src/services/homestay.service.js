@@ -115,51 +115,68 @@ export const getAllHomestayCustomer = async ({
 }) =>
   new Promise(async (resolve, reject) => {
     try {
-       // Tạo object truy vấn
-       const search = {};
+      // Tạo object truy vấn
+      const search = {};
 
-       // Tạo điều kiện tìm kiếm theo key (nếu có)
-       if (key) {
-         search.$or = [
-           { purrPetCode: { $regex: key, $options: "i" } },
-           { categoryName: { $regex: key, $options: "i" } },
-         ];
-       }
- 
-       // Phân trang
-       const _limit = parseInt(limit) || 10;
-       const _page = parseInt(page) || 1;
-       const _skip = (_page - 1) * _limit;
- 
-       // Sắp xếp
-       const _sort = {};
-       if (order) {
-         const [key, value] = order.split(".");
-         _sort[key] = value === "asc" ? 1 : -1;
-       }
- 
-       // Truy vấn MongoDB
-       const response = await db.homestay.find({ ...query, ...search });
-       // .limit(_limit)
-       // .skip(_skip)
-       // .sort(_sort);
- 
-       resolve({
-         err: response ? 0 : -1,
-         message: response
-           ? "Get all category successfully"
-           : "Get all category failed",
-         data: response,
-        });
+      // Tạo điều kiện tìm kiếm theo key (nếu có)
+      if (key) {
+        search.$or = [
+          { purrPetCode: { $regex: key, $options: "i" } },
+          { categoryName: { $regex: key, $options: "i" } },
+        ];
+      }
+
+      // Phân trang
+      const _limit = parseInt(limit) || 10;
+      const _page = parseInt(page) || 1;
+      const _skip = (_page - 1) * _limit;
+
+      // Sắp xếp
+      const _sort = {};
+      if (order) {
+        const [key, value] = order.split(".");
+        _sort[key] = value === "asc" ? 1 : -1;
+      }
+
+      // Truy vấn MongoDB
+      const response = await db.homestay.find({ ...query, ...search });
+      // .limit(_limit)
+      // .skip(_skip)
+      // .sort(_sort);
+
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Get all category successfully"
+          : "Get all category failed",
+        data: response,
+      });
     } catch (error) {
       reject(error);
     }
-});
+  });
 
 export const getHomestayByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.homestay.findOne({ purrPetCode: purrPetCode });
+      const homestay = await db.homestay.findOne({ purrPetCode: purrPetCode });
+      if (!homestay) {
+        resolve({
+          err: -1,
+          message: "Homestay is not exist",
+        });
+      }
+      const category = await db.category.findOne({
+        purrPetCode: homestay.categoryCode,
+      });
+      const masterData = await db.masterData.findOne({
+        purrPetCode: homestay.masterDataCode,
+      });
+      const response = {
+        ...homestay._doc,
+        categoryName: category.categoryName,
+        masterDataName: masterData.name,
+      };
       resolve({
         err: response ? 0 : -1,
         message: response

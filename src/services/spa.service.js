@@ -39,7 +39,7 @@ export const createSpa = async (data) =>
       }
       const response = await db.spa.create(data);
       resolve({
-        err: response ? 0 : -1,
+        error: response ? 0 : -1,
         message: response ? "Create spa success" : "Create spa fail",
         data: response,
       });
@@ -75,7 +75,7 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
 
       const response = await db.spa.find({ ...query, ...search });
       resolve({
-        err: response ? 0 : -1,
+        error: response ? 0 : -1,
         message: response ? "Get all spa success" : "Get all spa fail",
         data: response,
       });
@@ -84,67 +84,59 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
     }
   });
 
-export const getAllSpaCustomer = async ({
-  page,
-  limit,
-  order,
-  key,
-  ...query
-}) =>
+export const getAllSpaCustomer = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
-    try {
-      // Tạo object truy vấn
-      const search = {};
+    try{
+       // Tạo object truy vấn
+       const search = {};
 
-      // Tạo điều kiện tìm kiếm theo key (nếu có)
-      const status = STATUS_SPA.ACTIVE;
-      if (key) {
-        search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
-        ];
-      }
-
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
-      // Sắp xếp
-      const _sort = {};
-      if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
-      }
-
-      // Truy vấn MongoDB
-      const response = await db.spa.find({
-        ...query,
-        ...search,
-        status: status,
-      });
-      // .limit(_limit)
-      // .skip(_skip)
-      // .sort(_sort);
-
-      resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? "Get all category successfully"
-          : "Get all category failed",
-        data: response,
-      });
-    } catch (error) {
+       // Tạo điều kiện tìm kiếm theo key (nếu có)
+        const status = STATUS_SPA.ACTIVE;
+       if (key) {
+         search.$or = [
+           { purrPetCode: { $regex: key, $options: "i" } },
+           { categoryName: { $regex: key, $options: "i" } },
+         ];
+       }
+ 
+       // Phân trang
+       const _limit = parseInt(limit) || 10;
+       const _page = parseInt(page) || 1;
+       const _skip = (_page - 1) * _limit;
+ 
+       // Sắp xếp
+       const _sort = {};
+       if (order) {
+         const [key, value] = order.split(".");
+         _sort[key] = value === "asc" ? 1 : -1;
+       }
+ 
+       // Truy vấn MongoDB
+       const response = await db.spa.find({ ...query, ...search, status: status });
+       // .limit(_limit)
+       // .skip(_skip)
+       // .sort(_sort);
+ 
+       resolve({
+         err: response ? 0 : -1,
+         message: response
+           ? "Get all category successfully"
+           : "Get all category failed",
+         data: response,
+        });
+    }
+    catch (error) {
       reject(error);
     }
   });
+
 
 export const getSpaByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       resolve({
-        err: response ? 0 : -1,
+        error: response ? 0 : -1,
         message: response ? "Get spa by code success" : "Get spa by code fail",
         data: response,
       });
@@ -182,7 +174,7 @@ export const updateSpa = async (data, purrPetCode) =>
         data
       );
       resolve({
-        err: response ? 0 : -1,
+        error: response ? 0 : -1,
         message: response ? "Update spa success" : "Update spa fail",
       });
     } catch (error) {
@@ -196,7 +188,7 @@ export const updateStatusSpa = async (purrPetCode) =>
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       if (!response) {
         return resolve({
-          err: -1,
+          error: -1,
           message: "spa is not exist",
         });
       } else {
@@ -207,7 +199,7 @@ export const updateStatusSpa = async (purrPetCode) =>
         }
         await response.save();
         resolve({
-          err: 0,
+          error: 0,
           message: "Update status spa success",
         });
       }
@@ -223,10 +215,79 @@ export const deleteSpa = async (purrPetCode) =>
         purrPetCode: purrPetCode,
       });
       resolve({
-        err: response ? 0 : -1,
+        error: response ? 0 : -1,
         message: response ? "Delete spa success" : "Delete spa fail",
       });
     } catch (error) {
       reject(error);
     }
   });
+
+export const getReportSpa = async (data) =>  new Promise(async (resolve, reject) => {
+    try{
+      const fromDate = new Date(data.fromDate);
+      fromDate.setUTCHours(0, 0, 0, 0);
+      const toDate = new Date(data.toDate);
+      toDate.setUTCHours(23, 59, 59, 999);
+    const result = await db.bookingSpa.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: fromDate,
+            $lte: toDate,
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "spas", 
+          localField: "spaCode", 
+          foreignField: "purrPetCode", 
+          as: "homestayInfo" 
+        }
+      },
+      {
+        $addFields: {
+          spaName: { $arrayElemAt: ["$homestayInfo.spaName", 0] },
+          spaType: { $arrayElemAt: ["$homestayInfo.spaType", 0] },
+        }
+      },
+      {
+        $group: {
+          _id: "$spaCode",
+          SpaCode: { $first: "$spaCode" },
+          spaName: { $first: "$spaName" },
+          spaType: { $first: "$spaType" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const bySpaType = {}; 
+    for (const entry of result) {
+      const { spaType, count } = entry;
+      if (spaType in bySpaType) {
+        bySpaType[spaType] += count;
+      } else {
+        bySpaType[spaType] = count;
+      }
+    }
+    const bySpaName = {}; 
+    for (const entry of result) {
+      const { spaName, count } = entry;
+      if (spaName in bySpaName) {
+        bySpaName[spaName] += count;
+      } else {
+        bySpaName[spaName] = count;
+      }
+    }
+    resolve({
+      err: 0,
+      message: "Get report homestay successfully!",
+      bySpaType: bySpaType,
+      bySpaName: bySpaName,
+    });
+  } catch (error) {
+    reject(error);
+  
+  }});

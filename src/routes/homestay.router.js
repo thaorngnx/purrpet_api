@@ -9,6 +9,7 @@ const router = express.Router();
 router.use(verifyToken);
 router.get("/query", controllers.getAllHomestay);
 router.get("/query-customer", controllers.getAllHomestayCustomer);
+router.post("/report-homestay", controllers.getReportHomestay);
 router.get("/:purrPetCode", controllers.getHomestayByCode);
 router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createHomestay);

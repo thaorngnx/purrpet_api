@@ -12,6 +12,7 @@ import {
   checkValidCategory,
   checkDuplicateValue,
 } from "../utils/validationData";
+import moment from "moment";
 
 export const createProduct = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -256,3 +257,57 @@ export const updateProductStatus = async (purrPetCode) =>
       reject(error);
     }
   });
+  
+export const getReportProduct = async (
+data
+ ) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const fromDate = new Date(data.fromDate);
+      fromDate.setUTCHours(0, 0, 0, 0);
+      const toDate = new Date(data.toDate);
+      toDate.setUTCHours(23, 59, 59, 999);
+        const result = await db.order.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: fromDate, 
+                $lte: toDate 
+              }
+            }
+          },
+          {
+            $unwind: "$orderItems" // Mở rộng mảng orderItems thành các tài liệu riêng lẻ
+          },
+          {
+            $lookup: {
+              from: "products", 
+              localField: "orderItems.productCode", 
+              foreignField: "purrPetCode", 
+              as: "productInfo" 
+            }
+          },
+          {
+            $addFields: {
+              productName: { $arrayElemAt: ["$productInfo.productName", 0] } 
+            }
+          },
+          {
+            $group: {
+              _id: "$orderItems.productCode",
+               productName: { $first: "$productName" },
+              totalQuantity: { $sum: "$orderItems.quantity" }
+            }
+          }
+        ]);
+      resolve({
+        err: 0,
+        message: "Get report product successfully!",
+        data: result
+      });
+      
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+  }); 

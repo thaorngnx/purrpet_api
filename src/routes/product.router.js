@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllProduct);
 router.get("/query-customer", controllers.getAllProductCustomer);
+router.post("/report-product", controllers.getReportProduct);
 router.get("/:purrPetCode", controllers.getProductByCode);
 //router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createProduct);

@@ -6,6 +6,7 @@ import { verifyToken } from "../middlewares/verify_token";
 const router = express.Router();
 
 router.get("/query", controllers.getAllSpa);
+router.post("/spa-report", controllers.getReportSpa);
 router.get("/:purrPetCode", controllers.getSpaByCode);
 router.get("/query-customer", controllers.getAllSpaCustomer);
 router.use(verifyToken);

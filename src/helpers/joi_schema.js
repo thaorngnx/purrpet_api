@@ -55,10 +55,7 @@ export const refreshDto = Joi.object({
 
 export const orderItemDto = Joi.object({
   productCode: Joi.string().required(),
-  //  unitPrice: Joi.number().required(),
   quantity: Joi.number().integer().required(),
-  // totalPriceItems: Joi.number().required(),
-  //   totalPrice: Joi.number().required()
 });
 
 export const bookingHomeItemDto = Joi.object({

@@ -106,3 +106,14 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
+export const getReportProduct = async (req, res) => {
+  try {
+    const response = await services.getReportProduct(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}
+
+

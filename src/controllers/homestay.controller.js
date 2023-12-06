@@ -105,3 +105,13 @@ export const deleteHomestay = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+export const getReportHomestay = async (req, res) => {
+  try {
+    const response = await services.getReportHomestay(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}

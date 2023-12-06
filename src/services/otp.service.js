@@ -49,6 +49,7 @@ export const sendOtp = async (data) =>
         { new: true }
       );
       if (response) {
+       
         resolve({
           err: 0,
           message: "Send otp successfully",
@@ -89,8 +90,8 @@ export const verifyOtp = async (data) =>
             let customer = await db.customer.findOne({
               email: response.email,
             });
-            const accessToken = null;
-            const refreshToken = null;
+            let accessToken = null;
+            let refreshToken = null;
             if (customer) {
               //create access token
               accessToken = generateAccessToken(

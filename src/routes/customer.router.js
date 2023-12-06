@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/query", controllers.getAllCustomer);
 router.get("/:purrPetCode", controllers.getCustomerByCode);
 router.post("/find-by-id/:id", controllers.getCustomerById);
-router.use(verifyToken);
+// router.use(verifyToken);
 router.post("/look-up-orders", controllers.lookUpOrders);
 
 router.post("/create", controllers.createCustomer);

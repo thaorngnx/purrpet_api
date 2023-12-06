@@ -1,7 +1,16 @@
 import db from "../models";
 import { checkDuplicateValue } from "../utils/validationData";
-import { generateCode } from "../utils/generateCode";
-import { COLLECTION, PREFIX, VALIDATE_DUPLICATE } from "../utils/constants";
+import {
+  generateCode,
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generateCode";
+import {
+  COLLECTION,
+  PREFIX,
+  VALIDATE_DUPLICATE,
+  COOKIES_PATH,
+} from "../utils/constants";
 
 export const getAllCustomer = async (query) =>
   new Promise(async (resolve, reject) => {
@@ -114,7 +123,23 @@ export const createCustomer = async (data) =>
           message: "Email đã tồn tại",
           data: null,
         });
-      const response = await db.customer.create(data);
+      const customer = await db.customer.create(data);
+      let response;
+      if (customer) {
+        const accessToken = generateAccessToken(
+          customer,
+          COOKIES_PATH.CUSTOMER
+        );
+        const refreshToken = generateRefreshToken(
+          customer,
+          COOKIES_PATH.CUSTOMER
+        );
+        response = {
+          ...customer._doc,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        };
+      }
       resolve({
         err: response ? 0 : -1,
         message: response

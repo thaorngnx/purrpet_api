@@ -58,8 +58,6 @@ export const refreshToken = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     const response = await services.logout(req.user);
-    res.clearCookie("access_token", { path: req.user.path });
-    res.clearCookie("refresh_token", { path: req.user.path });
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

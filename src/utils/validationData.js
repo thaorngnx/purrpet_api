@@ -360,11 +360,6 @@ export const checkValidStatusBooking = async (statusOld, statusNew) => {
         return 0;
       }
       break;
-    case STATUS_BOOKING.CHECKIN:
-      if (statusNew === STATUS_BOOKING.CHECKOUT) {
-        return 0;
-      }
-      break;
     default:
       break;
   }

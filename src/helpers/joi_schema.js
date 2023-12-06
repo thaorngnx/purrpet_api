@@ -167,7 +167,6 @@ export const bookingSpaDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CHECKOUT,
       Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),
@@ -191,7 +190,6 @@ export const bookingHomeDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CHECKOUT,
       Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),
@@ -365,7 +363,6 @@ export const updateOrderStatusDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CHECKOUT,
       Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),
@@ -391,7 +388,6 @@ export const updateBookingSpaStatusDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CHECKOUT,
       Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),
@@ -417,7 +413,6 @@ export const updateBookingHomeStatusDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CHECKOUT,
       Constant.STATUS_BOOKING.CANCEL
     )
     .allow(null),

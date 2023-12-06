@@ -48,7 +48,7 @@ export const bookingHomeSchema = new Schema(
           STATUS_BOOKING.WAITING_FOR_PAY,
           STATUS_BOOKING.PAID,
           STATUS_BOOKING.CHECKIN,
-          STATUS_BOOKING.CHECKOUT,
+          STATUS_BOOKING.EXPIRED,
           STATUS_BOOKING.CANCEL,
         ],
         message: "{VALUE} is not supported",

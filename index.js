@@ -4,6 +4,7 @@ dotenv.config();
 import cors from "cors";
 import initRoutes from "./src/routes";
 import "./database.js";
+import { cronJob } from "./src/utils/cronJob";
 
 const app = express();
 
@@ -28,3 +29,5 @@ const PORT = process.env.PORT || 8888;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+cronJob();

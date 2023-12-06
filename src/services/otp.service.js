@@ -33,38 +33,16 @@ export const sendOtp = async (data) =>
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          printDebug(error, OutputTypeDebug.ERROR);
+          console.log(error);
+          resolve({
+            err: -1,
+            message: "Send otp failed",
+          });
         } else {
-          printDebug(
-            "Email sent: " + info.response,
-            OutputTypeDebug.INFORMATION
-          );
+          console.log("Email sent: " + info.response);
         }
       });
       data.purrPetCode = await generateCode(COLLECTION.OTP, PREFIX.OTP);
-      // const existOtp = await db.otp.findOne({ email: data.email });
-      // if (existOtp) {
-      //   const response = await db.otp.findOneAndUpdate(
-      //     { email: data.email },
-      //     { otp: otp },
-      //     { new: true }
-      //   );
-      //   resolve({
-      //     err: response ? 0 : -1,
-      //     message: response ? "Send otp successfully" : "Send otp failed",
-      //     data: response,
-      //   });
-      // } else {
-      //   const response = await db.otp.create({
-      //     ...data,
-      //     otp: otp,
-      //   });
-
-      //   resolve({
-      //     err: response ? 0 : -1,
-      //     message: response ? "Send otp successfully" : "Send otp failed",
-      //   });
-      // }
       const response = await db.otp.findOneAndUpdate(
         { email: data.email },
         { otp: otp },

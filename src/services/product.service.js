@@ -84,7 +84,7 @@ export const getAllProduct = async ({
         };
       }
       //pagination
-      const _limit = parseInt(limit) || 10;
+      const _limit = parseInt(limit) || 12;
       const _page = parseInt(page) || 1;
       const _skip = (_page - 1) * _limit;
       //sort

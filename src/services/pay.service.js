@@ -4,6 +4,7 @@ import db from "../models";
 import { STATUS_ORDER } from "../utils/constants";
 import querystring from "qs";
 import crypto from "crypto";
+import { Console } from "console";
 
 dotenv.config();
 
@@ -45,8 +46,8 @@ export const createPaymentUrl = async (data) =>
       vnp_Params["vnp_TmnCode"] = tmnCode;
       vnp_Params["vnp_Locale"] = "vn";
       vnp_Params["vnp_CurrCode"] = currCode;
-      vnp_Params["vnp_TxnRef"] = data.idOrder;
-      vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + data.idOrder;
+      vnp_Params["vnp_TxnRef"] = data.orderCode;
+      vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + data.orderCode;
       vnp_Params["vnp_OrderType"] = "other";
       vnp_Params["vnp_Amount"] = amount;
       vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -65,7 +66,6 @@ export const createPaymentUrl = async (data) =>
       vnp_Params["vnp_SecureHash"] = signed;
       vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
       //Neu muon dung Redirect thi dong dong ben duoi
-
       resolve({
         err: 0,
         message: "Tạo url thanh toán thành công",
@@ -82,14 +82,12 @@ export const createPaymentUrl = async (data) =>
 
 export const vnpayReturn = async (vnp_Params) =>
   new Promise(async (resolve, reject) => {
+    console.log(vnp_Params);
     var secureHash = vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHashType"];
-
     var rspCode = vnp_Params["vnp_ResponseCode"];
-
     vnp_Params = sortObject(vnp_Params);
-
     var secretKey = process.env.vnp_HashSecret;
     var signData = querystring.stringify(vnp_Params, { encode: false });
     var hmac = crypto.createHmac("sha512", secretKey);

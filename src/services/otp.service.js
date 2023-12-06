@@ -86,24 +86,29 @@ export const verifyOtp = async (data) =>
               otp: 0,
             });
             //find customer info
-            const customer = await db.customer.findOne({
+            let customer = await db.customer.findOne({
               email: response.email,
             });
-            //create access token
-            const accessToken = generateAccessToken(
-              customer,
-              COOKIES_PATH.CUSTOMER
-            );
-            //create refresh token
-            const refreshToken = generateRefreshToken(
-              customer,
-              COOKIES_PATH.CUSTOMER
-            );
-            //save token
-            await db.customer.findByIdAndUpdate(customer.id, {
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-            });
+            const accessToken = null;
+            const refreshToken = null;
+            if (customer) {
+              //create access token
+              accessToken = generateAccessToken(
+                customer,
+                COOKIES_PATH.CUSTOMER
+              );
+              //create refresh token
+              refreshToken = generateRefreshToken(
+                customer,
+                COOKIES_PATH.CUSTOMER
+              );
+              //save token
+              await db.customer.findByIdAndUpdate(customer.id, {
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              });
+            }
+
             resolve({
               err: 0,
               message: "Verify otp successfully",

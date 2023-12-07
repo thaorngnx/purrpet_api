@@ -10,6 +10,8 @@ export const addCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
+      sameSite: "none",
+      secure: true,
     });
     return res.status(200).json(response);
   } catch (error) {
@@ -34,7 +36,7 @@ export const updateCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "None",
+      sameSite: "none",
       secure: true,
     });
     return res.status(200).json(response);
@@ -50,7 +52,7 @@ export const deleteProductInCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "None",
+      sameSite: "none",
       secure: true,
     });
     return res.status(200).json(response);
@@ -66,7 +68,7 @@ export const deleteCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "None",
+      sameSite: "none",
       secure: true,
     });
     return res.status(200).json(response);

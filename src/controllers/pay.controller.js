@@ -16,8 +16,8 @@ export const createPaymentUrl = async (req, res) => {
 
 export const vnpayReturn = async (req, res) => {
   try {
-    const response = await services.vnpayReturn(req.query);
-    return res.status(200).json(response);
+     await services.vnpayReturn(req.query);
+    res.redirect("https://ui-purrpetshop.vercel.app/order");
   } catch (error) {
     return internalServerError(res);
   }

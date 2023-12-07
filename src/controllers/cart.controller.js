@@ -1,7 +1,6 @@
 import * as services from "../services";
 import { internalServerError, badRequest } from "../middlewares/handle_errors";
 import { addCartDto } from "../helpers/joi_schema";
-import cookie from 'cookie';
 
 export const addCart = async (req, res) => {
   try {
@@ -35,6 +34,8 @@ export const updateCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
+      sameSite: "None",
+      secure: true,
     });
     return res.status(200).json(response);
   } catch (error) {
@@ -49,6 +50,8 @@ export const deleteProductInCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
+      sameSite: "None",
+      secure: true,
     });
     return res.status(200).json(response);
   } catch (error) {
@@ -63,6 +66,8 @@ export const deleteCart = async (req, res) => {
     res.cookie("cartData", JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
+      sameSite: "None",
+      secure: true,
     });
     return res.status(200).json(response);
   } catch (error) {

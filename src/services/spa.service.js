@@ -39,7 +39,7 @@ export const createSpa = async (data) =>
       }
       const response = await db.spa.create(data);
       resolve({
-        error: response ? 0 : -1,
+        err: response ? 0 : -1,
         message: response ? "Create spa success" : "Create spa fail",
         data: response,
       });
@@ -75,7 +75,7 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
 
       const response = await db.spa.find({ ...query, ...search });
       resolve({
-        error: response ? 0 : -1,
+        err: response ? 0 : -1,
         message: response ? "Get all spa success" : "Get all spa fail",
         data: response,
       });
@@ -136,7 +136,7 @@ export const getSpaByCode = async (purrPetCode) =>
     try {
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       resolve({
-        error: response ? 0 : -1,
+        err: response ? 0 : -1,
         message: response ? "Get spa by code success" : "Get spa by code fail",
         data: response,
       });
@@ -174,7 +174,7 @@ export const updateSpa = async (data, purrPetCode) =>
         data
       );
       resolve({
-        error: response ? 0 : -1,
+        err: response ? 0 : -1,
         message: response ? "Update spa success" : "Update spa fail",
       });
     } catch (error) {
@@ -188,7 +188,7 @@ export const updateStatusSpa = async (purrPetCode) =>
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       if (!response) {
         return resolve({
-          error: -1,
+          err: -1,
           message: "spa is not exist",
         });
       } else {
@@ -199,7 +199,7 @@ export const updateStatusSpa = async (purrPetCode) =>
         }
         await response.save();
         resolve({
-          error: 0,
+          err: 0,
           message: "Update status spa success",
         });
       }
@@ -215,7 +215,7 @@ export const deleteSpa = async (purrPetCode) =>
         purrPetCode: purrPetCode,
       });
       resolve({
-        error: response ? 0 : -1,
+        err: response ? 0 : -1,
         message: response ? "Delete spa success" : "Delete spa fail",
       });
     } catch (error) {

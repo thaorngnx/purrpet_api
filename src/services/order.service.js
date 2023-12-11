@@ -1,6 +1,7 @@
 import db from "../models";
 import { COLLECTION, PREFIX, STATUS_ORDER, ROLE } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import { pagination } from "../utils/pagination";
 
 export const createOrder = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -97,23 +98,28 @@ export const getAllOrder = async ({ page, limit, order, key, ...query }) =>
           ],
         };
       }
-      //pagination
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
+      
       //sort
       const _sort = {};
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-      const response = await db.order.find({ ...query, ...search });
+      const response = await db.order.find({ ...query, ...search }).sort(_sort);
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Get all order successfully"
           : "Get all order failed",
-        data: response,
+          data: result.dataInOnePage,
+          totalPage: result.totalPage,
       });
     } catch (error) {
       reject(error);

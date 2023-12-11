@@ -79,3 +79,13 @@ export const updateCustomer = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+export const getCustomerByEmail = async (req, res) => {
+  try {
+    const response = await services.getCustomerByEmail(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}

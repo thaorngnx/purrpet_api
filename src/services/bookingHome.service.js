@@ -7,6 +7,7 @@ import {
   checkValidStatusBooking,
 } from "../utils/validationData";
 import dayjs from "dayjs";
+import { pagination } from "../utils/pagination";
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -43,24 +44,47 @@ export const createBookingHome = async (data) =>
           : "Create booking home failed",
         data: response,
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
-export const getAllBookingHome = async () =>
+export const getAllBookingHome = async (
+  {
+    page,
+    limit,
+    order,
+    key,
+    ...query
+  }
+) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.bookingHome.find();
+      //Săp xếp
+      const _sort = {};
+      if (order) {
+        const [key, value] = order.split(".");
+        _sort[key] = value === "asc" ? 1 : -1;
+      }
+      const response = await db.bookingHome.find().sort(_sort);
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Get all booking home successfully"
           : "Get all booking home failed",
-        data: response,
+          data: result.dataInOnePage,
+          totalPage: result.totalPage,
+
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -103,8 +127,8 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
           : "Get booking home by code failed",
         data: response,
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -128,8 +152,8 @@ export const getBookingHomeByCustomer = async (id) =>
           : "Get booking home by customer failed",
         data: response,
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -146,8 +170,8 @@ export const updateBookingHome = async (data, purrPetCode) =>
           ? "Update booking home successfully"
           : "Update booking home failed",
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -185,8 +209,8 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           });
         }
       }
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -202,8 +226,8 @@ export const deleteBookingHome = async (purrPetCode) =>
           ? "Delete booking home successfully"
           : "Delete booking home failed",
       });
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });
 
@@ -212,7 +236,7 @@ export const getUnavailableDay = async (query) =>
     try {
       const response = await getUnavailableDayByHome(query);
       resolve(response);
-    } catch (error) {
-      reject(error);
+    } catch (err) {
+      reject(err);
     }
   });

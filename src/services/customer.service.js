@@ -185,3 +185,19 @@ export const updateCustomer = async (data, purrPetCode) =>
       reject(error);
     }
   });
+
+export const getCustomerByEmail = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.customer.findOne({email: data.email});
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Get customer by email successfully"
+          : "Get customer by email failed",
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

@@ -49,7 +49,7 @@ export const createBookingHome = async (data) =>
     }
   });
 
-export const getAllBookingHome = async (
+export const getAllBookingHome = async (user, 
   {
     page,
     limit,
@@ -60,13 +60,34 @@ export const getAllBookingHome = async (
 ) =>
   new Promise(async (resolve, reject) => {
     try {
-      //Săp xếp
+      if (user.role === ROLE.CUSTOMER) {
+        query = {
+          ...query,
+          customerCode: user.purrPetCode,
+        };
+      }
+      //search
+      let search = {};
+      if (key) {
+        search = {
+          ...search,
+          $or: [
+            { purrPetCode: { $regex: key, $options: "i" } },
+            { customerEmail: { $regex: key, $options: "i" } },
+            { customerName: { $regex: key, $options: "i" } },
+            { status: { $regex: key, $options: "i" } },
+          ],
+        };
+      }
+      
+      //sort
       const _sort = {};
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-      const response = await db.bookingHome.find().sort(_sort);
+
+      const response = await db.bookingHome.find({ ...query, ...search }).sort(_sort);
       const count = response.length;
       const result = pagination({
         data: response,
@@ -94,25 +115,36 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       const bookingHome = await db.bookingHome.findOne({
         purrPetCode: purrPetCode,
       });
+
       if (!bookingHome) {
         resolve({
           err: -1,
           message: "Booking home not found",
         });
       }
-      const customer = await db.customer.findOne({
-        purrPetCode: bookingHome.customerCode,
-      });
-      if (user.role === ROLE.CUSTOMER && customer.id !== user.id) {
+
+      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== bookingHome.customerCode) {
         resolve({
           err: -1,
           message: "You don't have permission to get this booking home",
         });
       }
+      const customer = await db.customer.findOne({
+        purrPetCode: bookingHome.customerCode,
+      });
+
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
+        });
+      }
+
       const numberOfDay = dayjs(bookingHome.dateCheckOut).diff(
         dayjs(bookingHome.dateCheckIn),
         "day"
       );
+      
       const response = {
         ...bookingHome._doc,
         customerName: customer.name,

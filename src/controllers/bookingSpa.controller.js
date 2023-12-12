@@ -10,7 +10,7 @@ import { internalServerError, badRequest } from "../middlewares/handle_errors";
 
 export const getAllBookingSpa = async (req, res) => {
   try {
-    const response = await services.getAllBookingSpa(req.query);
+    const response = await services.getAllBookingSpa(req.user, req.query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

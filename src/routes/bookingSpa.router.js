@@ -5,7 +5,7 @@ import { isAdmin, isCustomer, isStaff } from "../middlewares/verify_role";
 
 const router = express.Router();
 
-router.get("/query", controllers.getAllBookingSpa);
+router.get("/query", verifyToken, controllers.getAllBookingSpa);
 router.get("/get-available-time", controllers.getAvailableTime);
 router.get(
   "/get-by-customer",

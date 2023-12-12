@@ -7,18 +7,19 @@ export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) return unauthorized("Required authorization!", res);
   const access_token = token.split(" ")[1];
+  let response;
   jwt.verify(
     access_token,
     process.env.ACCESS_TOKEN_SECRET,
     async (err, user) => {
       if (!user) return unauthorized("Access token is invalid!", res);
       if (user.role === ROLE.CUSTOMER) {
-        const response = await db.customer.findOne({
+        response = await db.customer.findOne({
           accessToken: access_token,
         });
         if (!response) return unauthorized("Access token is invalid!", res);
       } else {
-        const response = await db.account.findOne({
+        response = await db.account.findOne({
           accessToken: access_token,
         });
         if (!response) return unauthorized("Access token is invalid!", res);
@@ -34,7 +35,11 @@ export const verifyToken = (req, res, next) => {
           return unauthorized("Access token is expired!", res, isChecked);
         }
       }
-      req.user = user;
+      req.user = {
+        id: user.id,
+        role: user.role,
+        purrPetCode: response.purrPetCode,
+      }
       next();
     }
   );

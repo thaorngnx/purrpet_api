@@ -81,9 +81,15 @@ export const createOrder = async (data) =>
     }
   });
 
-export const getAllOrder = async ({ page, limit, order, key, ...query }) =>
+export const getAllOrder = async (user, { page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
+      if (user.role === ROLE.CUSTOMER) {
+        query = {
+          ...query,
+          customerCode: user.purrPetCode,
+        };
+      }
       //search
       let search = {};
       if (key) {
@@ -130,19 +136,29 @@ export const getOrderByCode = async (user, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const order = await db.order.findOne({ purrPetCode: purrPetCode });
+
       if (!order) {
         resolve({
           err: -1,
           message: "Order not found",
         });
       }
-      const customer = await db.customer.findOne({
-        purrPetCode: order.customerCode,
-      });
-      if (user.role === ROLE.CUSTOMER && customer.id !== user.id) {
+
+      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== order.customerCode) {
         resolve({
           err: -1,
           message: "You don't have permission to access this order",
+        });
+      }
+
+      const customer = await db.customer.findOne({
+        purrPetCode: order.customerCode,
+      });
+      
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
         });
       }
 

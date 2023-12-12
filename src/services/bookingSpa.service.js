@@ -50,7 +50,7 @@ export const createBookingSpa = async (data) =>
     }
   });
 
-export const getAllBookingSpa = async ({ 
+export const getAllBookingSpa = async (user, { 
   page,
   limit,
   order,
@@ -59,13 +59,34 @@ export const getAllBookingSpa = async ({
 }) =>
   new Promise(async (resolve, reject) => {
     try {
-      //Săp xếp
+      if (user.role === ROLE.CUSTOMER) {
+        query = {
+          ...query,
+          customerCode: user.purrPetCode,
+        };
+      }
+      //search
+      let search = {};
+      if (key) {
+        search = {
+          ...search,
+          $or: [
+            { purrPetCode: { $regex: key, $options: "i" } },
+            { customerEmail: { $regex: key, $options: "i" } },
+            { customerName: { $regex: key, $options: "i" } },
+            { status: { $regex: key, $options: "i" } },
+          ],
+        };
+      }
+      
+      //sort
       const _sort = {};
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-      const response = await db.bookingSpa.find().sort(_sort);
+
+      const response = await db.bookingSpa.find({ ...query, ...search }).sort(_sort);
       const count = response.length;
       const result = pagination({
         data: response,
@@ -92,19 +113,29 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       const bookingSpa = await db.bookingSpa.findOne({
         purrPetCode: purrPetCode,
       });
+      
       if (!bookingSpa) {
         resolve({
           err: -1,
           message: "Booking spa not found",
         });
       }
-      const customer = await db.customer.findOne({
-        purrPetCode: bookingSpa.customerCode,
-      });
-      if (user.role === ROLE.CUSTOMER && customer.id !== user.id) {
+
+      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== bookingSpa.customerCode) {
         resolve({
           err: -1,
           message: "You don't have permission to access this booking spa",
+        });
+      }
+
+      const customer = await db.customer.findOne({
+        purrPetCode: bookingSpa.customerCode,
+      });
+
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Customer not found",
         });
       }
       const response = {

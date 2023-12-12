@@ -6,7 +6,7 @@ import { isCustomer } from "../middlewares/verify_role";
 const router = express.Router();
 
 //router.use(verifyToken);
-router.get("/query", controllers.getAllOrder);
+router.get("/query", verifyToken, controllers.getAllOrder);
 router.get(
   "/get-by-customer",
   verifyToken,

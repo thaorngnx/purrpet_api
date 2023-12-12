@@ -8,7 +8,7 @@ import { internalServerError, badRequest } from "../middlewares/handle_errors";
 
 export const getAllOrder = async (req, res) => {
   try {
-    const response = await services.getAllOrder(req.query);
+    const response = await services.getAllOrder(req.user, req.query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

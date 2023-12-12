@@ -81,7 +81,7 @@ export const createOrder = async (data) =>
     }
   });
 
-export const getAllOrder = async (user, { page, limit, order, key, ...query }) =>
+export const getAllOrder = async (user, { page, limit, order, key, fromDate, toDate, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
       if (user.role === ROLE.CUSTOMER) {
@@ -93,17 +93,26 @@ export const getAllOrder = async (user, { page, limit, order, key, ...query }) =
       //search
       let search = {};
       if (key) {
+        console.log("key", key);
         search = {
           ...search,
-          $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { customerEmail: { $regex: key, $options: "i" } },
-            { customerName: { $regex: key, $options: "i" } },
-            { customerAddress: { $regex: key, $options: "i" } },
-            { status: { $regex: key, $options: "i" } },
-          ],
+              $or: [
+                { purrPetCode: { $regex: key, $options: "i" } },
+                { customerCode: { $regex: key, $options: "i" } },
+              ],
         };
       }
+      if (fromDate && toDate) {
+        search = {
+          ...search,
+          createdAt: {
+            $gte: new Date(fromDate),
+            $lte: new Date(toDate),
+          },
+        };
+      }
+
+      console.log("search", search);
       
       //sort
       const _sort = {};

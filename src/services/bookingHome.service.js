@@ -55,6 +55,8 @@ export const getAllBookingHome = async (user,
     limit,
     order,
     key,
+    fromDate,
+    toDate,
     ...query
   }
 ) =>
@@ -73,10 +75,18 @@ export const getAllBookingHome = async (user,
           ...search,
           $or: [
             { purrPetCode: { $regex: key, $options: "i" } },
-            { customerEmail: { $regex: key, $options: "i" } },
-            { customerName: { $regex: key, $options: "i" } },
-            { status: { $regex: key, $options: "i" } },
+            { customerCode: { $regex: key, $options: "i" } },
           ],
+        };
+      }
+
+      if (fromDate && toDate) {
+        search = {
+          ...search,
+          dateCheckIn: {
+            $gte: new Date(fromDate),
+            $lte: new Date(toDate),
+          },
         };
       }
       

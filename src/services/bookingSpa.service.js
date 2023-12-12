@@ -55,6 +55,8 @@ export const getAllBookingSpa = async (user, {
   limit,
   order,
   key,
+  fromDate,
+  toDate,
   ...query
 }) =>
   new Promise(async (resolve, reject) => {
@@ -72,10 +74,18 @@ export const getAllBookingSpa = async (user, {
           ...search,
           $or: [
             { purrPetCode: { $regex: key, $options: "i" } },
-            { customerEmail: { $regex: key, $options: "i" } },
-            { customerName: { $regex: key, $options: "i" } },
-            { status: { $regex: key, $options: "i" } },
+            { customerCode: { $regex: key, $options: "i" } },
           ],
+        };
+      }
+
+      if (fromDate && toDate) {
+        search = {
+          ...search,
+          bookingDate: {
+            $gte: new Date(fromDate),
+            $lte: new Date(toDate),
+          },
         };
       }
       

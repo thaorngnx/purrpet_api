@@ -204,3 +204,35 @@ export const getCustomerByEmail = async (data) =>
       reject(error);
     }
   });
+
+  export const createCusStaff = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      data.purrPetCode = await generateCode(
+        COLLECTION.CUSTOMER,
+        PREFIX.CUSTOMER
+      );
+      const isExistCustomer = await checkDuplicateValue(
+        data.purrPetCode,
+        VALIDATE_DUPLICATE.EMAIL,
+        data.email,
+        COLLECTION.CUSTOMER
+      );
+      if (isExistCustomer.err !== 0)
+        return resolve({
+          err: -1,
+          message: "Email đã tồn tại",
+          data: null,
+        });
+      const response = await db.customer.create(data);
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? "Create customer successfully"
+          : "Create customer failed",
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

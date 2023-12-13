@@ -13,6 +13,7 @@ router.post("/find-by-id/:id", controllers.getCustomerById);
 // router.use(verifyToken);
 router.post("/look-up-orders", controllers.lookUpOrders);
 router.post("/create", controllers.createCustomer);
+router.post("/createcus-staff", controllers.createCusStaff);
 router.put("/update/:purrPetCode", controllers.updateCustomer);
 
 

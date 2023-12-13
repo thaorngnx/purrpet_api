@@ -89,3 +89,15 @@ export const getCustomerByEmail = async (req, res) => {
     return internalServerError(res);
   }
 }
+
+export const createCusStaff = async (req, res) => {
+  try {
+    const { error } = customerDto.validate(req.body);
+    if (error) return badRequest(error.message, res);
+    const response = await services.createCusStaff(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}

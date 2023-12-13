@@ -116,4 +116,14 @@ export const getReportProduct = async (req, res) => {
   }
 }
 
+export const getAllProductStaff = async (req, res) => {
+  try {
+    const response = await services.getAllProductStaff(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}
+
 

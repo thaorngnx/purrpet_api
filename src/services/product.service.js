@@ -13,6 +13,7 @@ import {
   checkDuplicateValue,
 } from "../utils/validationData";
 import moment from "moment";
+import e from "express";
 
 export const createProduct = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -157,6 +158,55 @@ export const getAllProductCustomer = async ({
       reject(error);
     }
   });
+
+  export const getAllProductStaff = async ({
+    page,
+    limit,
+    order,
+    key,
+    ...query
+  }) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        query = {
+          ...query,
+          inventory: { $gt: 0 },
+        };
+        //search
+        let search = {};
+        if (key) {
+          search = {
+            ...search,
+            $or: [
+              { purrPetCode: { $regex: key, $options: "i" } },
+              { productName: { $regex: key, $options: "i" } },
+              { description: { $regex: key, $options: "i" } },
+            ],
+          };
+        }
+        //pagination
+        const _limit = parseInt(limit) || 12;
+        const _page = parseInt(page) || 1;
+        const _skip = (_page - 1) * _limit;
+        //sort
+        const _sort = {};
+        if (order) {
+          const [key, value] = order.split(".");
+          _sort[key] = value === "asc" ? 1 : -1;
+        }
+        const response = await db.product.find({ ...query, ...search });
+        resolve({
+          err: response ? 0 : -1,
+          message: response
+            ? "Get all product successfully"
+            : "Get all product failed",
+          data: response,
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+
 
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {

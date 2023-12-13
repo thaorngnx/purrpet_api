@@ -139,6 +139,9 @@ export const createCustomer = async (data) =>
           accessToken: accessToken,
           refreshToken: refreshToken,
         };
+        customer.accessToken = accessToken;
+        customer.refreshToken = refreshToken;
+        await customer.save();
       }
       resolve({
         err: response ? 0 : -1,

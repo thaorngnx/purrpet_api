@@ -5,7 +5,7 @@ import { internalServerError, badRequest } from "../middlewares/handle_errors";
 export const sendOtp = async (req, res) => {
   try {
     const { error } = sendOtpDto.validate(req.body);
-    if (error) return badRequest(res, error.details[0].message);
+    if (error) return badRequest(error.message, res);
     const response = await services.sendOtp(req.body);
     return res.status(200).json(response);
   } catch (error) {
@@ -17,7 +17,7 @@ export const sendOtp = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   try {
     const { error } = verifyOtpDto.validate(req.body);
-    if (error) return badRequest(res, error.details[0].message);
+    if (error) return badRequest(error.message, res);
     const response = await services.verifyOtp(req.body);
     return res.status(200).json(response);
   } catch (error) {

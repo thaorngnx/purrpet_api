@@ -18,11 +18,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use((req, res, next) => {
-  res.setHeader("Content-Type", "text/html");
-  next();
-});
+app.use(express.static("public"));
 
 
 app.get("/", (req, res) => {

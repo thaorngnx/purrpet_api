@@ -20,15 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-
-// app.get("/", (req, res) => {
-//   res.send("Welcome to PurrPet API");
-// });
-//set header text/html
 app.get("/", (req, res) => {
-  res.setHeader("Content-Type", "text/html");
   res.send("Welcome to PurrPet API");
 });
+
 
 initRoutes(app);
 

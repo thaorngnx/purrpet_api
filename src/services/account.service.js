@@ -94,6 +94,9 @@ export const updateAccount = async (data, purrPetCode) =>
           message: "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!",
         });
       }
+      if (data.password) {
+        data.password = hashPassword(data.password);
+      }
       const response = await db.account.findOneAndUpdate(
         { purrPetCode: purrPetCode },
         data

@@ -38,8 +38,8 @@ export const createAccount = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create account successfully"
-          : "Create account failed",
+          ? "Tạo tài khoản thành công"
+          : "Tạo tài khoản thất bại",
         data: response,
       });
     } catch (error) {
@@ -54,8 +54,8 @@ export const getAllAccount = async () =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all account successfully"
-          : "Get all account failed",
+          ? "Lấy danh sách tài khoản thành công"
+          : "Lấy danh sách tài khoản thất bại",
         data: response,
       });
     } catch (error) {
@@ -70,8 +70,8 @@ export const getAccountByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get account by code successfully"
-          : "Get account by code failed",
+          ? "Lấy thông tin tài khoản thành công"
+          : "Lấy thông tin tài khoản thất bại",
         data: response,
       });
     } catch (error) {
@@ -104,8 +104,8 @@ export const updateAccount = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update tài khoản successfully"
-          : "Update account failed",
+          ? "Cập nhật tài khoản thành công"
+          : "Cập nhật tài khoản thất bại",
       });
     } catch (error) {
       reject(error);
@@ -119,7 +119,7 @@ export const updateStatusAccount = async (purrPetCode) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Account not found",
+          message: "Không tìm thấy tài khoản",
         });
       } else {
         if (response.status === STATUS_ACCOUNT.ACTIVE) {
@@ -130,7 +130,7 @@ export const updateStatusAccount = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Update status account successfully",
+          message: "Cập nhật tài khoản thành công",
           data: response,
         });
       }
@@ -148,8 +148,8 @@ export const deleteAccount = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Delete account successfully"
-          : "Delete account failed",
+          ? "Xóa tài khoản thành công"
+          : "Xóa tài khoản thất bại",
       });
     } catch (error) {
       reject(error);

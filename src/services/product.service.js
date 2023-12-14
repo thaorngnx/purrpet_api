@@ -98,8 +98,8 @@ export const getAllProduct = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all product successfully"
-          : "Get all product failed",
+          ? "Lấy danh sách sản phẩm thành công!"
+          : "Lấy danh sách sản phẩm thất bại!",
         data: response,
       });
     } catch (error) {
@@ -149,8 +149,8 @@ export const getAllProductCustomer = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all category successfully"
-          : "Get all category failed",
+          ? "Lấy danh sách sản phẩm thành công!"
+          : "Lấy danh sách sản phẩm thất bại!",
         data: result.dataInOnePage,
         totalPage: result.totalPage,
       });
@@ -198,8 +198,8 @@ export const getAllProductCustomer = async ({
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Get all product successfully"
-            : "Get all product failed",
+            ? "Lấy danh sách sản phẩm thành công!"
+            : "Lấy danh sách sản phẩm thất bại!",
           data: response,
         });
       } catch (error) {
@@ -352,7 +352,7 @@ data
         ]);
       resolve({
         err: 0,
-        message: "Get report product successfully!",
+        message: "Thống kê sản phẩm thành công!",
         data: result
       });
       

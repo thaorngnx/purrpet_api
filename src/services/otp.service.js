@@ -28,7 +28,9 @@ export const sendOtp = async (data) =>
         to: data.email,
         subject: "Xác thực người dùng",
         html: `<h1>Xác thực người dùng</h1>
-                    <p>OTP xác thực người dùng của bạn là: ${otp}</p>`,
+        <p>Chào mừng bạn đến với PetPurr</p>
+        <p>Đây là mã OTP của bạn và mã này có hiệu lực trong vòng 5 phút!</p>
+        <p>OTP xác thực người dùng của bạn là: ${otp}</p>`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -36,7 +38,7 @@ export const sendOtp = async (data) =>
           console.log(error);
           resolve({
             err: -1,
-            message: "Send otp failed",
+            message: "Gửi mã OTP thất bại",
           });
         } else {
           console.log("Email sent: " + info.response);
@@ -52,7 +54,7 @@ export const sendOtp = async (data) =>
        
         resolve({
           err: 0,
-          message: "Send otp successfully",
+          message: "Gửi mã OTP thành công",
         });
       } else {
         const response = await db.otp.create({
@@ -62,7 +64,7 @@ export const sendOtp = async (data) =>
 
         resolve({
           err: response ? 0 : -1,
-          message: response ? "Send otp successfully" : "Send otp failed",
+          message: response ? "Gửi mã OTP thành công" : "Gửi mã OTP thất bại",
         });
       }
     } catch (error) {
@@ -78,14 +80,12 @@ export const verifyOtp = async (data) =>
         if (data.otp == 0) {
           resolve({
             err: -1,
-            message: "Verify otp failed",
+            message: "Xác thực otp thất bại",
           });
         } else {
           if (response.otp == data.otp) {
-            //save refresh token
-            await db.otp.findByIdAndUpdate(response.id, {
-              otp: 0,
-            });
+            //delete otp
+            await db.otp.findByIdAndDelete(response.id);
             //find customer info
             let customer = await db.customer.findOne({
               email: response.email,
@@ -112,7 +112,7 @@ export const verifyOtp = async (data) =>
 
             resolve({
               err: 0,
-              message: "Verify otp successfully",
+              message: "Xác thực otp thành công",
               data: customer,
               access_token: accessToken,
               refresh_token: refreshToken,
@@ -120,14 +120,14 @@ export const verifyOtp = async (data) =>
           } else {
             resolve({
               err: -1,
-              message: "Verify otp failed",
+              message: "Xác thực otp thất bại",
             });
           }
         }
       } else {
         resolve({
           err: -1,
-          message: "Verify otp failed",
+          message: "Xác thực otp thất bại",
         });
       }
     } catch (error) {

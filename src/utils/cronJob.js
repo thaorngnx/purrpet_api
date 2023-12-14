@@ -96,4 +96,16 @@ export const cronJob = () => {
       }
     });
   });
+
+  //job: check otp code expired after 5 minutes - RUN 1 minute 1 time
+  cron.schedule("*/1 * * * *", async () => {
+    console.log("check otp code expired after 5 minutes");
+    //get time now minus 5 minutes
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - 5);
+    const otps = await db.otp.find({ updatedAt: { $lte: now } });
+    otps.forEach(async (otp) => {
+      await db.otp.findByIdAndDelete(otp.id);
+    });
+  });
 };

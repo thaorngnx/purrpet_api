@@ -19,8 +19,8 @@ export const getAllCustomer = async (query) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all customer successfully"
-          : "Get all customer failed",
+          ? "Lấy danh sách khách hàng thành công"
+          : "Lấy danh sách khách hàng thất bại",
         data: response,
       });
     } catch (error) {
@@ -42,8 +42,8 @@ export const getCustomerByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get customer by code successfully"
-          : "Get customer by code failed",
+          ? "Lấy thông tin khách hàng thành công"
+          : "Lấy thông tin khách hàng thất bại",
         data: response,
         totalOrder: total_order,
       });
@@ -59,8 +59,8 @@ export const getCustomerById = async (id) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get customer by id successfully"
-          : "Get customer by id failed",
+          ? "Lấy thông tin khách hàng thành công"
+          : "Lấy thông tin khách hàng thất bại",
         data: response,
       });
     } catch (error) {
@@ -92,8 +92,8 @@ export const lookUpOrders = async (userId) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Look up orders successfully"
-            : "Look up orders failed",
+            ? "Tra cứu đơn hàng thành công"
+            : "Tra cứu đơn hàng thất bại",
           Oder_Product: isOder,
           Homestay: isHomestay,
           Spa: isSpa,
@@ -146,8 +146,8 @@ export const createCustomer = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create customer successfully"
-          : "Create customer failed",
+          ? "Tạo khách hàng thành công"
+          : "Tạo khách hàng thất bại",
         data: response,
       });
     } catch (error) {
@@ -180,8 +180,8 @@ export const updateCustomer = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update customer successfully"
-          : "Update customer failed",
+          ? "Cập nhật khách hàng thành công"
+          : "Cập nhật khách hàng thất bại",
         data: response,
       });
     } catch (error) {
@@ -196,8 +196,8 @@ export const getCustomerByEmail = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get customer by email successfully"
-          : "Get customer by email failed",
+          ? "Lấy thông tin khách hàng thành công"
+          : "Lấy thông tin khách hàng thất bại",
         data: response,
       });
     } catch (error) {
@@ -228,8 +228,8 @@ export const getCustomerByEmail = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create customer successfully"
-          : "Create customer failed",
+          ? "Tạo khách hàng thành công"
+          : "Tạo khách hàng thất bại",
         data: response,
       });
     } catch (error) {

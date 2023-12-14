@@ -31,8 +31,8 @@ export const createCategory = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create category successfully"
-          : "Create category failed",
+          ? "Tạo danh mục thành công"
+          : "Tạo danh mục thất bại",
         data: response,
       });
     } catch (error) {
@@ -75,8 +75,8 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all category successfully"
-          : "Get all category failed",
+          ? "Lấy danh sách danh mục thành công"
+          : "Lấy danh sách danh mục thất bại",
         data: response,
       });
     } catch (error) {
@@ -126,8 +126,8 @@ export const getAllCategoryCustomer = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all category successfully"
-          : "Get all category failed",
+          ? "Lấy danh sách danh mục thành công"
+          : "Lấy danh sách danh mục thất bại",
         data: response,
       });
     } catch (error) {
@@ -142,8 +142,8 @@ export const getCategoryByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get category by code successfully"
-          : "Get category by code failed",
+          ? "Lấy thông tin danh mục thành công"
+          : "Lấy thông tin danh mục thất bại",
         data: response,
       });
     } catch (error) {
@@ -173,8 +173,8 @@ export const updateCategory = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update category successfully"
-          : "Update category failed",
+          ? "Cập nhật danh mục thành công"
+          : "Cập nhật danh mục thất bại",
       });
     } catch (error) {
       reject(error);
@@ -188,7 +188,7 @@ export const updateStatusCategory = async (purrPetCode) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Category not found",
+          message: "Danh mục không tồn tại",
         });
       } else {
         if (response.status === STATUS_CATEGORY.ACTIVE) {
@@ -199,7 +199,7 @@ export const updateStatusCategory = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Update status category successfully",
+          message: "Cập nhật trạng thái danh mục thành công",
         });
       }
     } catch (error) {
@@ -216,8 +216,8 @@ export const deleteCategory = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Delete category successfully"
-          : "Delete category failed",
+          ? "Xóa danh mục thành công"
+          : "Xóa danh mục thất bại",
       });
     } catch (error) {
       reject(error);

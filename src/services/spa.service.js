@@ -40,7 +40,7 @@ export const createSpa = async (data) =>
       const response = await db.spa.create(data);
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Create spa success" : "Create spa fail",
+        message: response ? "Tạo spa thành công" : "Tạo spa thất bại",
         data: response,
       });
     } catch (error) {
@@ -76,7 +76,7 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
       const response = await db.spa.find({ ...query, ...search });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Get all spa success" : "Get all spa fail",
+        message: response ? "Lấy danh sách spa thành công" : "Lấy danh sách spa thất bại",
         data: response,
       });
     } catch (error) {
@@ -120,8 +120,8 @@ export const getAllSpaCustomer = async ({ page, limit, order, key, ...query }) =
        resolve({
          err: response ? 0 : -1,
          message: response
-           ? "Get all category successfully"
-           : "Get all category failed",
+           ? "Lấy danh sách spa thành công"
+           : "Lấy danh sách spa thất bại",
          data: response,
         });
     }
@@ -137,7 +137,7 @@ export const getSpaByCode = async (purrPetCode) =>
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Get spa by code success" : "Get spa by code fail",
+        message: response ? "Lấy thông tin spa thành công" : "Lấy thông tin spa thất bại",
         data: response,
       });
     } catch (error) {
@@ -175,7 +175,7 @@ export const updateSpa = async (data, purrPetCode) =>
       );
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Update spa success" : "Update spa fail",
+        message: response ? "Cập nhật spa thành công" : "Cập nhật spa thất bại",
       });
     } catch (error) {
       reject(error);
@@ -189,7 +189,7 @@ export const updateStatusSpa = async (purrPetCode) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "spa is not exist",
+          message: "Spa không tồn tại",
         });
       } else {
         if (response.status === STATUS_SPA.ACTIVE) {
@@ -200,7 +200,7 @@ export const updateStatusSpa = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Update status spa success",
+          message: "Cập nhật trạng thái spa thành công",
         });
       }
     } catch (error) {
@@ -216,7 +216,7 @@ export const deleteSpa = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Delete spa success" : "Delete spa fail",
+        message: response ? "Xóa spa thành công" : "Xóa spa thất bại",
       });
     } catch (error) {
       reject(error);
@@ -283,7 +283,7 @@ export const getReportSpa = async (data) =>  new Promise(async (resolve, reject)
     }
     resolve({
       err: 0,
-      message: "Get report homestay successfully!",
+      message: "Thống kê spa thành công",
       bySpaType: bySpaType,
       bySpaName: bySpaName,
     });

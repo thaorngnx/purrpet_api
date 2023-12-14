@@ -51,15 +51,15 @@ export const createHomestay = async (data) =>
       if (!category) {
         resolve({
           err: -1,
-          message: "Category code is not exist",
+          message: "Danh mục không tồn tại",
         });
       }
       const response = await db.homestay.create(data);
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create homestay successfully"
-          : "Create homestay failed",
+          ? "Tạo homestay thành công"
+          : "Taọ homestay thất bại",
         data: response,
       });
     } catch (error) {
@@ -97,8 +97,8 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all homestay successfully"
-          : "Get all homestay failed",
+          ? "Tạo homestay thành công"
+          : "Taọ homestay thất bại",
         data: response,
       });
     } catch (error) {
@@ -147,8 +147,8 @@ export const getAllHomestayCustomer = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all category successfully"
-          : "Get all category failed",
+          ? "Lấy danh sách homestay thành công"
+          : "Lấy danh sách homestay thất bại",
         data: response,
       });
     } catch (error) {
@@ -163,7 +163,7 @@ export const getHomestayByCode = async (purrPetCode) =>
       if (!homestay) {
         resolve({
           err: -1,
-          message: "Homestay is not exist",
+          message: "Homestay không tồn tại",
         });
       }
       const category = await db.category.findOne({
@@ -180,8 +180,8 @@ export const getHomestayByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get homestay by code successfully"
-          : "Get homestay by code failed",
+          ? "Lấy thông tin homestay thành công"
+          : "Lấy thông tin homestay thất bại",
         data: response,
       });
     } catch (error) {
@@ -224,8 +224,8 @@ export const updateHomestay = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update homestay successfully"
-          : "Update homestay failed",
+          ? "Cập nhật homestay thành công"
+          : "Cập nhật homestay thất bại",
       });
     } catch (error) {
       reject(error);
@@ -239,7 +239,7 @@ export const updateStatusHomestay = async (purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Homestay is not exist",
+          message: "Homestay không tồn tại",
         });
       } else {
         if (response.status === STATUS_HOME.ACTIVE) {
@@ -250,7 +250,7 @@ export const updateStatusHomestay = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Update status homestay success",
+          message: "Cập nhật trạng thái homestay thành công",
         });
       }
     } catch (error) {
@@ -267,8 +267,8 @@ export const deleteHomestay = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Delete homestay successfully"
-          : "Delete homestay failed",
+          ? "Xóa homestay thành công"
+          : "Xóa homestay thất bại",
       });
     } catch (error) {
       reject(error);
@@ -363,7 +363,7 @@ export const deleteHomestay = async (purrPetCode) =>
       }
       resolve({
         err: 0,
-        message: "Get report homestay successfully!",
+        message: "Thống kê homestay thành công",
         data:  statsByMasterData ,
         datadog: datasetDog,
         datacat: datasetCat,

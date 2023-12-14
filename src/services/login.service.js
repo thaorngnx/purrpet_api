@@ -86,7 +86,7 @@ export const refreshToken = async (refresh_token) =>
       let refreshToken = "";
       const decoded = jwt.decode(refresh_token);
       if (!decoded)
-        return resolve({ err: -1, message: "Refresh token failed!" });
+        return resolve({ err: -1, message: "Refresh token thất bại" });
       let response;
       if (decoded.role === ROLE.CUSTOMER) {
         response = await db.customer.findOne({
@@ -95,7 +95,7 @@ export const refreshToken = async (refresh_token) =>
         if (!response) {
           return resolve({
             err: -1,
-            message: "Refresh token failed!",
+            message: "Refresh token thất bại",
           });
         }
         // Create JWT
@@ -114,7 +114,7 @@ export const refreshToken = async (refresh_token) =>
         if (!response) {
           return resolve({
             err: -1,
-            message: "Refresh token failed!",
+            message: "Refresh token thất bại",
           });
         }
         // Create JWT
@@ -129,7 +129,7 @@ export const refreshToken = async (refresh_token) =>
       }
       resolve({
         err: 0,
-        message: "Refresh token successfully!",
+        message: "Refresh token thành công!",
         access_token: accessToken,
         refresh_token: refreshToken,
       });
@@ -162,12 +162,12 @@ export const logout = async (user) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "User is not found!",
+          message: "Không tìm thấy tài khoản!",
         });
       }
       resolve({
         err: 0,
-        message: "Logout successfully!",
+        message: "Đăng xuất thành công!",
       });
     } catch (error) {
       reject(error);

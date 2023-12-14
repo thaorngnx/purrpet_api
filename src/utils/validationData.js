@@ -251,7 +251,7 @@ export const getUnavailableDayByHome = async (query) =>
       if (listBookingHome.length === 0) {
         return resolve({
           err: 0,
-          message: "Get unavailable day successfully",
+          message: "Lấy ngày không thể đặt thành công",
           data: [],
         });
       }
@@ -283,7 +283,7 @@ export const getUnavailableDayByHome = async (query) =>
       });
       resolve({
         err: 0,
-        message: "Get unavailable day successfully",
+        message: "Lấy ngày không thể đặt thành công",
         data: unavailableDay,
       });
     } catch (error) {

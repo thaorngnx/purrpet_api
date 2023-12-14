@@ -138,25 +138,25 @@ export const vnpayReturn = async (vnp_Params) =>
           } else {
             resolve({
               RspCode: "02",
-              Message: "This order has been updated to the payment status",
+              Message: "Đơn hàng đã được thanh toán",
             });
           }
         } else {
           resolve({
             RspCode: "04",
-            Message: "Invalid amount",
+            Message: "Số tiền không hợp lệ",
           });
         }
       } else {
         resolve({
           RspCode: "03",
-          Message: "Invalid order id",
+          Message: "Mã đơn hàng không hợp lệ",
         });
       }
     } else {
       resolve({
         RspCode: "97",
-        Message: "Chu ky khong hop le",
+        Message: "Chữ ký không hợp lệ",
       });
     }
   });

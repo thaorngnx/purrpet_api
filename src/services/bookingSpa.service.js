@@ -21,7 +21,7 @@ export const createBookingSpa = async (data) =>
       if (checkValidBookingDateTime.err !== 0) {
         resolve({
           err: -1,
-          message: "Booking date time is invalid",
+          message: "Giờ đặt lịch không hợp lệ",
         });
       }
       const customer = await db.customer.findOne({
@@ -30,7 +30,7 @@ export const createBookingSpa = async (data) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
       data.purrPetCode = await generateCode(
@@ -41,8 +41,8 @@ export const createBookingSpa = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create booking spa successfully"
-          : "Create booking spa failed",
+          ? "Tạo đơn đặt lịch thành công"
+          : "Tạo đơn đặt lịch thất bại",
         data: response,
       });
     } catch (error) {
@@ -107,8 +107,8 @@ export const getAllBookingSpa = async (user, {
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all booking spa successfully"
-          : "Get all booking spa failed",
+          ? "Lấy danh sách đơn đặt lịch spa thành công"
+          : "Lấy danh sách đơn đặt lịch spa thất bại",
           data: result.dataInOnePage,
           totalPage: result.totalPage,
       });
@@ -127,14 +127,14 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       if (!bookingSpa) {
         resolve({
           err: -1,
-          message: "Booking spa not found",
+          message: "Không tìm thấy đơn đặt lịch spa",
         });
       }
 
       if (user.role === ROLE.CUSTOMER && user.purrPetCode !== bookingSpa.customerCode) {
         resolve({
           err: -1,
-          message: "You don't have permission to access this booking spa",
+          message: "Bạn không có quyền truy cập đơn đặt lịch này",
         });
       }
 
@@ -145,7 +145,7 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
       const response = {
@@ -157,8 +157,8 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get booking spa by code successfully"
-          : "Get booking spa by code failed",
+          ? "Lấy thông tin đơn đặt lịch spa thành công"
+          : "Lấy thông tin đơn đặt lịch spa thất bại",
         data: response,
       });
     } catch (error) {
@@ -173,7 +173,7 @@ export const getBookingSpaByCustomer = async (id) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
       if (customer) {
@@ -183,8 +183,8 @@ export const getBookingSpaByCustomer = async (id) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Get booking spa by customer code successfully"
-            : "Get booking spa by customer code failed",
+            ? "Lấy danh sách đơn đặt lịch spa thành công"
+            : "Lấy danh sách đơn đặt lịch spa thất bại",
           data: response,
         });
       }
@@ -203,8 +203,8 @@ export const updateBookingSpa = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update booking spa successfully"
-          : "Update booking spa failed",
+          ? "Cập nhật đơn đặt lịch spa thành công"
+          : "Cập nhật đơn đặt lịch spa thất bại",
       });
     } catch (error) {
       reject(error);
@@ -222,7 +222,7 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Booking Spa not found",
+          message: "Không tìm thấy đơn đặt lịch spa",
         });
       } else {
         const checkUpdate = await checkValidStatusBooking(
@@ -239,7 +239,7 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
           await response.save();
           resolve({
             err: 0,
-            message: "Update status booking spa success",
+            message: "Cập nhật trạng thái thành công",
           });
         }
       }
@@ -257,8 +257,8 @@ export const deleteBookingSpa = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Delete booking spa successfully"
-          : "Delete booking spa failed",
+          ? "Xóa đơn đặt lịch spa thành công"
+          : "Xóa đơn đặt lịch spa thất bại",
       });
     } catch (error) {
       reject(error);
@@ -272,12 +272,12 @@ export const getAvailableTime = async (bookingDate) =>
       if (response.err !== 0) {
         resolve({
           err: -1,
-          message: "Get available time failed",
+          message: "Lấy thời gian trống thất bại",
         });
       }
       resolve({
         err: 0,
-        message: "Get available time successfully",
+        message: "Lấy thời gian trống thành công",
         data: response.data,
       });
     } catch (error) {

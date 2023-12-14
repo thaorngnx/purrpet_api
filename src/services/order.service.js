@@ -13,7 +13,7 @@ export const createOrder = async (data) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
       data.customerAddress = customer.address;
@@ -25,7 +25,7 @@ export const createOrder = async (data) =>
         isOutOfStock = true;
         resolve({
           err: -1,
-          message: "Product not found",
+          message: "Không tìm thấy sản phẩm",
         });
       }
 
@@ -66,14 +66,14 @@ export const createOrder = async (data) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Create order successfully"
-            : "Create order failed",
+            ? "Tạo đơn hàng thành công"
+            : "Tạo đơn hàng thất bại",
           data: response,
         });
       } else {
         resolve({
           err: -1,
-          message: "Product is out of stock",
+          message: "Sản phẩm đã hết hàng",
         });
       }
     } catch (error) {
@@ -131,8 +131,8 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all order successfully"
-          : "Get all order failed",
+          ? "Lấy danh sách đơn hàng thành công"
+          : "Lấy danh sách đơn hàng thất bại",
           data: result.dataInOnePage,
           totalPage: result.totalPage,
       });
@@ -149,14 +149,14 @@ export const getOrderByCode = async (user, purrPetCode) =>
       if (!order) {
         resolve({
           err: -1,
-          message: "Order not found",
+          message: "Không tìm thấy đơn hàng",
         });
       }
 
       if (user.role === ROLE.CUSTOMER && user.purrPetCode !== order.customerCode) {
         resolve({
           err: -1,
-          message: "You don't have permission to access this order",
+          message: "Bạn không có quyền truy cập đơn hàng này",
         });
       }
 
@@ -167,7 +167,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
 
@@ -179,7 +179,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       };
       resolve({
         err: 0,
-        message: "Get order by code successfully",
+        message: "Lấy thông tin đơn hàng thành công",
         data: response,
       });
     } catch (error) {
@@ -194,7 +194,7 @@ export const getOrderByCustomer = async (id) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Customer not found",
+          message: "Không tìm thấy khách hàng",
         });
       }
       if (customer) {
@@ -204,8 +204,8 @@ export const getOrderByCustomer = async (id) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Get order by customer code successfully"
-            : "Get order by customer code failed",
+            ? "Lấy danh sách đơn hàng thành công"
+            : "Lấy danh sách đơn hàng thất bại",
           data: response,
         });
       }
@@ -237,7 +237,7 @@ export const updateOrder = async (data, purrPetCode) =>
 
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Update order successfully" : "Update order failed",
+        message: response ? "Cập nhật đơn hàng thành công" : "Cập nhật đơn hàng thất bại",
       });
     } catch (error) {
       reject(error);
@@ -251,7 +251,7 @@ export const updateStatusOrder = async (data, purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Order not found",
+          message: "Không tìm thấy đơn hàng",
         });
       } else {
         let validStatus = false;
@@ -282,12 +282,12 @@ export const updateStatusOrder = async (data, purrPetCode) =>
           response.save();
           resolve({
             err: 0,
-            message: "Update status order successfully",
+            message: "Cập nhật trạng thái đơn hàng thành công",
           });
         } else {
           resolve({
             err: -1,
-            message: "Status order is invalid",
+            message: "Trạng thái đơn hàng không hợp lệ",
           });
         }
       }
@@ -304,7 +304,7 @@ export const deleteOrder = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Delete order successfully" : "Delete order failed",
+        message: response ? "Xóa đơn hàng thành công" : "Xóa đơn hàng thất bại",
       });
     } catch (error) {
       reject(error);

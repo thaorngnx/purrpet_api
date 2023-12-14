@@ -28,8 +28,8 @@ export const createMasterData = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Create masterData successfully"
-          : "Create masterData failed",
+          ? "Tạo masterData thành công"
+          : "Tạo masterData thất bại",
         data: response,
       });
     } catch (error) {
@@ -44,8 +44,8 @@ export const getAllMasterData = async (query) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get all masterData successfully"
-          : "Get all masterData failed",
+          ? "Lấy danh sách masterData thành công"
+          : "Lấy danh sách masterData thất bại",
         data: response,
       });
     } catch (error) {
@@ -62,8 +62,8 @@ export const getMasterDataByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Get masterData by code successfully"
-          : "Get masterData by code failed",
+          ? "Lấy thông tin masterData thành công"
+          : "Lấy thông tin masterData thất bại",
         data: response,
       });
     } catch (error) {
@@ -95,8 +95,8 @@ export const updateMasterData = async (data, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Update masterData successfully"
-          : "Update masterData failed",
+          ? "Cập nhật masterData thành công"
+          : "Cập nhật masterData thất bại",
       });
     } catch (error) {
       reject(error);
@@ -141,8 +141,8 @@ export const deleteMasterData = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Delete masterData successfully"
-          : "Delete masterData failed",
+          ? "Xóa masterData thành công"
+          : "Xóa masterData thất bại",
       });
     } catch (error) {
       reject(error);

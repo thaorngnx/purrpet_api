@@ -51,7 +51,7 @@ export const createOrder = async (data) =>
       });
 
       const inventoryCheck = price.map((item) => item.inventory);
-      const inventory = inventoryCheck.every((item) => item > 0);
+      const inventory = inventoryCheck.every((item) => item > -1);
       if (!inventory) {
         isOutOfStock = true;
       } else {

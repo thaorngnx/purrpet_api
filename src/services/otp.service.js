@@ -28,7 +28,7 @@ export const sendOtp = async (data) =>
         to: data.email,
         subject: "Xác thực người dùng",
         html: `<h1>Xác thực người dùng</h1>
-        <p>Chào mừng bạn đến với PetPurr</p>
+        <p>Chào mừng bạn đến với Purrpet</p>
         <p>Đây là mã OTP của bạn và mã này có hiệu lực trong vòng 5 phút!</p>
         <p>OTP xác thực người dùng của bạn là: ${otp}</p>`,
       };

@@ -89,12 +89,12 @@ export const getAllProduct = async ({
       const _page = parseInt(page) || 1;
       const _skip = (_page - 1) * _limit;
       //sort
-      const _sort = {};
+      let _sort = { inventory: -1 }; 
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-      const response = await db.product.find({ ...query, ...search });
+      const response = await db.product.find({ ...query, ...search }).sort(_sort);
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -129,12 +129,12 @@ export const getAllProductCustomer = async ({
         ];
       }
       //Săp xếp
-      const _sort = {};
+      let _sort = { inventory: -1 }; 
+     
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
       }
-
       const response = await db.product
         .find({ ...query, ...search, status: status })
         .sort(_sort);
@@ -189,12 +189,12 @@ export const getAllProductCustomer = async ({
         const _page = parseInt(page) || 1;
         const _skip = (_page - 1) * _limit;
         //sort
-        const _sort = {};
+        let _sort = { inventory: -1 }; // Sắp xếp theo trường "inventory" giảm dần mặc định
         if (order) {
           const [key, value] = order.split(".");
           _sort[key] = value === "asc" ? 1 : -1;
         }
-        const response = await db.product.find({ ...query, ...search });
+        const response = await db.product.find({ ...query, ...search }).sort(_sort);
         resolve({
           err: response ? 0 : -1,
           message: response

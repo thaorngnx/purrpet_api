@@ -6,7 +6,7 @@ import { isAdmin, isCustomer, isStaff } from "../middlewares/verify_role";
 
 const router = express.Router();
 
-router.get("/query", verifyToken, isAdmin, controllers.getAllProduct);
+router.get("/query", verifyToken, controllers.getAllProduct);
 router.get("/query-staff", controllers.getAllProductStaff);
 router.get("/query-customer", controllers.getAllProductCustomer);
 router.post("/report-product", verifyToken, isAdmin, controllers.getReportProduct);

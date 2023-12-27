@@ -5,7 +5,7 @@ import { isAdmin, isCustomer, isStaff } from "../middlewares/verify_role";
 
 const router = express.Router();
 
-router.post("/getbyEmail", controllers.getCustomerByEmail);
+router.post("/getbyEmail", verifyToken, isStaff, controllers.getCustomerByEmail);
 //router.use(verifyToken);
 router.get("/query", controllers.getAllCustomer);
 router.get("/:purrPetCode", controllers.getCustomerByCode);

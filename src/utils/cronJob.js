@@ -44,6 +44,16 @@ export const cronJob = () => {
           await db.order.findByIdAndUpdate(order.id, {
             status: STATUS_ORDER.CANCEL,
           });
+          //update quantity products in orderItems
+          const orderItems = order.orderItems;
+          orderItems.forEach(async (item) => {
+            const product = await db.product.findOne({
+              purrPetCode: item.productCode,
+            });
+            product.inventory += item.quantity;
+            await product.save();
+          });
+          
         }
       });
     } catch (error) {

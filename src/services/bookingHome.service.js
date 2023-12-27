@@ -1,5 +1,5 @@
 import db from "../models";
-import { COLLECTION, PREFIX, ROLE } from "../utils/constants";
+import { COLLECTION, PREFIX, ROLE, STATUS_BOOKING, STATUS_ORDER } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
 import {
   checkValidBookingDateOfHome,

@@ -221,7 +221,7 @@ export const updateOrder = async (data, purrPetCode) =>
         { purrPetCode: purrPetCode },
         data
       );
-      if (data.status === "Đã hủy") {
+      if (data.status === STATUS_ORDER.CANCEL) {
         const order = await db.order.findOne({ purrPetCode: purrPetCode });
         const priceItems = order.orderItems.map((item) => item.productCode);
         const price = await db.product.find({
@@ -280,6 +280,16 @@ export const updateStatusOrder = async (data, purrPetCode) =>
         if (validStatus) {
           response.status = data.status;
           response.save();
+          if (data.status === STATUS_ORDER.CANCEL) {
+            const orderItems = response.orderItems;
+            orderItems.forEach(async (item) => {
+              const product = await db.product.findOne({
+                purrPetCode: item.productCode,
+              });
+              product.inventory += item.quantity;
+              await product.save();
+            });
+          }
           resolve({
             err: 0,
             message: "Cập nhật trạng thái đơn hàng thành công",

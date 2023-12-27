@@ -7,11 +7,10 @@ const router = express.Router();
 
 router.get("/query", controllers.getAllCategory);
 router.get("/query-customer", controllers.getAllCategoryCustomer);
+router.post("/create", verifyToken, controllers.createCategory);
+router.put("/update/:purrPetCode", verifyToken, controllers.updateCategory);
+router.put("/update-status/:purrPetCode", verifyToken, controllers.updateStatusCategory);
+router.delete("/delete/:purrPetCode", verifyToken, controllers.deleteCategory);
 router.get("/:purrPetCode", controllers.getCategoryByCode);
-router.use(verifyToken);
-router.post("/create", controllers.createCategory);
-router.put("/update/:purrPetCode", controllers.updateCategory);
-router.put("/update-status/:purrPetCode", controllers.updateStatusCategory);
-router.delete("/delete/:purrPetCode", controllers.deleteCategory);
 
 module.exports = router;

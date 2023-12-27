@@ -2,11 +2,12 @@ import * as controllers from "../controllers";
 import express from "express";
 import upload from "../utils/cloudinary";
 import { verifyToken } from "../middlewares/verify_token";
+import { isAdmin, isCustomer, isStaff } from "../middlewares/verify_role";
 
 const router = express.Router();
 
-router.get("/query", controllers.getAllSpa);
-router.post("/spa-report", controllers.getReportSpa);
+router.get("/query", verifyToken, isAdmin, controllers.getAllSpa);
+router.post("/spa-report", verifyToken, isAdmin, controllers.getReportSpa);
 router.get("/:purrPetCode", controllers.getSpaByCode);
 router.get("/query-customer", controllers.getAllSpaCustomer);
 router.use(verifyToken);

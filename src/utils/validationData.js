@@ -118,6 +118,7 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
     try {
       const bookingInDay = await db.bookingSpa.find({
         bookingDate: bookingDate,
+        status: { $ne: STATUS_BOOKING.CANCEL },
       });
       //find in master data start time, end time, minuteStep, quantity is max booking in 1 time slot
       const masterData = await db.masterData.find({
@@ -128,10 +129,6 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
       let minuteStep = 0;
       let quantity = 0;
       masterData.forEach((element) => {
-        // element.name === GROUP_SPA.QUANTITY && (quantity = element.value);
-        // element.name === GROUP_SPA.TIME_START && (timeStart = element.value);
-        // element.name === GROUP_SPA.TIME_END && (timeEnd = element.value);
-        // element.name === GROUP_SPA.MINUTE_STEP && (minuteStep = element.value);
         switch (element.name) {
           case GROUP_SPA.QUANTITY:
             quantity = element.value;
@@ -243,6 +240,8 @@ export const getUnavailableDayByHome = async (query) =>
       for (const home of listHome) {
         const booking = await db.bookingHome.find({
           homeCode: home.purrPetCode,
+          //status not cancel
+          status: { $ne: STATUS_BOOKING.CANCEL },
         });
         if (booking.length !== 0) {
           listBookingHome.push(...booking);

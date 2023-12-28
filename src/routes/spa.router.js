@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.get("/query", verifyToken, isAdmin, controllers.getAllSpa);
 router.post("/spa-report", verifyToken, isAdmin, controllers.getReportSpa);
-router.get("/:purrPetCode", controllers.getSpaByCode);
 router.get("/query-customer", controllers.getAllSpaCustomer);
+router.get("/:purrPetCode", controllers.getSpaByCode);
 router.use(verifyToken);
 router.post("/create", upload.array("images"), controllers.createSpa);
 router.put(

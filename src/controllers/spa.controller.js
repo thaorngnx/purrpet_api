@@ -14,7 +14,7 @@ export const getAllSpa = async (req, res) => {
 
 export const getAllSpaCustomer = async (req, res) => {
   try {
-    const response = await services.getAllSpaCustomer(req.query);
+    const response = await services.getAllSpaCustomer();
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

@@ -129,11 +129,13 @@ export const getAllProductCustomer = async ({
         ];
       }
       //Săp xếp
-      let _sort = { inventory: -1 }; 
+      let _sort = { }; 
      
       if (order) {
         const [key, value] = order.split(".");
         _sort[key] = value === "asc" ? 1 : -1;
+      }else{
+        _sort = { inventory: -1 };
       }
       const response = await db.product
         .find({ ...query, ...search, status: status })

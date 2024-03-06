@@ -128,13 +128,31 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
         limit: limit,
         page: page,
       });
+      //find image of product in order items in result
+      //save productCode that finded image to avoid duplicate request
+      let productsFinded = []; //{productCode, image}
+
+      for (let i = 0; i < result.dataInOnePage.length; i++) {
+        for (let j = 0; j < result.dataInOnePage[i].orderItems.length; j++) {
+          if (!productsFinded.find((item) => item.productCode === result.dataInOnePage[i].orderItems[j].productCode)) {
+            const product = await db.product.findOne({ purrPetCode: result.dataInOnePage[i].orderItems[j].productCode });
+            if (product) {
+              productsFinded.push({ productCode: result.dataInOnePage[i].orderItems[j].productCode, image: product?.images[0]?.path });
+              result.dataInOnePage[i].orderItems[j].image = product?.images[0]?.path;
+            }
+          } else {
+            result.dataInOnePage[i].orderItems[j].image = productsFinded.find((item) => item.productCode === result.dataInOnePage[i].orderItems[j].productCode).image;
+          }
+        }
+      }
+
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Lấy danh sách đơn hàng thành công"
           : "Lấy danh sách đơn hàng thất bại",
-          data: result.dataInOnePage,
-          totalPage: result.totalPage,
+        data: result.dataInOnePage,
+        totalPage: result.totalPage,
       });
     } catch (error) {
       reject(error);

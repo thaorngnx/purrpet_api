@@ -37,6 +37,10 @@ export const productSchema = new Schema(
       type: Number,
       required: true,
     },
+    star:{
+      type: Number,
+      default: 5,
+    },
     status: {
       type: String,
       enum: {

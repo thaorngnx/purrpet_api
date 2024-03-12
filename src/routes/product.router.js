@@ -9,6 +9,9 @@ const router = express.Router();
 router.get("/query", verifyToken, controllers.getAllProduct);
 router.get("/query-staff", controllers.getAllProductStaff);
 router.get("/query-customer", controllers.getAllProductCustomer);
+
+router.get("/best-seller", controllers.getAllSellingProduct);
+
 router.post("/report-product", verifyToken, isAdmin, controllers.getReportProduct);
 router.post("/create", verifyToken, upload.array("images"), controllers.createProduct);
 router.put(

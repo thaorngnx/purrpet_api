@@ -363,3 +363,70 @@ data
         throw error;
       }
   }); 
+  export const getAllSellingProduct = async (query) =>
+  new Promise(async (resolve, reject) => {
+    try {
+     
+        const result = await db.order.aggregate([
+
+          {
+            $unwind: "$orderItems" // Mở rộng mảng orderItems thành các tài liệu riêng lẻ
+          },
+          {
+            $lookup: {
+              from: "products", 
+              localField: "orderItems.productCode", 
+              foreignField: "purrPetCode", 
+              as: "productInfo" 
+            }
+          },
+          {
+            $addFields: {
+              productName: { $arrayElemAt: ["$productInfo.productName", 0] },
+              categoryCode: { $arrayElemAt: ["$productInfo.categoryCode", 0] },
+              images: { $arrayElemAt: ["$productInfo.images", 0] },
+              price: { $first: "$productInfo.price" },
+              inventory: { $first: "$productInfo.inventory" },
+              description: { $first: "$productInfo.description" },
+              star: { $first: "$productInfo.star" }
+              
+            }
+          },
+          {
+            $match:{
+              inventory: { $gt: 0 }
+            }
+          },
+          {
+            $group: {
+              _id: "$orderItems.productCode",
+              categoryCode: { $first: "$categoryCode" },
+               productName: { $first: "$productName" },
+              images: { $first: "$images" },
+              price: { $first: "$price" },
+              description: { $first: "$description" },
+              star: { $first: "$star" },
+              inventory: { $first: "$inventory" },
+              totalQuantity: { $sum: "$orderItems.quantity" },
+            }
+          },
+          {
+            $sort: {
+              totalQuantity: -1 
+            }
+          },
+          {
+            $limit: 10 
+          }
+        ]);
+      resolve({
+        err: 0,
+        message: "Lấy danh sách sản phẩm bán chạy thành công!",
+        data: result
+      });
+      
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+  }); 

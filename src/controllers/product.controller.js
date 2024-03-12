@@ -125,5 +125,14 @@ export const getAllProductStaff = async (req, res) => {
     return internalServerError(res);
   }
 }
+export const getAllSellingProduct = async (req, res) => {
+  try {
+    const response = await services.getAllSellingProduct(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+}
 
 

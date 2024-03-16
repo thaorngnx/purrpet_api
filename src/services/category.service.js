@@ -6,6 +6,7 @@ import {
   VALIDATE_DUPLICATE,
 } from "../utils/constants";
 import { generateCode } from "../utils/generateCode";
+import { pagination } from "../utils/pagination";
 import { checkDuplicateValue } from "../utils/validationData";
 
 export const createCategory = async (data) =>
@@ -72,12 +73,21 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
       // .skip(_skip)
       // .sort(_sort);
 
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
+
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Lấy danh sách danh mục thành công"
           : "Lấy danh sách danh mục thất bại",
-        data: response,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);
@@ -120,15 +130,22 @@ export const getAllCategoryCustomer = async ({
       // Truy vấn MongoDB
       const response = await db.category
         .find({ ...query, ...search, status: status })
-        .limit(_limit)
-        .skip(_skip)
         .sort(_sort);
+      
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Lấy danh sách danh mục thành công"
           : "Lấy danh sách danh mục thất bại",
-        data: response,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

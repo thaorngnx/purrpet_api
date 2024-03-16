@@ -153,8 +153,8 @@ export const getAllProductCustomer = async ({
         message: response
           ? "Lấy danh sách sản phẩm thành công!"
           : "Lấy danh sách sản phẩm thất bại!",
-        data: result.dataInOnePage,
-        totalPage: result.totalPage,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

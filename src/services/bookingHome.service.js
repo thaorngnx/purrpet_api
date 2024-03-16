@@ -110,9 +110,8 @@ export const getAllBookingHome = async (user,
         message: response
           ? "Lấy danh sách đơn đặt phòng thành công"
           : "Lấy danh sách đơn đặt phòng thất bại",
-          data: result.dataInOnePage,
-          totalPage: result.totalPage,
-
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (err) {
       reject(err);

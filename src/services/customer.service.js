@@ -11,17 +11,27 @@ import {
   VALIDATE_DUPLICATE,
   COOKIES_PATH,
 } from "../utils/constants";
+import { pagination } from "../utils/pagination";
 
 export const getAllCustomer = async (query) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.customer.find(query);
+      const count = response.length;
+      const result = pagination({
+        data: response,
+        total: count,
+        limit: limit,
+        page: page,
+      });
+
       resolve({
         err: response ? 0 : -1,
         message: response
           ? "Lấy danh sách khách hàng thành công"
           : "Lấy danh sách khách hàng thất bại",
-        data: response,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

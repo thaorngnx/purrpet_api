@@ -109,8 +109,8 @@ export const getAllBookingSpa = async (user, {
         message: response
           ? "Lấy danh sách đơn đặt lịch spa thành công"
           : "Lấy danh sách đơn đặt lịch spa thất bại",
-          data: result.dataInOnePage,
-          totalPage: result.totalPage,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

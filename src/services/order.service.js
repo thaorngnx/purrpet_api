@@ -117,23 +117,6 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
       page: page,
     });
 
-    let productsFinded = [];
-
-    for (let i = 0; i < result.dataInOnePage.length; i++) {
-      for (let j = 0; j < result.dataInOnePage[i].orderItems.length; j++) {
-        const productCode = result.dataInOnePage[i].orderItems[j].productCode;
-        if (!productsFinded.find((item) => item.productCode === productCode)) {
-          const product = await db.product.findOne({ purrPetCode: productCode });
-          if (product) {
-            productsFinded.push({ productCode, image: product?.images[0]?.path });
-            result.dataInOnePage[i].orderItems[j].image = product?.images[0]?.path;
-          }
-        } else {
-          result.dataInOnePage[i].orderItems[j].image = productsFinded.find((item) => item.productCode === productCode).image;
-        }
-      }
-    }
-
     return {
       err: response ? 0 : -1,
       message: response ? "Lấy danh sách đơn hàng thành công" : "Lấy danh sách đơn hàng thất bại",

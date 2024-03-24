@@ -127,3 +127,183 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
     throw error;
   }
 };
+
+export const getOrderByCode = async (user, purrPetCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const order = await db.order.findOne({ purrPetCode: purrPetCode });
+
+      if (!order) {
+        resolve({
+          err: -1,
+          message: "Không tìm thấy đơn hàng",
+        });
+      }
+
+      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== order.customerCode) {
+        resolve({
+          err: -1,
+          message: "Bạn không có quyền truy cập đơn hàng này",
+        });
+      }
+
+      const customer = await db.customer.findOne({
+        purrPetCode: order.customerCode,
+      });
+
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Không tìm thấy khách hàng",
+        });
+      }
+
+      const response = {
+        ...order._doc,
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phoneNumber,
+      };
+      resolve({
+        err: 0,
+        message: "Lấy thông tin đơn hàng thành công",
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getOrderByCustomer = async (id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const customer = await db.customer.findOne({ _id: id });
+      if (!customer) {
+        resolve({
+          err: -1,
+          message: "Không tìm thấy khách hàng",
+        });
+      }
+      if (customer) {
+        const response = await db.order.find({
+          customerCode: customer.purrPetCode,
+        });
+        resolve({
+          err: response ? 0 : -1,
+          message: response
+            ? "Lấy danh sách đơn hàng thành công"
+            : "Lấy danh sách đơn hàng thất bại",
+          data: response,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const updateOrder = async (data, purrPetCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.order.findOneAndUpdate(
+        { purrPetCode: purrPetCode },
+        data
+      );
+      if (data.status === STATUS_ORDER.CANCEL) {
+        const order = await db.order.findOne({ purrPetCode: purrPetCode });
+        const priceItems = order.orderItems.map((item) => item.productCode);
+        const price = await db.product.find({
+          purrPetCode: { $in: priceItems },
+        });
+        price.forEach((item) => {
+          item.inventory += order.orderItems.find(
+            (i) => i.productCode === item.purrPetCode
+          ).quantity;
+          item.save();
+        });
+      }
+
+      resolve({
+        err: response ? 0 : -1,
+        message: response ? "Cập nhật đơn hàng thành công" : "Cập nhật đơn hàng thất bại",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const updateStatusOrder = async (data, purrPetCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.order.findOne({ purrPetCode: purrPetCode });
+      if (!response) {
+        resolve({
+          err: -1,
+          message: "Không tìm thấy đơn hàng",
+        });
+      } else {
+        let validStatus = false;
+        switch (response.status) {
+          case STATUS_ORDER.WAITING_FOR_PAY:
+            if (
+              data.status === STATUS_ORDER.PAID ||
+              data.status === STATUS_ORDER.CANCEL
+            ) {
+              validStatus = true;
+            }
+            break;
+          case STATUS_ORDER.PAID:
+            if (data.status === STATUS_ORDER.DELIVERING) {
+              validStatus = true;
+            }
+            break;
+          case STATUS_ORDER.DELIVERING:
+            if (data.status === STATUS_ORDER.DONE) {
+              validStatus = true;
+            }
+            break;
+          default:
+            break;
+        }
+        if (validStatus) {
+          response.status = data.status;
+          response.save();
+          if (data.status === STATUS_ORDER.CANCEL) {
+            const orderItems = response.orderItems;
+            orderItems.forEach(async (item) => {
+              const product = await db.product.findOne({
+                purrPetCode: item.productCode,
+              });
+              product.inventory += item.quantity;
+              await product.save();
+            });
+          }
+          resolve({
+            err: 0,
+            message: "Cập nhật trạng thái đơn hàng thành công",
+          });
+        } else {
+          resolve({
+            err: -1,
+            message: "Trạng thái đơn hàng không hợp lệ",
+          });
+        }
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const deleteOrder = async (purrPetCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.order.findOneAndDelete({
+        purrPetCode: purrPetCode,
+      });
+      resolve({
+        err: response ? 0 : -1,
+        message: response ? "Xóa đơn hàng thành công" : "Xóa đơn hàng thất bại",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

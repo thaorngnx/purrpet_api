@@ -12,3 +12,4 @@ export * from './cart.controller';
 export * from './masterData.controller';
 export * from './pay.controller';
 export * from './otp.controller';
+export * from './favorite.controller';

@@ -13,7 +13,7 @@ import {
 } from '../utils/constants';
 import { pagination } from '../utils/pagination';
 
-export const getAllCustomer = async (query) =>
+export const getAllCustomer = async ({ page, limit, order, key, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.customer.find(query);

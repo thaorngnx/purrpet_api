@@ -9,6 +9,7 @@ import product from './product';
 import customer from './customer';
 import masterData from './masterData';
 import otp from './otp';
+import favorite from './favorite';
 
 export default {
   account,
@@ -22,4 +23,5 @@ export default {
   customer,
   masterData,
   otp,
+  favorite,
 };

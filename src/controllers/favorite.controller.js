@@ -13,8 +13,6 @@ export const getAllFavorite = async (req, res) => {
 
 export const favoriteProduct = async (req, res) => {
   try {
-    console.log(req.params);
-    console.log(req.user);
     const response = await services.favoriteProduct(
       req.user.purrPetCode,
       req.params.productCode,

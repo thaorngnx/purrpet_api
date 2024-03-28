@@ -1,13 +1,13 @@
-import db from "../models";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { ROLE, COOKIES_PATH } from "../utils/constants";
+import db from '../models';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { ROLE, COOKIES_PATH } from '../utils/constants';
 import {
   generateRefreshToken,
   generateAccessToken,
-} from "../utils/generateCode";
+} from '../utils/generateCode';
 
-require("dotenv").config();
+require('dotenv').config();
 
 export const loginAccount = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -16,13 +16,13 @@ export const loginAccount = async (data) =>
       if (!response)
         return resolve({
           err: -1,
-          message: "Đăng nhập không thành công!",
+          message: 'Đăng nhập không thành công!',
         });
       const isChecked = bcrypt.compareSync(data.password, response.password);
       if (!isChecked || response.role !== ROLE.STAFF)
         return resolve({
           err: -1,
-          message: "Đăng nhập không thành công!",
+          message: 'Đăng nhập không thành công!',
         });
       // Create JWT
       const accessToken = generateAccessToken(response, COOKIES_PATH.STAFF);
@@ -35,7 +35,7 @@ export const loginAccount = async (data) =>
       });
       resolve({
         err: 0,
-        message: "Đăng nhập thành công!",
+        message: 'Đăng nhập thành công!',
         access_token: accessToken,
         refresh_token: refreshToken,
       });
@@ -51,13 +51,13 @@ export const loginAccountAdmin = async (data) =>
       if (!response)
         return resolve({
           err: -1,
-          message: "Đăng nhập không thành công!",
+          message: 'Đăng nhập không thành công!',
         });
       const isChecked = bcrypt.compareSync(data.password, response.password);
       if (!isChecked || response.role !== ROLE.ADMIN)
         return resolve({
           err: -1,
-          message: "Đăng nhập không thành công!",
+          message: 'Đăng nhập không thành công!',
         });
       // Create JWT
       const accessToken = generateAccessToken(response, COOKIES_PATH.ADMIN);
@@ -70,7 +70,7 @@ export const loginAccountAdmin = async (data) =>
       });
       resolve({
         err: 0,
-        message: "Đăng nhập thành công!",
+        message: 'Đăng nhập thành công!',
         access_token: accessToken,
         refresh_token: refreshToken,
       });
@@ -82,11 +82,11 @@ export const loginAccountAdmin = async (data) =>
 export const refreshToken = async (refresh_token) =>
   new Promise(async (resolve, reject) => {
     try {
-      let accessToken = "";
-      let refreshToken = "";
+      let accessToken = '';
+      let refreshToken = '';
       const decoded = jwt.decode(refresh_token);
       if (!decoded)
-        return resolve({ err: -1, message: "Refresh token thất bại" });
+        return resolve({ err: -1, message: 'Refresh token thất bại' });
       let response;
       if (decoded.role === ROLE.CUSTOMER) {
         response = await db.customer.findOne({
@@ -95,7 +95,7 @@ export const refreshToken = async (refresh_token) =>
         if (!response) {
           return resolve({
             err: -1,
-            message: "Refresh token thất bại",
+            message: 'Refresh token thất bại',
           });
         }
         // Create JWT
@@ -114,7 +114,7 @@ export const refreshToken = async (refresh_token) =>
         if (!response) {
           return resolve({
             err: -1,
-            message: "Refresh token thất bại",
+            message: 'Refresh token thất bại',
           });
         }
         // Create JWT
@@ -129,7 +129,7 @@ export const refreshToken = async (refresh_token) =>
       }
       resolve({
         err: 0,
-        message: "Refresh token thành công!",
+        message: 'Refresh token thành công!',
         access_token: accessToken,
         refresh_token: refreshToken,
       });
@@ -162,12 +162,12 @@ export const logout = async (user) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Không tìm thấy tài khoản!",
+          message: 'Không tìm thấy tài khoản!',
         });
       }
       resolve({
         err: 0,
-        message: "Đăng xuất thành công!",
+        message: 'Đăng xuất thành công!',
       });
     } catch (error) {
       reject(error);

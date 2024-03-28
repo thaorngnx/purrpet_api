@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { ROLE } from "../utils/constants";
+import mongoose from 'mongoose';
+import { ROLE } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -44,7 +44,7 @@ export const customerSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("customer", customerSchema);
+export default mongoose.model('customer', customerSchema);

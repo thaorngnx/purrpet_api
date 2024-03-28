@@ -1,11 +1,11 @@
-import * as Joi from "joi";
-import * as Constant from "../utils/constants";
-import * as EmailValidator from "email-validator";
+import * as Joi from 'joi';
+import * as Constant from '../utils/constants';
+import * as EmailValidator from 'email-validator';
 
 const checkNumberPhone = (value, helpers) => {
   const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
   if (!value.match(regexPhoneNumber)) {
-    return helpers.message("Số điện thoại không hợp lệ");
+    return helpers.message('Số điện thoại không hợp lệ');
   }
   return value;
 };
@@ -27,11 +27,11 @@ export const masterDataCode = Joi.object({
 });
 
 export const images = Joi.object({
-  fieldname: Joi.string().valid("images").required(),
+  fieldname: Joi.string().valid('images').required(),
   originalname: Joi.string().required(),
-  encoding: Joi.string().valid("7bit", "8bit", "binary", "base64").required(),
+  encoding: Joi.string().valid('7bit', '8bit', 'binary', 'base64').required(),
   mimetype: Joi.string()
-    .valid("image/png", "image/jpeg", "image/jpg")
+    .valid('image/png', 'image/jpeg', 'image/jpg')
     .required(),
   path: Joi.string().required(),
   size: Joi.number().integer().required(),
@@ -71,7 +71,7 @@ export const categoryDto = Joi.object({
     .valid(
       Constant.CATEGORY_TYPE.PRODUCT,
       Constant.CATEGORY_TYPE.SPA,
-      Constant.CATEGORY_TYPE.HOMESTAY
+      Constant.CATEGORY_TYPE.HOMESTAY,
     )
     .required(),
   status: Joi.string()
@@ -137,14 +137,14 @@ export const orderDto = Joi.object({
     district: Joi.string().required(),
     province: Joi.string().required(),
   }).allow(null),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
-      Constant.STATUS_ORDER.DONE
+      Constant.STATUS_ORDER.DONE,
     )
     .allow(null),
   createBy: Joi.string().allow(null),
@@ -159,7 +159,7 @@ export const bookingSpaDto = Joi.object({
   // customerName: Joi.string().required(),
   // customerEmail: Joi.string().email().required(),
   // customerPhone: Joi.string().required().custom(checkNumberPhone),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
   status: Joi.string()
@@ -167,7 +167,7 @@ export const bookingSpaDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CANCEL
+      Constant.STATUS_BOOKING.CANCEL,
     )
     .allow(null),
   createBy: Joi.string().allow(null),
@@ -182,7 +182,7 @@ export const bookingHomeDto = Joi.object({
   // customerName: Joi.string().required(),
   // customerEmail: Joi.string().email().required(),
   // customerPhone: Joi.string().required().custom(checkNumberPhone),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
   status: Joi.string()
@@ -190,7 +190,7 @@ export const bookingHomeDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CANCEL
+      Constant.STATUS_BOOKING.CANCEL,
     )
     .allow(null),
   createBy: Joi.string().allow(null),
@@ -281,7 +281,7 @@ export const updateCategoryDto = Joi.object({
     .valid(
       Constant.CATEGORY_TYPE.PRODUCT,
       Constant.CATEGORY_TYPE.SPA,
-      Constant.CATEGORY_TYPE.HOMESTAY
+      Constant.CATEGORY_TYPE.HOMESTAY,
     )
     .allow(null),
   status: Joi.string()
@@ -342,14 +342,14 @@ export const updateOrderDto = Joi.object({
     district: Joi.string().required(),
     province: Joi.string().required(),
   }).allow(null),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
-      Constant.STATUS_ORDER.DONE
+      Constant.STATUS_ORDER.DONE,
     )
     .allow(null),
   createBy: Joi.string().allow(null),
@@ -364,7 +364,7 @@ export const updateOrderStatusDto = Joi.object({
       Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
-      Constant.STATUS_ORDER.DONE
+      Constant.STATUS_ORDER.DONE,
     )
     .allow(null),
 });
@@ -375,7 +375,7 @@ export const updateBookingSpaDto = Joi.object({
   spaCode: Joi.string().allow(null),
   bookingSpaPrice: Joi.number().allow(null),
   customerCode: Joi.string().allow(null),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   bookingDate: Joi.date().allow(null),
   bookingTime: Joi.string().allow(null),
   createBy: Joi.string().allow(null),
@@ -389,7 +389,7 @@ export const updateBookingSpaStatusDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CANCEL
+      Constant.STATUS_BOOKING.CANCEL,
     )
     .allow(null),
 });
@@ -400,7 +400,7 @@ export const updateBookingHomeDto = Joi.object({
   homeCode: Joi.string().allow(null),
   bookingHomePrice: Joi.number().allow(null),
   customerCode: Joi.string().allow(null),
-  customerNote: Joi.string().allow(null, ""),
+  customerNote: Joi.string().allow(null, ''),
   dateCheckIn: Joi.date().allow(null),
   dateCheckOut: Joi.date().allow(null),
   createBy: Joi.string().allow(null),
@@ -414,7 +414,7 @@ export const updateBookingHomeStatusDto = Joi.object({
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
       Constant.STATUS_BOOKING.PAID,
       Constant.STATUS_BOOKING.CHECKIN,
-      Constant.STATUS_BOOKING.CANCEL
+      Constant.STATUS_BOOKING.CANCEL,
     )
     .allow(null),
 });

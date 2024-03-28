@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -36,7 +36,7 @@ export const masterDataSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("masterData", masterDataSchema);
+export default mongoose.model('masterData', masterDataSchema);

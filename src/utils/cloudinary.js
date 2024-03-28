@@ -1,7 +1,7 @@
-const cloudinary = require("cloudinary").v2;
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-require("dotenv").config();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+require('dotenv').config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -12,9 +12,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "purrpet",
+    folder: 'purrpet',
   },
-  allowedFormats: ["jpg", "png", "jpeg"],
+  allowedFormats: ['jpg', 'png', 'jpeg'],
 });
 
 const upload = multer({ storage });

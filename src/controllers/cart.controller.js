@@ -1,16 +1,16 @@
-import * as services from "../services";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
-import { addCartDto } from "../helpers/joi_schema";
+import * as services from '../services';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import { addCartDto } from '../helpers/joi_schema';
 
 export const addCart = async (req, res) => {
   try {
     const { error } = addCartDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.addCart(req.body, req.cookies);
-    res.cookie("cartData", JSON.stringify(response), {
+    res.cookie('cartData', JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
     return res.status(200).json(response);
@@ -33,10 +33,10 @@ export const getCart = async (req, res) => {
 export const updateCart = async (req, res) => {
   try {
     const response = await services.updateCart(req.body, req.cookies);
-    res.cookie("cartData", JSON.stringify(response), {
+    res.cookie('cartData', JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
     return res.status(200).json(response);
@@ -49,10 +49,10 @@ export const updateCart = async (req, res) => {
 export const deleteProductInCart = async (req, res) => {
   try {
     const response = await services.deleteProductInCart(req.body, req.cookies);
-    res.cookie("cartData", JSON.stringify(response), {
+    res.cookie('cartData', JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
     return res.status(200).json(response);
@@ -65,10 +65,10 @@ export const deleteProductInCart = async (req, res) => {
 export const deleteCart = async (req, res) => {
   try {
     const response = await services.deleteCart(req.cookies);
-    res.cookie("cartData", JSON.stringify(response), {
+    res.cookie('cartData', JSON.stringify(response), {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
     return res.status(200).json(response);

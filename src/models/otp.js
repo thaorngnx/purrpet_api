@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-mongoose.set("runValidators", true);
+import mongoose from 'mongoose';
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 export const otpSchema = new Schema(
@@ -23,6 +23,6 @@ export const otpSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-export default mongoose.model("otp", otpSchema);
+export default mongoose.model('otp', otpSchema);

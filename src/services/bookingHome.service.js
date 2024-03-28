@@ -1,13 +1,19 @@
-import db from "../models";
-import { COLLECTION, PREFIX, ROLE, STATUS_BOOKING, STATUS_ORDER } from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
+import db from '../models';
+import {
+  COLLECTION,
+  PREFIX,
+  ROLE,
+  STATUS_BOOKING,
+  STATUS_ORDER,
+} from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
 import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
   checkValidStatusBooking,
-} from "../utils/validationData";
-import dayjs from "dayjs";
-import { pagination } from "../utils/pagination";
+} from '../utils/validationData';
+import dayjs from 'dayjs';
+import { pagination } from '../utils/pagination';
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -15,12 +21,12 @@ export const createBookingHome = async (data) =>
       const checkValidBookingDate = await checkValidBookingDateOfHome(
         data.checkIn,
         data.checkOut,
-        data.homeCode
+        data.homeCode,
       );
       if (checkValidBookingDate.err !== 0) {
         resolve({
           err: -1,
-          message: "Ngày đặt phòng không hợp lệ",
+          message: 'Ngày đặt phòng không hợp lệ',
         });
       }
       const customer = await db.customer.findOne({
@@ -29,19 +35,19 @@ export const createBookingHome = async (data) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Không tìm thấy khách hàng",
+          message: 'Không tìm thấy khách hàng',
         });
       }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_HOME,
-        PREFIX.BOOKING_HOME
+        PREFIX.BOOKING_HOME,
       );
       const response = await db.bookingHome.create(data);
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Tạo đơn đặt phòng thành công"
-          : "Tạo đơn đặt phòng thất bại",
+          ? 'Tạo đơn đặt phòng thành công'
+          : 'Tạo đơn đặt phòng thất bại',
         data: response,
       });
     } catch (err) {
@@ -49,16 +55,9 @@ export const createBookingHome = async (data) =>
     }
   });
 
-export const getAllBookingHome = async (user, 
-  {
-    page,
-    limit,
-    order,
-    key,
-    fromDate,
-    toDate,
-    ...query
-  }
+export const getAllBookingHome = async (
+  user,
+  { page, limit, order, key, fromDate, toDate, ...query },
 ) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -74,8 +73,8 @@ export const getAllBookingHome = async (user,
         search = {
           ...search,
           $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { customerCode: { $regex: key, $options: "i" } },
+            { purrPetCode: { $regex: key, $options: 'i' } },
+            { customerCode: { $regex: key, $options: 'i' } },
           ],
         };
       }
@@ -89,15 +88,17 @@ export const getAllBookingHome = async (user,
           },
         };
       }
-      
+
       //sort
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      const response = await db.bookingHome.find({ ...query, ...search }).sort(_sort);
+      const response = await db.bookingHome
+        .find({ ...query, ...search })
+        .sort(_sort);
       const count = response.length;
       const result = pagination({
         data: response,
@@ -108,8 +109,8 @@ export const getAllBookingHome = async (user,
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách đơn đặt phòng thành công"
-          : "Lấy danh sách đơn đặt phòng thất bại",
+          ? 'Lấy danh sách đơn đặt phòng thành công'
+          : 'Lấy danh sách đơn đặt phòng thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -128,14 +129,17 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       if (!bookingHome) {
         resolve({
           err: -1,
-          message: "Không tìm thấy đơn đặt phòng",
+          message: 'Không tìm thấy đơn đặt phòng',
         });
       }
 
-      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== bookingHome.customerCode) {
+      if (
+        user.role === ROLE.CUSTOMER &&
+        user.purrPetCode !== bookingHome.customerCode
+      ) {
         resolve({
           err: -1,
-          message: "Bạn không có quyền truy cập đơn đặt phòng này",
+          message: 'Bạn không có quyền truy cập đơn đặt phòng này',
         });
       }
       const customer = await db.customer.findOne({
@@ -145,15 +149,15 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Không tìm thấy khách hàng",
+          message: 'Không tìm thấy khách hàng',
         });
       }
 
       const numberOfDay = dayjs(bookingHome.dateCheckOut).diff(
         dayjs(bookingHome.dateCheckIn),
-        "day"
+        'day',
       );
-      
+
       const response = {
         ...bookingHome._doc,
         customerName: customer.name,
@@ -164,8 +168,8 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin đơn đặt phòng thành công"
-          : "Lấy thông tin đơn đặt phòng thất bại",
+          ? 'Lấy thông tin đơn đặt phòng thành công'
+          : 'Lấy thông tin đơn đặt phòng thất bại',
         data: response,
       });
     } catch (err) {
@@ -180,7 +184,7 @@ export const getBookingHomeByCustomer = async (id) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Không tìm thấy khách hàng",
+          message: 'Không tìm thấy khách hàng',
         });
       }
       const response = await db.bookingHome.find({
@@ -189,8 +193,8 @@ export const getBookingHomeByCustomer = async (id) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách đơn đặt phòng thành công"
-          : "Lấy danh sách đơn đặt phòng thất bại",
+          ? 'Lấy danh sách đơn đặt phòng thành công'
+          : 'Lấy danh sách đơn đặt phòng thất bại',
         data: response,
       });
     } catch (err) {
@@ -203,13 +207,13 @@ export const updateBookingHome = async (data, purrPetCode) =>
     try {
       const response = await db.bookingHome.findOneAndUpdate(
         { purrPetCode: purrPetCode },
-        data
+        data,
       );
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Cập nhật đơn đặt phòng thành công"
-          : "Cập nhật đơn đặt phòng thất bại",
+          ? 'Cập nhật đơn đặt phòng thành công'
+          : 'Cập nhật đơn đặt phòng thất bại',
       });
     } catch (err) {
       reject(err);
@@ -225,28 +229,28 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Không tìm thấy đơn đặt phòng",
+          message: 'Không tìm thấy đơn đặt phòng',
         });
       } else {
         const checkValid = await checkValidStatusBooking(
           response.status,
-          data.status
+          data.status,
         );
         if (checkValid !== 0) {
           resolve({
             err: -1,
-            message: "Không thể cập nhật trạng thái",
+            message: 'Không thể cập nhật trạng thái',
           });
         } else {
           const updateStatus = await db.bookingHome.findOneAndUpdate(
             { purrPetCode: purrPetCode },
-            { status: data.status }
+            { status: data.status },
           );
           resolve({
             err: updateStatus ? 0 : -1,
             message: updateStatus
-              ? "Cập nhật trạng thái đơn đặt phòng thành công"
-              : "Cập nhật trạng thái đơn đặt phòng thất bại",
+              ? 'Cập nhật trạng thái đơn đặt phòng thành công'
+              : 'Cập nhật trạng thái đơn đặt phòng thất bại',
           });
         }
       }
@@ -264,8 +268,8 @@ export const deleteBookingHome = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Xóa đơn đặt phòng thành công"
-          : "Xóa đơn đặt phòng thất bại",
+          ? 'Xóa đơn đặt phòng thành công'
+          : 'Xóa đơn đặt phòng thất bại',
       });
     } catch (err) {
       reject(err);

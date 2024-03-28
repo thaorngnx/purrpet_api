@@ -1,24 +1,24 @@
-import db from "../models";
+import db from '../models';
 import {
   COLLECTION,
   PREFIX,
   CATEGORY_TYPE,
   STATUS_HOME,
   VALIDATE_DUPLICATE,
-} from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
-import { pagination } from "../utils/pagination";
+} from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
+import { pagination } from '../utils/pagination';
 import {
   checkValidCategory,
   checkDuplicateValueV3,
-} from "../utils/validationData";
+} from '../utils/validationData';
 
 export const createHomestay = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       const validCategory = await checkValidCategory(
         data,
-        CATEGORY_TYPE.HOMESTAY
+        CATEGORY_TYPE.HOMESTAY,
       );
       if (validCategory.err !== 0) {
         return resolve(validCategory);
@@ -33,18 +33,18 @@ export const createHomestay = async (data) =>
         data.masterDataCode,
         VALIDATE_DUPLICATE.HOMESTAY_TYPE,
         data.homeType,
-        COLLECTION.HOMESTAY
+        COLLECTION.HOMESTAY,
       );
       if (isExistHome.err !== 0) {
         return resolve({
           err: -1,
-          message: "Homestay đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Homestay đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
 
       data.purrPetCode = await generateCode(
         COLLECTION.HOMESTAY,
-        PREFIX.HOMESTAY
+        PREFIX.HOMESTAY,
       );
       const category = await db.category.findOne({
         purrPetCode: data.categoryCode,
@@ -52,15 +52,13 @@ export const createHomestay = async (data) =>
       if (!category) {
         resolve({
           err: -1,
-          message: "Danh mục không tồn tại",
+          message: 'Danh mục không tồn tại',
         });
       }
       const response = await db.homestay.create(data);
       resolve({
         err: response ? 0 : -1,
-        message: response
-          ? "Tạo homestay thành công"
-          : "Taọ homestay thất bại",
+        message: response ? 'Tạo homestay thành công' : 'Taọ homestay thất bại',
         data: response,
       });
     } catch (error) {
@@ -77,10 +75,10 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
         search = {
           ...search,
           $or: [
-            { purrPetCode: { $regex: key, $options: "i" } },
-            { homestayName: { $regex: key, $options: "i" } },
-            { description: { $regex: key, $options: "i" } },
-            { categoryName: { $regex: key, $options: "i" } },
+            { purrPetCode: { $regex: key, $options: 'i' } },
+            { homestayName: { $regex: key, $options: 'i' } },
+            { description: { $regex: key, $options: 'i' } },
+            { categoryName: { $regex: key, $options: 'i' } },
           ],
         };
       }
@@ -91,8 +89,8 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
       //sort
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
       const response = await db.homestay.find({ ...query, ...search });
       const count = response.length;
@@ -105,9 +103,7 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
 
       resolve({
         err: response ? 0 : -1,
-        message: response
-          ? "Tạo homestay thành công"
-          : "Taọ homestay thất bại",
+        message: response ? 'Tạo homestay thành công' : 'Taọ homestay thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -131,8 +127,8 @@ export const getAllHomestayCustomer = async ({
       // Tạo điều kiện tìm kiếm theo key (nếu có)
       if (key) {
         search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
+          { purrPetCode: { $regex: key, $options: 'i' } },
+          { categoryName: { $regex: key, $options: 'i' } },
         ];
       }
 
@@ -144,8 +140,8 @@ export const getAllHomestayCustomer = async ({
       // Sắp xếp
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
 
       // Truy vấn MongoDB
@@ -157,8 +153,8 @@ export const getAllHomestayCustomer = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách homestay thành công"
-          : "Lấy danh sách homestay thất bại",
+          ? 'Lấy danh sách homestay thành công'
+          : 'Lấy danh sách homestay thất bại',
         data: response,
       });
     } catch (error) {
@@ -173,7 +169,7 @@ export const getHomestayByCode = async (purrPetCode) =>
       if (!homestay) {
         resolve({
           err: -1,
-          message: "Homestay không tồn tại",
+          message: 'Homestay không tồn tại',
         });
       }
       const category = await db.category.findOne({
@@ -190,8 +186,8 @@ export const getHomestayByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin homestay thành công"
-          : "Lấy thông tin homestay thất bại",
+          ? 'Lấy thông tin homestay thành công'
+          : 'Lấy thông tin homestay thất bại',
         data: response,
       });
     } catch (error) {
@@ -204,7 +200,7 @@ export const updateHomestay = async (data, purrPetCode) =>
     try {
       const validCategory = await checkValidCategory(
         data,
-        CATEGORY_TYPE.HOMESTAY
+        CATEGORY_TYPE.HOMESTAY,
       );
       if (validCategory.err !== 0) {
         return resolve(validCategory);
@@ -217,25 +213,25 @@ export const updateHomestay = async (data, purrPetCode) =>
         data.masterDataCode,
         VALIDATE_DUPLICATE.HOMESTAY_TYPE,
         data.homeType,
-        COLLECTION.HOMESTAY
+        COLLECTION.HOMESTAY,
       );
       if (isExistHome.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên homestay đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Tên homestay đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
 
       const response = await db.homestay.findOneAndUpdate(
         { purrPetCode: purrPetCode },
-        data
+        data,
       );
 
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Cập nhật homestay thành công"
-          : "Cập nhật homestay thất bại",
+          ? 'Cập nhật homestay thành công'
+          : 'Cập nhật homestay thất bại',
       });
     } catch (error) {
       reject(error);
@@ -249,7 +245,7 @@ export const updateStatusHomestay = async (purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Homestay không tồn tại",
+          message: 'Homestay không tồn tại',
         });
       } else {
         if (response.status === STATUS_HOME.ACTIVE) {
@@ -260,7 +256,7 @@ export const updateStatusHomestay = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Cập nhật trạng thái homestay thành công",
+          message: 'Cập nhật trạng thái homestay thành công',
         });
       }
     } catch (error) {
@@ -276,16 +272,14 @@ export const deleteHomestay = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response
-          ? "Xóa homestay thành công"
-          : "Xóa homestay thất bại",
+        message: response ? 'Xóa homestay thành công' : 'Xóa homestay thất bại',
       });
     } catch (error) {
       reject(error);
     }
   });
 
-  export const getReportHomestay = async (data) =>
+export const getReportHomestay = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       const fromDate = new Date(data.fromDate);
@@ -303,24 +297,23 @@ export const deleteHomestay = async (purrPetCode) =>
         },
         {
           $lookup: {
-            from: "homestays", 
-            localField: "homeCode", 
-            foreignField: "purrPetCode", 
-            as: "homestayInfo" 
-          }
-          
+            from: 'homestays',
+            localField: 'homeCode',
+            foreignField: 'purrPetCode',
+            as: 'homestayInfo',
+          },
         },
         {
           $addFields: {
-            masterData: { $arrayElemAt: ["$homestayInfo.masterDataCode", 0] },
-            homeType: { $arrayElemAt: ["$homestayInfo.homeType", 0] },
-          }
+            masterData: { $arrayElemAt: ['$homestayInfo.masterDataCode', 0] },
+            homeType: { $arrayElemAt: ['$homestayInfo.homeType', 0] },
+          },
         },
         {
           $group: {
-            _id: "$homeCode",
-            masterData: { $first: "$masterData" },
-            homeType: { $first: "$homeType" },
+            _id: '$homeCode',
+            masterData: { $first: '$masterData' },
+            homeType: { $first: '$homeType' },
             count: { $sum: 1 },
           },
         },
@@ -333,15 +326,15 @@ export const deleteHomestay = async (purrPetCode) =>
           continue;
         }
         const masterDataName = doc.name;
-      
+
         if (masterData in statsByMasterData) {
-          statsByMasterData[ masterDataName] += count;
+          statsByMasterData[masterDataName] += count;
         } else {
-          statsByMasterData[ masterDataName] = count;
+          statsByMasterData[masterDataName] = count;
         }
       }
 
-      const statsByMasterDataAndHomeType ={};
+      const statsByMasterDataAndHomeType = {};
       for (const entry of result) {
         const { masterData, homeType, count } = entry;
         const doc = await db.masterData.findOne({ purrPetCode: masterData });
@@ -356,13 +349,13 @@ export const deleteHomestay = async (purrPetCode) =>
           statsByMasterDataAndHomeType[key] = count;
         }
       }
-      
+
       const datasetDog = {};
       const datasetCat = {};
       for (const [key, count] of Object.entries(statsByMasterDataAndHomeType)) {
-        const [masterData, homeType] = key.split("-");
+        const [masterData, homeType] = key.split('-');
 
-        const dataset = homeType === "Chó" ? datasetDog : datasetCat;
+        const dataset = homeType === 'Chó' ? datasetDog : datasetCat;
         const masterDataName = `${masterData}-${homeType}`;
 
         if (masterDataName in dataset) {
@@ -373,11 +366,10 @@ export const deleteHomestay = async (purrPetCode) =>
       }
       resolve({
         err: 0,
-        message: "Thống kê homestay thành công",
-        data:  statsByMasterData ,
+        message: 'Thống kê homestay thành công',
+        data: statsByMasterData,
         datadog: datasetDog,
         datacat: datasetCat,
-
       });
     } catch (error) {
       reject(error);

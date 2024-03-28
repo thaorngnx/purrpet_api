@@ -1,11 +1,11 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   purrPetCode,
   productDto,
   updateProductDto,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
-const cloudinary = require("cloudinary").v2;
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
+const cloudinary = require('cloudinary').v2;
 
 export const getAllProduct = async (req, res) => {
   try {
@@ -25,7 +25,7 @@ export const getAllProductCustomer = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};
 
 export const getProductByCode = async (req, res) => {
   try {
@@ -73,7 +73,7 @@ export const updateProduct = async (req, res) => {
     }
     const response = await services.updateProduct(
       { ...req.body, images },
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -114,7 +114,7 @@ export const getReportProduct = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};
 
 export const getAllProductStaff = async (req, res) => {
   try {
@@ -124,7 +124,7 @@ export const getAllProductStaff = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};
 export const getAllSellingProduct = async (req, res) => {
   try {
     const response = await services.getAllSellingProduct(req.query);
@@ -133,6 +133,4 @@ export const getAllSellingProduct = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
-
-
+};

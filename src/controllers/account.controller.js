@@ -1,10 +1,10 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   purrPetCode,
   accountDto,
   updateAccountDto,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllAccount = async (req, res) => {
   try {
@@ -49,7 +49,7 @@ export const updateAccount = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateAccount(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {

@@ -1,4 +1,4 @@
-import createError from "http-errors";
+import createError from 'http-errors';
 
 export const badRequest = (err, res) => {
   const error = createError.BadRequest(err);
@@ -17,7 +17,7 @@ export const internalServerError = (res) => {
 };
 
 export const notFound = (req, res) => {
-  const error = createError.NotFound("This route is not defined!");
+  const error = createError.NotFound('This route is not defined!');
   return res.status(error.status).json({
     err: error.status,
     message: error.message,

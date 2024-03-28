@@ -1,6 +1,6 @@
-import * as services from "../services";
-import { purrPetCode, updateSpaDto, spaDto } from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+import * as services from '../services';
+import { purrPetCode, updateSpaDto, spaDto } from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllSpa = async (req, res) => {
   try {
@@ -68,7 +68,7 @@ export const updateSpa = async (req, res) => {
     }
     const response = await services.updateSpa(
       { ...req.body, images },
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -109,4 +109,4 @@ export const getReportSpa = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};

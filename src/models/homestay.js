@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_HOME, HOME_TYPE } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_HOME, HOME_TYPE } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -15,7 +15,7 @@ export const homestaySchema = new Schema(
       type: String,
       enum: {
         values: [HOME_TYPE.DOG, HOME_TYPE.CAT],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: HOME_TYPE.DOG,
     },
@@ -44,7 +44,7 @@ export const homestaySchema = new Schema(
       type: String,
       enum: {
         values: [STATUS_HOME.ACTIVE, STATUS_HOME.INACTIVE],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_HOME.ACTIVE,
     },
@@ -55,7 +55,7 @@ export const homestaySchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("homestay", homestaySchema);
+export default mongoose.model('homestay', homestaySchema);

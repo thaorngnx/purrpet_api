@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_ORDER } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_ORDER } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -43,7 +43,7 @@ export const orderSchema = new Schema(
           STATUS_ORDER.CANCEL,
           STATUS_ORDER.DONE,
         ],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_ORDER.WAITING_FOR_PAY,
     },
@@ -54,6 +54,6 @@ export const orderSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-export default mongoose.model("order", orderSchema);
+export default mongoose.model('order', orderSchema);

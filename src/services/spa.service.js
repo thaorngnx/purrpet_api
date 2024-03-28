@@ -1,17 +1,17 @@
-import db from "../models";
+import db from '../models';
 import {
   COLLECTION,
   PREFIX,
   CATEGORY_TYPE,
   STATUS_SPA,
   VALIDATE_DUPLICATE,
-} from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
-import { pagination } from "../utils/pagination";
+} from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
+import { pagination } from '../utils/pagination';
 import {
   checkValidCategory,
   checkDuplicateValueV3,
-} from "../utils/validationData";
+} from '../utils/validationData';
 
 export const createSpa = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -30,18 +30,18 @@ export const createSpa = async (data) =>
         data.spaName,
         VALIDATE_DUPLICATE.SPA_TYPE,
         data.spaType,
-        COLLECTION.SPA
+        COLLECTION.SPA,
       );
       if (isExistSpa.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên spa đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Tên spa đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
       const response = await db.spa.create(data);
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Tạo spa thành công" : "Tạo spa thất bại",
+        message: response ? 'Tạo spa thành công' : 'Tạo spa thất bại',
         data: response,
       });
     } catch (error) {
@@ -55,10 +55,10 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
       const search = {};
       if (key) {
         search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { spaName: { $regex: key, $options: "i" } },
-          { description: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
+          { purrPetCode: { $regex: key, $options: 'i' } },
+          { spaName: { $regex: key, $options: 'i' } },
+          { description: { $regex: key, $options: 'i' } },
+          { categoryName: { $regex: key, $options: 'i' } },
         ];
       }
 
@@ -70,8 +70,8 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
       // Sắp xếp
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
 
       const response = await db.spa.find({ ...query, ...search });
@@ -84,7 +84,9 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Lấy danh sách spa thành công" : "Lấy danh sách spa thất bại",
+        message: response
+          ? 'Lấy danh sách spa thành công'
+          : 'Lấy danh sách spa thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -96,24 +98,22 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
 export const getAllSpaCustomer = async () =>
   new Promise(async (resolve, reject) => {
     try {
-       // Truy vấn MongoDB
+      // Truy vấn MongoDB
       const response = await db.spa.find({ status: STATUS_SPA.ACTIVE });
 
       console.log(response);
- 
+
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách spa thành công"
-          : "Lấy danh sách spa thất bại",
+          ? 'Lấy danh sách spa thành công'
+          : 'Lấy danh sách spa thất bại',
         data: response,
       });
-    }
-    catch (error) {
+    } catch (error) {
       reject(error);
     }
   });
-
 
 export const getSpaByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
@@ -121,7 +121,9 @@ export const getSpaByCode = async (purrPetCode) =>
       const response = await db.spa.findOne({ purrPetCode: purrPetCode });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Lấy thông tin spa thành công" : "Lấy thông tin spa thất bại",
+        message: response
+          ? 'Lấy thông tin spa thành công'
+          : 'Lấy thông tin spa thất bại',
         data: response,
       });
     } catch (error) {
@@ -144,22 +146,22 @@ export const updateSpa = async (data, purrPetCode) =>
         data.spaName,
         VALIDATE_DUPLICATE.SPA_TYPE,
         data.spaType,
-        COLLECTION.SPA
+        COLLECTION.SPA,
       );
       if (isExistSpa.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên spa đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Tên spa đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
 
       const response = await db.spa.findOneAndUpdate(
         { purrPetCode: purrPetCode },
-        data
+        data,
       );
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Cập nhật spa thành công" : "Cập nhật spa thất bại",
+        message: response ? 'Cập nhật spa thành công' : 'Cập nhật spa thất bại',
       });
     } catch (error) {
       reject(error);
@@ -173,7 +175,7 @@ export const updateStatusSpa = async (purrPetCode) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Spa không tồn tại",
+          message: 'Spa không tồn tại',
         });
       } else {
         if (response.status === STATUS_SPA.ACTIVE) {
@@ -184,7 +186,7 @@ export const updateStatusSpa = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Cập nhật trạng thái spa thành công",
+          message: 'Cập nhật trạng thái spa thành công',
         });
       }
     } catch (error) {
@@ -200,78 +202,79 @@ export const deleteSpa = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Xóa spa thành công" : "Xóa spa thất bại",
+        message: response ? 'Xóa spa thành công' : 'Xóa spa thất bại',
       });
     } catch (error) {
       reject(error);
     }
   });
 
-export const getReportSpa = async (data) =>  new Promise(async (resolve, reject) => {
-    try{
+export const getReportSpa = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
       const fromDate = new Date(data.fromDate);
       fromDate.setUTCHours(0, 0, 0, 0);
       const toDate = new Date(data.toDate);
       toDate.setUTCHours(23, 59, 59, 999);
-    const result = await db.bookingSpa.aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: fromDate,
-            $lte: toDate,
+      const result = await db.bookingSpa.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: fromDate,
+              $lte: toDate,
+            },
           },
         },
-      },
-      {
-        $lookup: {
-          from: "spas", 
-          localField: "spaCode", 
-          foreignField: "purrPetCode", 
-          as: "homestayInfo" 
-        }
-      },
-      {
-        $addFields: {
-          spaName: { $arrayElemAt: ["$homestayInfo.spaName", 0] },
-          spaType: { $arrayElemAt: ["$homestayInfo.spaType", 0] },
-        }
-      },
-      {
-        $group: {
-          _id: "$spaCode",
-          SpaCode: { $first: "$spaCode" },
-          spaName: { $first: "$spaName" },
-          spaType: { $first: "$spaType" },
-          count: { $sum: 1 },
+        {
+          $lookup: {
+            from: 'spas',
+            localField: 'spaCode',
+            foreignField: 'purrPetCode',
+            as: 'homestayInfo',
+          },
         },
-      },
-    ]);
+        {
+          $addFields: {
+            spaName: { $arrayElemAt: ['$homestayInfo.spaName', 0] },
+            spaType: { $arrayElemAt: ['$homestayInfo.spaType', 0] },
+          },
+        },
+        {
+          $group: {
+            _id: '$spaCode',
+            SpaCode: { $first: '$spaCode' },
+            spaName: { $first: '$spaName' },
+            spaType: { $first: '$spaType' },
+            count: { $sum: 1 },
+          },
+        },
+      ]);
 
-    const bySpaType = {}; 
-    for (const entry of result) {
-      const { spaType, count } = entry;
-      if (spaType in bySpaType) {
-        bySpaType[spaType] += count;
-      } else {
-        bySpaType[spaType] = count;
+      const bySpaType = {};
+      for (const entry of result) {
+        const { spaType, count } = entry;
+        if (spaType in bySpaType) {
+          bySpaType[spaType] += count;
+        } else {
+          bySpaType[spaType] = count;
+        }
       }
-    }
-    const bySpaName = {}; 
-    for (const entry of result) {
-      const { spaName, count } = entry;
-      if (spaName in bySpaName) {
-        bySpaName[spaName] += count;
-      } else {
-        bySpaName[spaName] = count;
+      const bySpaName = {};
+      for (const entry of result) {
+        const { spaName, count } = entry;
+        if (spaName in bySpaName) {
+          bySpaName[spaName] += count;
+        } else {
+          bySpaName[spaName] = count;
+        }
       }
+      resolve({
+        err: 0,
+        message: 'Thống kê spa thành công',
+        bySpaType: bySpaType,
+        bySpaName: bySpaName,
+      });
+    } catch (error) {
+      reject(error);
     }
-    resolve({
-      err: 0,
-      message: "Thống kê spa thành công",
-      bySpaType: bySpaType,
-      bySpaName: bySpaName,
-    });
-  } catch (error) {
-    reject(error);
-  
-  }});
+  });

@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_PRODUCT } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_PRODUCT } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -37,7 +37,7 @@ export const productSchema = new Schema(
       type: Number,
       required: true,
     },
-    star:{
+    star: {
       type: Number,
       default: 5,
     },
@@ -45,7 +45,7 @@ export const productSchema = new Schema(
       type: String,
       enum: {
         values: [STATUS_PRODUCT.ACTIVE, STATUS_PRODUCT.INACTIVE],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_PRODUCT.ACTIVE,
     },
@@ -56,7 +56,7 @@ export const productSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("product", productSchema);
+export default mongoose.model('product', productSchema);

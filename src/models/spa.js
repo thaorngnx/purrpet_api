@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_SPA, SPA_TYPE } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_SPA, SPA_TYPE } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -20,7 +20,7 @@ export const spaSchema = new Schema(
       type: String,
       enum: {
         values: [SPA_TYPE.DOG, SPA_TYPE.CAT],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: SPA_TYPE.DOG,
     },
@@ -44,7 +44,7 @@ export const spaSchema = new Schema(
       type: String,
       enum: {
         values: [STATUS_SPA.ACTIVE, STATUS_SPA.INACTIVE],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_SPA.ACTIVE,
     },
@@ -55,7 +55,7 @@ export const spaSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("spa", spaSchema);
+export default mongoose.model('spa', spaSchema);

@@ -1,4 +1,4 @@
-import db from "../models";
+import db from '../models';
 export const addCart = async (data, cookies) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -7,9 +7,9 @@ export const addCart = async (data, cookies) =>
       const existProduct = await db.product.findOne({
         purrPetCode: productCode,
       });
-      if (!existProduct) return reject("Product not found");
-      const cartData = cookies["cartData"];
-      const cart = JSON.parse(cartData || "[]");
+      if (!existProduct) return reject('Product not found');
+      const cartData = cookies['cartData'];
+      const cart = JSON.parse(cartData || '[]');
       if (cart.find((item) => item.productCode === productCode)) {
         cart.find((item) => item.productCode === productCode).quantity +=
           quantity;
@@ -29,8 +29,8 @@ export const addCart = async (data, cookies) =>
 export const getCart = async (cookies) =>
   new Promise(async (resolve, reject) => {
     try {
-      const cartData = cookies["cartData"];
-      const cart = JSON.parse(cartData || "[]");
+      const cartData = cookies['cartData'];
+      const cart = JSON.parse(cartData || '[]');
       resolve(cart);
     } catch (error) {
       reject(error);
@@ -45,11 +45,11 @@ export const updateCart = async (data, cookies) =>
       const existProduct = await db.product.findOne({
         purrPetCode: productCode,
       });
-      if (!existProduct) return reject("Product not found");
-      const cartData = cookies["cartData"];
-      const cart = JSON.parse(cartData || "[]");
+      if (!existProduct) return reject('Product not found');
+      const cartData = cookies['cartData'];
+      const cart = JSON.parse(cartData || '[]');
       const index = cart.findIndex((item) => item.productCode === productCode);
-      if (index === -1) return reject("Product not found");
+      if (index === -1) return reject('Product not found');
       cart[index].quantity = quantity;
       resolve(cart);
     } catch (error) {
@@ -61,10 +61,10 @@ export const deleteProductInCart = async (data, cookies) =>
   new Promise(async (resolve, reject) => {
     try {
       const productCode = data.productCode;
-      const cartData = cookies["cartData"];
-      const cart = JSON.parse(cartData || "[]");
+      const cartData = cookies['cartData'];
+      const cart = JSON.parse(cartData || '[]');
       const index = cart.findIndex((item) => item.productCode === productCode);
-      if (index === -1) return reject("Product not found");
+      if (index === -1) return reject('Product not found');
       cart.splice(index, 1);
       resolve(cart);
     } catch (error) {
@@ -75,8 +75,8 @@ export const deleteProductInCart = async (data, cookies) =>
 export const deleteCart = async (cookies) =>
   new Promise(async (resolve, reject) => {
     try {
-      const cartData = cookies["cartData"];
-      const cart = JSON.parse(cartData || "[]");
+      const cartData = cookies['cartData'];
+      const cart = JSON.parse(cartData || '[]');
       resolve([]);
     } catch (error) {
       reject(error);

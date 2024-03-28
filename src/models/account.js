@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { ROLE, STATUS_ACCOUNT } from "../utils/constants";
+import mongoose from 'mongoose';
+import { ROLE, STATUS_ACCOUNT } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -28,7 +28,7 @@ export const accountSchema = new Schema(
       type: String,
       enum: {
         values: [ROLE.ADMIN, ROLE.STAFF],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: ROLE.STAFF,
     },
@@ -36,7 +36,7 @@ export const accountSchema = new Schema(
       type: String,
       enum: {
         values: [STATUS_ACCOUNT.ACTIVE, STATUS_ACCOUNT.INACTIVE],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_ACCOUNT.ACTIVE,
     },
@@ -53,7 +53,7 @@ export const accountSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("account", accountSchema);
+export default mongoose.model('account', accountSchema);

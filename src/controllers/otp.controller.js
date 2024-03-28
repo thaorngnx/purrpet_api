@@ -1,6 +1,6 @@
-import * as services from "../services";
-import { sendOtpDto, verifyOtpDto } from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+import * as services from '../services';
+import { sendOtpDto, verifyOtpDto } from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const sendOtp = async (req, res) => {
   try {

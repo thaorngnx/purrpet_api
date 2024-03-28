@@ -1,10 +1,10 @@
-import cron from "node-cron";
-import db from "../models";
-import { STATUS_BOOKING, STATUS_ORDER } from "../utils/constants";
+import cron from 'node-cron';
+import db from '../models';
+import { STATUS_BOOKING, STATUS_ORDER } from '../utils/constants';
 
 export const cronJob = () => {
   //job: check waiting for payment booking spa/ home/ order and cancel it after 10 minutes created
-  cron.schedule("*/2 * * * *", async () => {
+  cron.schedule('*/2 * * * *', async () => {
     // console.log("cancel not paid after 10 minutes");
     try {
       const bookingSpa = await db.bookingSpa.find({
@@ -53,7 +53,6 @@ export const cronJob = () => {
             product.inventory += item.quantity;
             await product.save();
           });
-          
         }
       });
     } catch (error) {
@@ -61,7 +60,7 @@ export const cronJob = () => {
     }
   });
   //job: check booking spa paid but after booking time and move to expired - RUN 1 HOUR 1 TIME
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule('0 * * * *', async () => {
     try {
       // console.log("check booking spa paid but after booking time");
       const bookingSpa = await db.bookingSpa.find({
@@ -71,7 +70,7 @@ export const cronJob = () => {
         const now = new Date();
         //check booking day same
         const bookingDate = new Date(booking.bookingDate);
-        const bookingTime = booking.bookingTime.split(":");
+        const bookingTime = booking.bookingTime.split(':');
         bookingDate.setHours(bookingTime[0]);
         bookingDate.setMinutes(bookingTime[1]);
         bookingDate.setSeconds(bookingTime[2]);
@@ -88,7 +87,7 @@ export const cronJob = () => {
     }
   });
   //job: check booking home paid but after date check out and move to expired - RUN 1 day 1 time
-  cron.schedule("0 0 * * *", async () => {
+  cron.schedule('0 0 * * *', async () => {
     // console.log("check booking home paid but after date check out");
     const bookingHome = await db.bookingHome({
       status: STATUS_BOOKING.PAID,
@@ -108,7 +107,7 @@ export const cronJob = () => {
   });
 
   //job: check otp code expired after 5 minutes - RUN 1 minute 1 time
-  cron.schedule("*/1 * * * *", async () => {
+  cron.schedule('*/1 * * * *', async () => {
     // console.log("check otp code expired after 5 minutes");
     //get time now minus 5 minutes
     const now = new Date();

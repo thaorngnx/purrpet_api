@@ -1,14 +1,14 @@
-import db from "../models";
+import db from '../models';
 import {
   GROUP_CODE,
   GROUP_SPA,
   COLLECTION,
   PREFIX,
   STATUS_BOOKING,
-} from "./constants";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import { generateCode } from "../utils/generateCode";
+} from './constants';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { generateCode } from '../utils/generateCode';
 dayjs.extend(customParseFormat);
 
 export const checkValidCategory = async (data, categoryType) =>
@@ -20,12 +20,12 @@ export const checkValidCategory = async (data, categoryType) =>
       if (category === null || category.categoryType != categoryType) {
         return resolve({
           err: -1,
-          message: "Danh mục không hợp lệ. Vui lòng chọn lại danh mục!",
+          message: 'Danh mục không hợp lệ. Vui lòng chọn lại danh mục!',
         });
       }
       resolve({
         err: 0,
-        message: "Danh mục hợp lệ!",
+        message: 'Danh mục hợp lệ!',
       });
     } catch (error) {
       reject(error);
@@ -37,7 +37,7 @@ export const checkDuplicateValue = async (
   purrPetCode,
   field,
   value,
-  collectionName
+  collectionName,
 ) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -63,7 +63,7 @@ export const checkDuplicateValueV3 = async (
   nameValue,
   fieldType,
   valueType,
-  collectionName
+  collectionName,
 ) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -92,7 +92,7 @@ export const checkDuplicateValueV2 = async (
   codeValue,
   fieldName,
   nameValue,
-  colelctionName
+  colelctionName,
 ) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -124,8 +124,8 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
       const masterData = await db.masterData.find({
         groupCode: GROUP_CODE.SPA,
       });
-      let timeStart = "";
-      let timeEnd = "";
+      let timeStart = '';
+      let timeEnd = '';
       let minuteStep = 0;
       let quantity = 0;
       masterData.forEach((element) => {
@@ -152,26 +152,26 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
       const currentTime = dayjs();
       const searchDate = dayjs(bookingDate);
 
-      let time = dayjs(timeStart, "HH:mm");
-      const endTime = dayjs(timeEnd, "HH:mm");
+      let time = dayjs(timeStart, 'HH:mm');
+      const endTime = dayjs(timeEnd, 'HH:mm');
 
       while (time.isBefore(endTime)) {
         if (
           time.isBefore(currentTime) &&
-          searchDate.isSame(currentTime, "day")
+          searchDate.isSame(currentTime, 'day')
         ) {
-          time = time.add(minuteStep, "minute");
+          time = time.add(minuteStep, 'minute');
           continue;
         }
-        const timeString = time.format("HH:mm");
+        const timeString = time.format('HH:mm');
         validTime.push(timeString);
-        time = time.add(minuteStep, "minute");
+        time = time.add(minuteStep, 'minute');
       }
       //check available time slot
       const availableTime = [];
       validTime.forEach((time) => {
         const bookingInTime = bookingInDay.filter(
-          (booking) => booking.bookingTime === time
+          (booking) => booking.bookingTime === time,
         );
         if (bookingInTime.length < quantity) {
           availableTime.push(time);
@@ -188,14 +188,14 @@ export const getAvailableTimeInDayOfSpa = async (bookingDate) =>
 
 export const checkValidBookingDateTimeOfSpa = async (
   bookingDate,
-  bookingTime
+  bookingTime,
 ) =>
   new Promise(async (resolve, reject) => {
     try {
       const currentTime = dayjs();
       const bookingDateTime = dayjs(
         `${bookingDate} ${bookingTime}`,
-        "DD/MM/YYYY HH:mm"
+        'DD/MM/YYYY HH:mm',
       );
       if (bookingDateTime.isBefore(currentTime)) {
         return resolve({
@@ -203,7 +203,7 @@ export const checkValidBookingDateTimeOfSpa = async (
         });
       }
       const listValidTimeInBookingDate = await getAvailableTimeInDayOfSpa(
-        bookingDate
+        bookingDate,
       );
       if (listValidTimeInBookingDate.err !== 0) {
         return resolve({
@@ -250,7 +250,7 @@ export const getUnavailableDayByHome = async (query) =>
       if (listBookingHome.length === 0) {
         return resolve({
           err: 0,
-          message: "Lấy ngày không thể đặt thành công",
+          message: 'Lấy ngày không thể đặt thành công',
           data: [],
         });
       }
@@ -259,9 +259,9 @@ export const getUnavailableDayByHome = async (query) =>
       listBookingHome.forEach((item) => {
         const dateCheckIn = dayjs(item.dateCheckIn);
         const dateCheckOut = dayjs(item.dateCheckOut);
-        const diff = dateCheckOut.diff(dateCheckIn, "day");
+        const diff = dateCheckOut.diff(dateCheckIn, 'day');
         for (let i = 0; i < diff; i++) {
-          listBookingDay.push(dateCheckIn.add(i, "day"));
+          listBookingDay.push(dateCheckIn.add(i, 'day'));
         }
       });
       //in listBookingDay find day has quantity == quantity
@@ -270,7 +270,7 @@ export const getUnavailableDayByHome = async (query) =>
       listBookingDay.forEach((item) => {
         let count = 0;
         listBookingDay.forEach((item2) => {
-          if (item.isSame(item2, "day")) {
+          if (item.isSame(item2, 'day')) {
             count++;
           }
         });
@@ -282,7 +282,7 @@ export const getUnavailableDayByHome = async (query) =>
       });
       resolve({
         err: 0,
-        message: "Lấy ngày không thể đặt thành công",
+        message: 'Lấy ngày không thể đặt thành công',
         data: unavailableDay,
       });
     } catch (error) {
@@ -293,13 +293,13 @@ export const getUnavailableDayByHome = async (query) =>
 export const checkValidBookingDateOfHome = async (
   dateCheckIn,
   dateCheckOut,
-  homeCode
+  homeCode,
 ) =>
   new Promise(async (resolve, reject) => {
     try {
       const currentTime = dayjs();
-      const checkIn = dayjs(dateCheckIn, "DD/MM/YYYY");
-      const checkOut = dayjs(dateCheckOut, "DD/MM/YYYY");
+      const checkIn = dayjs(dateCheckIn, 'DD/MM/YYYY');
+      const checkOut = dayjs(dateCheckOut, 'DD/MM/YYYY');
       if (checkIn.isBefore(currentTime) || checkOut.isBefore(currentTime)) {
         return resolve({
           err: -1,
@@ -310,7 +310,7 @@ export const checkValidBookingDateOfHome = async (
           err: -1,
         });
       }
-      const diff = checkOut.diff(checkIn, "day");
+      const diff = checkOut.diff(checkIn, 'day');
       if (diff > 30) {
         return resolve({
           err: -1,
@@ -329,7 +329,7 @@ export const checkValidBookingDateOfHome = async (
       }
       const listUnavailableDay = unavailableDay.data;
       for (let i = 0; i < diff; i++) {
-        const day = checkIn.add(i, "day");
+        const day = checkIn.add(i, 'day');
         if (listUnavailableDay.includes(day)) {
           return resolve({
             err: -1,

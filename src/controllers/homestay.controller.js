@@ -1,10 +1,10 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   purrPetCode,
   updateHomestayDto,
   homestayDto,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllHomestay = async (req, res) => {
   try {
@@ -72,7 +72,7 @@ export const updateHomestay = async (req, res) => {
     }
     const response = await services.updateHomestay(
       { ...req.body, images },
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -86,7 +86,7 @@ export const updateStatusHomestay = async (req, res) => {
     const { error } = purrPetCode.validate(req.params);
     if (error) return badRequest(error.message, res);
     const response = await services.updateStatusHomestay(
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -114,4 +114,4 @@ export const getReportHomestay = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};

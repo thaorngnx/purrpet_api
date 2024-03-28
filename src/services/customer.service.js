@@ -1,17 +1,17 @@
-import db from "../models";
-import { checkDuplicateValue } from "../utils/validationData";
+import db from '../models';
+import { checkDuplicateValue } from '../utils/validationData';
 import {
   generateCode,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/generateCode";
+} from '../utils/generateCode';
 import {
   COLLECTION,
   PREFIX,
   VALIDATE_DUPLICATE,
   COOKIES_PATH,
-} from "../utils/constants";
-import { pagination } from "../utils/pagination";
+} from '../utils/constants';
+import { pagination } from '../utils/pagination';
 
 export const getAllCustomer = async (query) =>
   new Promise(async (resolve, reject) => {
@@ -28,8 +28,8 @@ export const getAllCustomer = async (query) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách khách hàng thành công"
-          : "Lấy danh sách khách hàng thất bại",
+          ? 'Lấy danh sách khách hàng thành công'
+          : 'Lấy danh sách khách hàng thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -52,8 +52,8 @@ export const getCustomerByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin khách hàng thành công"
-          : "Lấy thông tin khách hàng thất bại",
+          ? 'Lấy thông tin khách hàng thành công'
+          : 'Lấy thông tin khách hàng thất bại',
         data: response,
         totalOrder: total_order,
       });
@@ -69,8 +69,8 @@ export const getCustomerById = async (id) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin khách hàng thành công"
-          : "Lấy thông tin khách hàng thất bại",
+          ? 'Lấy thông tin khách hàng thành công'
+          : 'Lấy thông tin khách hàng thất bại',
         data: response,
       });
     } catch (error) {
@@ -89,7 +89,7 @@ export const lookUpOrders = async (userId) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Bạn chưa có đơn đặt hàng nào !!",
+          message: 'Bạn chưa có đơn đặt hàng nào !!',
           data: null,
         });
       } else {
@@ -102,8 +102,8 @@ export const lookUpOrders = async (userId) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Tra cứu đơn hàng thành công"
-            : "Tra cứu đơn hàng thất bại",
+            ? 'Tra cứu đơn hàng thành công'
+            : 'Tra cứu đơn hàng thất bại',
           Oder_Product: isOder,
           Homestay: isHomestay,
           Spa: isSpa,
@@ -119,18 +119,18 @@ export const createCustomer = async (data) =>
     try {
       data.purrPetCode = await generateCode(
         COLLECTION.CUSTOMER,
-        PREFIX.CUSTOMER
+        PREFIX.CUSTOMER,
       );
       const isExistCustomer = await checkDuplicateValue(
         data.purrPetCode,
         VALIDATE_DUPLICATE.EMAIL,
         data.email,
-        COLLECTION.CUSTOMER
+        COLLECTION.CUSTOMER,
       );
       if (isExistCustomer.err !== 0)
         return resolve({
           err: -1,
-          message: "Email đã tồn tại",
+          message: 'Email đã tồn tại',
           data: null,
         });
       const customer = await db.customer.create(data);
@@ -138,11 +138,11 @@ export const createCustomer = async (data) =>
       if (customer) {
         const accessToken = generateAccessToken(
           customer,
-          COOKIES_PATH.CUSTOMER
+          COOKIES_PATH.CUSTOMER,
         );
         const refreshToken = generateRefreshToken(
           customer,
-          COOKIES_PATH.CUSTOMER
+          COOKIES_PATH.CUSTOMER,
         );
         response = {
           ...customer._doc,
@@ -156,8 +156,8 @@ export const createCustomer = async (data) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Tạo khách hàng thành công"
-          : "Tạo khách hàng thất bại",
+          ? 'Tạo khách hàng thành công'
+          : 'Tạo khách hàng thất bại',
         data: response,
       });
     } catch (error) {
@@ -173,25 +173,25 @@ export const updateCustomer = async (data, purrPetCode) =>
           purrPetCode,
           VALIDATE_DUPLICATE.EMAIL,
           data.email,
-          COLLECTION.CUSTOMER
+          COLLECTION.CUSTOMER,
         );
         if (isExistCustomer.err !== 0)
           return resolve({
             err: -1,
-            message: "Email đã tồn tại",
+            message: 'Email đã tồn tại',
             data: null,
           });
       }
       const response = await db.customer.findOneAndUpdate(
         { purrPetCode: purrPetCode },
         data,
-        { new: true }
+        { new: true },
       );
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Cập nhật khách hàng thành công"
-          : "Cập nhật khách hàng thất bại",
+          ? 'Cập nhật khách hàng thành công'
+          : 'Cập nhật khách hàng thất bại',
         data: response,
       });
     } catch (error) {
@@ -202,12 +202,12 @@ export const updateCustomer = async (data, purrPetCode) =>
 export const getCustomerByEmail = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.customer.findOne({email: data.email});
+      const response = await db.customer.findOne({ email: data.email });
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin khách hàng thành công"
-          : "Lấy thông tin khách hàng thất bại",
+          ? 'Lấy thông tin khách hàng thành công'
+          : 'Lấy thông tin khách hàng thất bại',
         data: response,
       });
     } catch (error) {
@@ -215,31 +215,31 @@ export const getCustomerByEmail = async (data) =>
     }
   });
 
-  export const createCusStaff = async (data) =>
+export const createCusStaff = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       data.purrPetCode = await generateCode(
         COLLECTION.CUSTOMER,
-        PREFIX.CUSTOMER
+        PREFIX.CUSTOMER,
       );
       const isExistCustomer = await checkDuplicateValue(
         data.purrPetCode,
         VALIDATE_DUPLICATE.EMAIL,
         data.email,
-        COLLECTION.CUSTOMER
+        COLLECTION.CUSTOMER,
       );
       if (isExistCustomer.err !== 0)
         return resolve({
           err: -1,
-          message: "Email đã tồn tại",
+          message: 'Email đã tồn tại',
           data: null,
         });
       const response = await db.customer.create(data);
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Tạo khách hàng thành công"
-          : "Tạo khách hàng thất bại",
+          ? 'Tạo khách hàng thành công'
+          : 'Tạo khách hàng thất bại',
         data: response,
       });
     } catch (error) {

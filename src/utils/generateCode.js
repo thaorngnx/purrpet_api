@@ -1,5 +1,5 @@
-import db from "../models";
-import jwt from "jsonwebtoken";
+import db from '../models';
+import jwt from 'jsonwebtoken';
 
 export const generateCode = async (collectionName, prefix) => {
   const collection = await db[collectionName].find();
@@ -21,7 +21,7 @@ export const generateAccessToken = (user, path) => {
       role: user.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: '30d' },
   );
   return accessToken;
 };
@@ -34,7 +34,7 @@ export const generateRefreshToken = (user, path) => {
       role: user.role,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "365d" }
+    { expiresIn: '365d' },
   );
   return refreshToken;
 };

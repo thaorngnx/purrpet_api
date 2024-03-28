@@ -1,15 +1,17 @@
-import db from "../models";
-import { COLLECTION, PREFIX, STATUS_ORDER, ROLE } from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
-import { pagination } from "../utils/pagination";
+import db from '../models';
+import { COLLECTION, PREFIX, STATUS_ORDER, ROLE } from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
+import { pagination } from '../utils/pagination';
 
 export const createOrder = async (data) => {
   try {
-    const customer = await db.customer.findOne({ purrPetCode: data.customerCode });
+    const customer = await db.customer.findOne({
+      purrPetCode: data.customerCode,
+    });
     if (!customer) {
       return {
         err: -1,
-        message: "Không tìm thấy khách hàng",
+        message: 'Không tìm thấy khách hàng',
       };
     }
 
@@ -17,12 +19,14 @@ export const createOrder = async (data) => {
     data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
 
     const productItems = data.orderItems.map((item) => item.productCode);
-    const products = await db.product.find({ purrPetCode: { $in: productItems } });
+    const products = await db.product.find({
+      purrPetCode: { $in: productItems },
+    });
 
     if (products.length !== productItems.length) {
       return {
         err: -1,
-        message: "Không tìm thấy sản phẩm",
+        message: 'Không tìm thấy sản phẩm',
       };
     }
 
@@ -30,7 +34,9 @@ export const createOrder = async (data) => {
     let orderPrice = 0;
 
     for (const item of products) {
-      const orderItem = data.orderItems.find((i) => i.productCode === item.purrPetCode);
+      const orderItem = data.orderItems.find(
+        (i) => i.productCode === item.purrPetCode,
+      );
       const totalPriceItems = item.price * orderItem.quantity;
       orderPrice += totalPriceItems;
       item.inventory -= orderItem.quantity;
@@ -51,13 +57,13 @@ export const createOrder = async (data) => {
       const response = await db.order.create({ ...data, orderPrice });
       return {
         err: response ? 0 : -1,
-        message: response ? "Tạo đơn hàng thành công" : "Tạo đơn hàng thất bại",
+        message: response ? 'Tạo đơn hàng thành công' : 'Tạo đơn hàng thất bại',
         data: response,
       };
     } else {
       return {
         err: -1,
-        message: "Sản phẩm đã hết hàng",
+        message: 'Sản phẩm đã hết hàng',
       };
     }
   } catch (error) {
@@ -65,7 +71,10 @@ export const createOrder = async (data) => {
   }
 };
 
-export const getAllOrder = async (user, { page, limit, order, key, fromDate, toDate, status, ...query }) => {
+export const getAllOrder = async (
+  user,
+  { page, limit, order, key, fromDate, toDate, status, ...query },
+) => {
   try {
     if (user.role === ROLE.CUSTOMER) {
       query = {
@@ -79,8 +88,8 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
       search = {
         ...search,
         $or: [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { customerCode: { $regex: key, $options: "i" } },
+          { purrPetCode: { $regex: key, $options: 'i' } },
+          { customerCode: { $regex: key, $options: 'i' } },
         ],
       };
     }
@@ -104,8 +113,8 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
 
     const _sort = {};
     if (order) {
-      const [key, value] = order.split(".");
-      _sort[key] = value === "asc" ? 1 : -1;
+      const [key, value] = order.split('.');
+      _sort[key] = value === 'asc' ? 1 : -1;
     }
 
     const response = await db.order.find({ ...query, ...search }).sort(_sort);
@@ -119,7 +128,9 @@ export const getAllOrder = async (user, { page, limit, order, key, fromDate, toD
 
     return {
       err: response ? 0 : -1,
-      message: response ? "Lấy danh sách đơn hàng thành công" : "Lấy danh sách đơn hàng thất bại",
+      message: response
+        ? 'Lấy danh sách đơn hàng thành công'
+        : 'Lấy danh sách đơn hàng thất bại',
       data: result.data,
       pagination: result.pagination,
     };
@@ -136,14 +147,17 @@ export const getOrderByCode = async (user, purrPetCode) =>
       if (!order) {
         resolve({
           err: -1,
-          message: "Không tìm thấy đơn hàng",
+          message: 'Không tìm thấy đơn hàng',
         });
       }
 
-      if (user.role === ROLE.CUSTOMER && user.purrPetCode !== order.customerCode) {
+      if (
+        user.role === ROLE.CUSTOMER &&
+        user.purrPetCode !== order.customerCode
+      ) {
         resolve({
           err: -1,
-          message: "Bạn không có quyền truy cập đơn hàng này",
+          message: 'Bạn không có quyền truy cập đơn hàng này',
         });
       }
 
@@ -154,7 +168,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Không tìm thấy khách hàng",
+          message: 'Không tìm thấy khách hàng',
         });
       }
 
@@ -166,7 +180,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       };
       resolve({
         err: 0,
-        message: "Lấy thông tin đơn hàng thành công",
+        message: 'Lấy thông tin đơn hàng thành công',
         data: response,
       });
     } catch (error) {
@@ -181,7 +195,7 @@ export const getOrderByCustomer = async (id) =>
       if (!customer) {
         resolve({
           err: -1,
-          message: "Không tìm thấy khách hàng",
+          message: 'Không tìm thấy khách hàng',
         });
       }
       if (customer) {
@@ -191,8 +205,8 @@ export const getOrderByCustomer = async (id) =>
         resolve({
           err: response ? 0 : -1,
           message: response
-            ? "Lấy danh sách đơn hàng thành công"
-            : "Lấy danh sách đơn hàng thất bại",
+            ? 'Lấy danh sách đơn hàng thành công'
+            : 'Lấy danh sách đơn hàng thất bại',
           data: response,
         });
       }
@@ -206,7 +220,7 @@ export const updateOrder = async (data, purrPetCode) =>
     try {
       const response = await db.order.findOneAndUpdate(
         { purrPetCode: purrPetCode },
-        data
+        data,
       );
       if (data.status === STATUS_ORDER.CANCEL) {
         const order = await db.order.findOne({ purrPetCode: purrPetCode });
@@ -216,7 +230,7 @@ export const updateOrder = async (data, purrPetCode) =>
         });
         price.forEach((item) => {
           item.inventory += order.orderItems.find(
-            (i) => i.productCode === item.purrPetCode
+            (i) => i.productCode === item.purrPetCode,
           ).quantity;
           item.save();
         });
@@ -224,7 +238,9 @@ export const updateOrder = async (data, purrPetCode) =>
 
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Cập nhật đơn hàng thành công" : "Cập nhật đơn hàng thất bại",
+        message: response
+          ? 'Cập nhật đơn hàng thành công'
+          : 'Cập nhật đơn hàng thất bại',
       });
     } catch (error) {
       reject(error);
@@ -238,7 +254,7 @@ export const updateStatusOrder = async (data, purrPetCode) =>
       if (!response) {
         resolve({
           err: -1,
-          message: "Không tìm thấy đơn hàng",
+          message: 'Không tìm thấy đơn hàng',
         });
       } else {
         let validStatus = false;
@@ -279,12 +295,12 @@ export const updateStatusOrder = async (data, purrPetCode) =>
           }
           resolve({
             err: 0,
-            message: "Cập nhật trạng thái đơn hàng thành công",
+            message: 'Cập nhật trạng thái đơn hàng thành công',
           });
         } else {
           resolve({
             err: -1,
-            message: "Trạng thái đơn hàng không hợp lệ",
+            message: 'Trạng thái đơn hàng không hợp lệ',
           });
         }
       }
@@ -301,7 +317,7 @@ export const deleteOrder = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response ? "Xóa đơn hàng thành công" : "Xóa đơn hàng thất bại",
+        message: response ? 'Xóa đơn hàng thành công' : 'Xóa đơn hàng thất bại',
       });
     } catch (error) {
       reject(error);

@@ -1,10 +1,10 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   orderDto,
   updateOrderDto,
   updateOrderStatusDto,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllOrder = async (req, res) => {
   try {
@@ -20,7 +20,7 @@ export const getOrderByCode = async (req, res) => {
   try {
     const response = await services.getOrderByCode(
       req.user,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -60,7 +60,7 @@ export const updateOrder = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateOrder(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -78,7 +78,7 @@ export const updateStatusOrder = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateStatusOrder(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {

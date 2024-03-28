@@ -1,29 +1,28 @@
-import express from "express";
-import dotenv from "dotenv";
+import express from 'express';
+import dotenv from 'dotenv';
 dotenv.config();
-import cors from "cors";
-import initRoutes from "./src/routes";
-import "./database.js";
-import { cronJob } from "./src/utils/cronJob";
+import cors from 'cors';
+import initRoutes from './src/routes';
+import './database.js';
+import { cronJob } from './src/utils/cronJob';
 
 const app = express();
 
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, "*"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [process.env.CLIENT_URL, '*'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static('public'));
 
-app.get("/", (req, res) => {
-  res.send("Welcome to PurrPet API");
+app.get('/', (req, res) => {
+  res.send('Welcome to PurrPet API');
 });
-
 
 initRoutes(app);
 

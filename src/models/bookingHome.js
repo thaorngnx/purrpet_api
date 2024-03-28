@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_BOOKING } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_BOOKING } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -51,7 +51,7 @@ export const bookingHomeSchema = new Schema(
           STATUS_BOOKING.EXPIRED,
           STATUS_BOOKING.CANCEL,
         ],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_BOOKING.WAITING_FOR_PAY,
     },
@@ -62,7 +62,7 @@ export const bookingHomeSchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("bookingHome", bookingHomeSchema);
+export default mongoose.model('bookingHome', bookingHomeSchema);

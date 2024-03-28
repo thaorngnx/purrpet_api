@@ -1,12 +1,12 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   purrPetCode,
   updateBookingSpaDto,
   bookingSpaDto,
   updateBookingSpaStatusDto,
   bookingDate,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllBookingSpa = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ export const getBookingSpaByCode = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.getBookingSpaByCode(
       req.user,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -64,7 +64,7 @@ export const updateBookingSpa = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateBookingSpa(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -82,7 +82,7 @@ export const updateStatusBookingSpa = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateStatusBookingSpa(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {

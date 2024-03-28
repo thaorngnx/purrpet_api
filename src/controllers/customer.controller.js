@@ -1,11 +1,11 @@
-import * as services from "../services";
+import * as services from '../services';
 import {
   purrPetCode,
   phoneNumber,
   updateCustomerDto,
   customerDto,
-} from "../helpers/joi_schema";
-import { internalServerError, badRequest } from "../middlewares/handle_errors";
+} from '../helpers/joi_schema';
+import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllCustomer = async (req, res) => {
   try {
@@ -71,7 +71,7 @@ export const updateCustomer = async (req, res) => {
     if (error) return badRequest(error.message, res);
     const response = await services.updateCustomer(
       req.body,
-      req.params.purrPetCode
+      req.params.purrPetCode,
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -88,7 +88,7 @@ export const getCustomerByEmail = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};
 
 export const createCusStaff = async (req, res) => {
   try {
@@ -100,4 +100,4 @@ export const createCusStaff = async (req, res) => {
     console.log(error);
     return internalServerError(res);
   }
-}
+};

@@ -1,12 +1,12 @@
-import db from "../models";
-import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import { COLLECTION, PREFIX, COOKIES_PATH, ROLE } from "../utils/constants";
+import db from '../models';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import { COLLECTION, PREFIX, COOKIES_PATH, ROLE } from '../utils/constants';
 import {
   generateCode,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/generateCode";
+} from '../utils/generateCode';
 
 export const sendOtp = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -15,18 +15,18 @@ export const sendOtp = async (data) =>
 
       //send mail
       let transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: 'gmail',
         secure: true,
         auth: {
-          user: "petpurr32@gmail.com",
-          pass: "wnojcrcxtidm uhnj",
+          user: 'petpurr32@gmail.com',
+          pass: 'wnojcrcxtidm uhnj',
         },
       });
 
       let mailOptions = {
-        from: "petpurr32@gmail.com",
+        from: 'petpurr32@gmail.com',
         to: data.email,
-        subject: "Xác thực người dùng",
+        subject: 'Xác thực người dùng',
         html: `<h1>Xác thực người dùng</h1>
         <p>Chào mừng bạn đến với Purrpet</p>
         <p>Đây là mã OTP của bạn và mã này có hiệu lực trong vòng 5 phút!</p>
@@ -38,23 +38,22 @@ export const sendOtp = async (data) =>
           console.log(error);
           resolve({
             err: -1,
-            message: "Gửi mã OTP thất bại",
+            message: 'Gửi mã OTP thất bại',
           });
         } else {
-          console.log("Email sent: " + info.response);
+          console.log('Email sent: ' + info.response);
         }
       });
       data.purrPetCode = await generateCode(COLLECTION.OTP, PREFIX.OTP);
       const response = await db.otp.findOneAndUpdate(
         { email: data.email },
         { otp: otp },
-        { new: true }
+        { new: true },
       );
       if (response) {
-       
         resolve({
           err: 0,
-          message: "Gửi mã OTP thành công",
+          message: 'Gửi mã OTP thành công',
         });
       } else {
         const response = await db.otp.create({
@@ -64,7 +63,7 @@ export const sendOtp = async (data) =>
 
         resolve({
           err: response ? 0 : -1,
-          message: response ? "Gửi mã OTP thành công" : "Gửi mã OTP thất bại",
+          message: response ? 'Gửi mã OTP thành công' : 'Gửi mã OTP thất bại',
         });
       }
     } catch (error) {
@@ -80,7 +79,7 @@ export const verifyOtp = async (data) =>
         if (data.otp == 0) {
           resolve({
             err: -1,
-            message: "Xác thực otp thất bại",
+            message: 'Xác thực otp thất bại',
           });
         } else {
           if (response.otp == data.otp) {
@@ -96,12 +95,12 @@ export const verifyOtp = async (data) =>
               //create access token
               accessToken = generateAccessToken(
                 customer,
-                COOKIES_PATH.CUSTOMER
+                COOKIES_PATH.CUSTOMER,
               );
               //create refresh token
               refreshToken = generateRefreshToken(
                 customer,
-                COOKIES_PATH.CUSTOMER
+                COOKIES_PATH.CUSTOMER,
               );
               //save token
               await db.customer.findByIdAndUpdate(customer.id, {
@@ -112,7 +111,7 @@ export const verifyOtp = async (data) =>
 
             resolve({
               err: 0,
-              message: "Xác thực otp thành công",
+              message: 'Xác thực otp thành công',
               data: customer,
               access_token: accessToken,
               refresh_token: refreshToken,
@@ -120,14 +119,14 @@ export const verifyOtp = async (data) =>
           } else {
             resolve({
               err: -1,
-              message: "Xác thực otp thất bại",
+              message: 'Xác thực otp thất bại',
             });
           }
         }
       } else {
         resolve({
           err: -1,
-          message: "Xác thực otp thất bại",
+          message: 'Xác thực otp thất bại',
         });
       }
     } catch (error) {

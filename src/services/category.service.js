@@ -1,39 +1,37 @@
-import db from "../models";
+import db from '../models';
 import {
   COLLECTION,
   PREFIX,
   STATUS_CATEGORY,
   VALIDATE_DUPLICATE,
-} from "../utils/constants";
-import { generateCode } from "../utils/generateCode";
-import { pagination } from "../utils/pagination";
-import { checkDuplicateValue } from "../utils/validationData";
+} from '../utils/constants';
+import { generateCode } from '../utils/generateCode';
+import { pagination } from '../utils/pagination';
+import { checkDuplicateValue } from '../utils/validationData';
 
 export const createCategory = async (data) =>
   new Promise(async (resolve, reject) => {
     try {
       data.purrPetCode = await generateCode(
         COLLECTION.CATEGORY,
-        PREFIX.CATEGORY
+        PREFIX.CATEGORY,
       );
       const isExistCategory = await checkDuplicateValue(
         data.purrPetCode,
         VALIDATE_DUPLICATE.CATEGORY_NAME,
         data.categoryName,
-        COLLECTION.CATEGORY
+        COLLECTION.CATEGORY,
       );
       if (isExistCategory.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Tên danh mục đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
       const response = await db.category.create(data);
       resolve({
         err: response ? 0 : -1,
-        message: response
-          ? "Tạo danh mục thành công"
-          : "Tạo danh mục thất bại",
+        message: response ? 'Tạo danh mục thành công' : 'Tạo danh mục thất bại',
         data: response,
       });
     } catch (error) {
@@ -50,8 +48,8 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
       // Tạo điều kiện tìm kiếm theo key (nếu có)
       if (key) {
         search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
+          { purrPetCode: { $regex: key, $options: 'i' } },
+          { categoryName: { $regex: key, $options: 'i' } },
         ];
       }
 
@@ -63,8 +61,8 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
       // Sắp xếp
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
 
       // Truy vấn MongoDB
@@ -84,8 +82,8 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách danh mục thành công"
-          : "Lấy danh sách danh mục thất bại",
+          ? 'Lấy danh sách danh mục thành công'
+          : 'Lấy danh sách danh mục thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -110,8 +108,8 @@ export const getAllCategoryCustomer = async ({
       const status = STATUS_CATEGORY.ACTIVE;
       if (key) {
         search.$or = [
-          { purrPetCode: { $regex: key, $options: "i" } },
-          { categoryName: { $regex: key, $options: "i" } },
+          { purrPetCode: { $regex: key, $options: 'i' } },
+          { categoryName: { $regex: key, $options: 'i' } },
         ];
       }
 
@@ -123,15 +121,15 @@ export const getAllCategoryCustomer = async ({
       // Sắp xếp
       const _sort = {};
       if (order) {
-        const [key, value] = order.split(".");
-        _sort[key] = value === "asc" ? 1 : -1;
+        const [key, value] = order.split('.');
+        _sort[key] = value === 'asc' ? 1 : -1;
       }
 
       // Truy vấn MongoDB
       const response = await db.category
         .find({ ...query, ...search, status: status })
         .sort(_sort);
-      
+
       const count = response.length;
       const result = pagination({
         data: response,
@@ -142,8 +140,8 @@ export const getAllCategoryCustomer = async ({
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy danh sách danh mục thành công"
-          : "Lấy danh sách danh mục thất bại",
+          ? 'Lấy danh sách danh mục thành công'
+          : 'Lấy danh sách danh mục thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -159,8 +157,8 @@ export const getCategoryByCode = async (purrPetCode) =>
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Lấy thông tin danh mục thành công"
-          : "Lấy thông tin danh mục thất bại",
+          ? 'Lấy thông tin danh mục thành công'
+          : 'Lấy thông tin danh mục thất bại',
         data: response,
       });
     } catch (error) {
@@ -175,23 +173,23 @@ export const updateCategory = async (data, purrPetCode) =>
         purrPetCode,
         VALIDATE_DUPLICATE.CATEGORY_NAME,
         data.categoryName,
-        COLLECTION.CATEGORY
+        COLLECTION.CATEGORY,
       );
       if (isExistCategory.err !== 0) {
         return resolve({
           err: -1,
-          message: "Tên danh mục đã tồn tại. Vui lòng chọn tên khác!",
+          message: 'Tên danh mục đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
       const response = await db.category.findOneAndUpdate(
         { purrPetCode: purrPetCode },
-        data
+        data,
       );
       resolve({
         err: response ? 0 : -1,
         message: response
-          ? "Cập nhật danh mục thành công"
-          : "Cập nhật danh mục thất bại",
+          ? 'Cập nhật danh mục thành công'
+          : 'Cập nhật danh mục thất bại',
       });
     } catch (error) {
       reject(error);
@@ -205,7 +203,7 @@ export const updateStatusCategory = async (purrPetCode) =>
       if (!response) {
         return resolve({
           err: -1,
-          message: "Danh mục không tồn tại",
+          message: 'Danh mục không tồn tại',
         });
       } else {
         if (response.status === STATUS_CATEGORY.ACTIVE) {
@@ -216,7 +214,7 @@ export const updateStatusCategory = async (purrPetCode) =>
         await response.save();
         resolve({
           err: 0,
-          message: "Cập nhật trạng thái danh mục thành công",
+          message: 'Cập nhật trạng thái danh mục thành công',
         });
       }
     } catch (error) {
@@ -232,9 +230,7 @@ export const deleteCategory = async (purrPetCode) =>
       });
       resolve({
         err: response ? 0 : -1,
-        message: response
-          ? "Xóa danh mục thành công"
-          : "Xóa danh mục thất bại",
+        message: response ? 'Xóa danh mục thành công' : 'Xóa danh mục thất bại',
       });
     } catch (error) {
       reject(error);

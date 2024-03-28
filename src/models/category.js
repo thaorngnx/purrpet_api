@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { STATUS_CATEGORY, CATEGORY_TYPE } from "../utils/constants";
+import mongoose from 'mongoose';
+import { STATUS_CATEGORY, CATEGORY_TYPE } from '../utils/constants';
 
-mongoose.set("runValidators", true);
+mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
@@ -25,7 +25,7 @@ export const categorySchema = new Schema(
           CATEGORY_TYPE.SPA,
           CATEGORY_TYPE.HOMESTAY,
         ],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: CATEGORY_TYPE.PRODUCT,
     },
@@ -33,7 +33,7 @@ export const categorySchema = new Schema(
       type: String,
       enum: {
         values: [STATUS_CATEGORY.ACTIVE, STATUS_CATEGORY.INACTIVE],
-        message: "{VALUE} is not supported",
+        message: '{VALUE} is not supported',
       },
       default: STATUS_CATEGORY.ACTIVE,
     },
@@ -44,7 +44,7 @@ export const categorySchema = new Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("category", categorySchema);
+export default mongoose.model('category', categorySchema);

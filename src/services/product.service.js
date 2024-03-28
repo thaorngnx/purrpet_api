@@ -396,7 +396,7 @@ export const getAllSellingProduct = async (query) =>
         },
         {
           $group: {
-            _id: '$productInfo._id',
+            _id: { $first: '$productInfo._id' },
             purrPetCode: { $first: '$orderItems.productCode' },
             categoryCode: { $first: '$categoryCode' },
             productName: { $first: '$productName' },

@@ -138,6 +138,7 @@ export const orderDto = Joi.object({
     province: Joi.string().required(),
   }).allow(null),
   customerNote: Joi.string().allow(null, ''),
+  userPoint: Joi.number().integer().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
@@ -162,6 +163,7 @@ export const bookingSpaDto = Joi.object({
   customerNote: Joi.string().allow(null, ''),
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
+  userPoint: Joi.number().integer().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
@@ -185,6 +187,7 @@ export const bookingHomeDto = Joi.object({
   customerNote: Joi.string().allow(null, ''),
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
+  userPoint: Joi.number().integer().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,

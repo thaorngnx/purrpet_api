@@ -33,11 +33,31 @@ export const createBookingSpa = async (data) =>
           message: 'Không tìm thấy khách hàng',
         });
       }
+      let availablePoint = data.bookingHomePrice * 0.01;
+      if (!data.userPoint) data.userPoint = 0;
+      if (
+        data.userPoint > availablePoint ||
+        data.userPoint < 0 ||
+        data.userPoint > customer.point
+      ) {
+        return {
+          err: -1,
+          message: 'Điểm tích lũy không đủ',
+        };
+      } else {
+        customer.point -= data.userPoint;
+        data.bookingHomePrice -= data.userPoint;
+      }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
         PREFIX.BOOKING_SPA,
       );
+
+      const point = data.bookingSpaPrice * 0.1;
+      console.log(customer.point, point);
       const response = await db.bookingSpa.create(data);
+      customer.point += point;
+      await customer.save();
       resolve({
         err: response ? 0 : -1,
         message: response

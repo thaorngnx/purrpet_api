@@ -31,6 +31,10 @@ export const customerSchema = new Schema(
       type: String,
       default: ROLE.CUSTOMER,
     },
+    point: {
+      type: Number,
+      default: 0,
+    },
     accessToken: {
       type: String,
     },

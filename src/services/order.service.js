@@ -45,6 +45,21 @@ export const createOrder = async (data) => {
       orderItem.image = item.images[0]?.path;
       await item.save();
     }
+    let availablePoint = orderPrice * 0.1;
+    if (!data.userPoint) data.userPoint = 0;
+    if (
+      data.userPoint > availablePoint ||
+      data.userPoint < 0 ||
+      data.userPoint > customer.point
+    ) {
+      return {
+        err: -1,
+        message: 'Điểm tích lũy không đủ',
+      };
+    } else {
+      customer.point -= data.userPoint;
+      orderPrice -= data.userPoint;
+    }
 
     const inventoryCheck = products.map((item) => item.inventory);
     const inventory = inventoryCheck.every((item) => item > -1);
@@ -54,7 +69,14 @@ export const createOrder = async (data) => {
     }
 
     if (!isOutOfStock) {
-      const response = await db.order.create({ ...data, orderPrice });
+      const point = Math.floor(orderPrice * 0.01);
+      const response = await db.order.create({
+        ...data,
+        orderPrice,
+      });
+      customer.point += point;
+      await customer.save();
+
       return {
         err: response ? 0 : -1,
         message: response ? 'Tạo đơn hàng thành công' : 'Tạo đơn hàng thất bại',

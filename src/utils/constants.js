@@ -25,7 +25,6 @@ export const STATUS_SPA = {
 };
 
 export const STATUS_ORDER = {
-  WAITING_FOR_PAY: 'Chờ thanh toán',
   NEW: 'Đơn hàng mới',
   PREPARE: 'Đang chuẩn bị',
   DELIVERING: 'Đang giao hàng',
@@ -44,6 +43,11 @@ export const STATUS_BOOKING = {
 export const STATUS_CATEGORY = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE',
+};
+
+export const STATUS_PAYMENT = {
+  WAITING_FOR_PAY: 'Chờ thanh toán',
+  PAID: 'Đã thanh toán',
 };
 
 export const CATEGORY_TYPE = {

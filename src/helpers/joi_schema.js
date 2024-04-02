@@ -144,7 +144,6 @@ export const orderDto = Joi.object({
     .required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.NEW,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
@@ -351,7 +350,7 @@ export const updateOrderDto = Joi.object({
   customerNote: Joi.string().allow(null, ''),
   status: Joi.string()
     .valid(
-      Constant.STATUS_ORDER.WAITING_FOR_PAY,
+      // Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,
@@ -365,7 +364,7 @@ export const updateOrderStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      Constant.STATUS_ORDER.WAITING_FOR_PAY,
+      // Constant.STATUS_ORDER.WAITING_FOR_PAY,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,

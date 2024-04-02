@@ -5,6 +5,7 @@ import {
   STATUS_ORDER,
   ROLE,
   PAYMENT_METHOD,
+  STATUS_PAYMENT,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { pagination } from '../utils/pagination';
@@ -51,6 +52,7 @@ export const createOrder = async (data) => {
       orderItem.image = item.images[0]?.path;
       await item.save();
     }
+    let totalPayment = orderPrice;
     let availablePoint = orderPrice * 0.1;
     if (!data.userPoint) data.userPoint = 0;
     if (
@@ -64,7 +66,7 @@ export const createOrder = async (data) => {
       };
     } else {
       customer.point -= data.userPoint;
-      orderPrice -= data.userPoint;
+      totalPayment -= data.userPoint;
     }
 
     const inventoryCheck = products.map((item) => item.inventory);
@@ -84,6 +86,8 @@ export const createOrder = async (data) => {
       const response = await db.order.create({
         ...data,
         orderPrice,
+        totalPayment,
+        pointUsed: data.userPoint,
       });
       customer.point += point;
       await customer.save();
@@ -292,9 +296,13 @@ export const updateStatusOrder = async (data, purrPetCode) =>
       } else {
         let validStatus = false;
         switch (response.status) {
-          case STATUS_ORDER.WAITING_FOR_PAY:
+          case STATUS_ORDER.NEW:
             if (
-              data.status === STATUS_ORDER.PREPARE ||
+              (data.status === STATUS_ORDER.PREPARE &&
+                response.payMethod === PAYMENT_METHOD.VNPAY &&
+                response.paymentStatus === STATUS_PAYMENT.PAID) ||
+              (data.status === STATUS_ORDER.PREPARE &&
+                response.payMethod === PAYMENT_METHOD.COD) ||
               data.status === STATUS_ORDER.CANCEL
             ) {
               validStatus = true;

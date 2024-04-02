@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
-import { PAYMENT_METHOD, STATUS_ORDER } from '../utils/constants';
+import {
+  PAYMENT_METHOD,
+  STATUS_ORDER,
+  STATUS_PAYMENT,
+} from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -41,11 +45,26 @@ export const orderSchema = new Schema(
       },
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: {
+        values: [STATUS_PAYMENT.WAITING_FOR_PAY, STATUS_PAYMENT.PAID],
+        message: '{VALUE} is not supported',
+      },
+      default: STATUS_PAYMENT.WAITING_FOR_PAY,
+    },
+    pointUsed: {
+      type: Number,
+      default: 0,
+    },
+    totalPayment: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: String,
       enum: {
         values: [
-          STATUS_ORDER.WAITING_FOR_PAY,
           STATUS_ORDER.NEW,
           STATUS_ORDER.PREPARE,
           STATUS_ORDER.DELIVERING,
@@ -54,7 +73,7 @@ export const orderSchema = new Schema(
         ],
         message: '{VALUE} is not supported',
       },
-      default: STATUS_ORDER.WAITING_FOR_PAY,
+      default: STATUS_ORDER.NEW,
     },
     createBy: {
       type: String,

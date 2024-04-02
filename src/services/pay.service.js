@@ -1,7 +1,7 @@
 import moment from 'moment';
 import dotenv from 'dotenv';
 import db from '../models';
-import { STATUS_ORDER } from '../utils/constants';
+import { STATUS_ORDER, STATUS_PAYMENT } from '../utils/constants';
 import querystring from 'qs';
 import crypto from 'crypto';
 import { Console } from 'console';
@@ -111,7 +111,7 @@ export const vnpayReturn = async (vnp_Params) =>
                 purrPetCode: vnp_Params['vnp_TxnRef'],
               });
               let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
-              paymentType.status = STATUS_ORDER.NEW;
+              paymentType.paymentStatus = STATUS_PAYMENT.PAID;
               await paymentType.save();
               resolve({
                 RspCode: '00',

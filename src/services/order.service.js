@@ -1,5 +1,11 @@
 import db from '../models';
-import { COLLECTION, PREFIX, STATUS_ORDER, ROLE } from '../utils/constants';
+import {
+  COLLECTION,
+  PREFIX,
+  STATUS_ORDER,
+  ROLE,
+  PAYMENT_METHOD,
+} from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { pagination } from '../utils/pagination';
 
@@ -66,6 +72,11 @@ export const createOrder = async (data) => {
 
     if (!inventory) {
       isOutOfStock = true;
+    }
+    if (data.payMethod === PAYMENT_METHOD.COD) {
+      data.status = STATUS_ORDER.NEW;
+    } else {
+      data.status = STATUS_ORDER.WAITING_FOR_PAY;
     }
 
     if (!isOutOfStock) {
@@ -283,14 +294,17 @@ export const updateStatusOrder = async (data, purrPetCode) =>
         switch (response.status) {
           case STATUS_ORDER.WAITING_FOR_PAY:
             if (
-              data.status === STATUS_ORDER.PAID ||
+              data.status === STATUS_ORDER.PREPARE ||
               data.status === STATUS_ORDER.CANCEL
             ) {
               validStatus = true;
             }
             break;
-          case STATUS_ORDER.PAID:
-            if (data.status === STATUS_ORDER.DELIVERING) {
+          case STATUS_ORDER.PREPARE:
+            if (
+              data.status === STATUS_ORDER.DELIVERING ||
+              data.status === STATUS_ORDER.CANCEL
+            ) {
               validStatus = true;
             }
             break;

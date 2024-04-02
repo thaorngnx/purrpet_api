@@ -46,7 +46,7 @@ export const createBookingSpa = async (data) =>
         };
       } else {
         customer.point -= data.userPoint;
-        data.bookingHomePrice -= data.userPoint;
+        data.bookingSpaPrice -= data.userPoint;
       }
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
@@ -54,7 +54,6 @@ export const createBookingSpa = async (data) =>
       );
 
       const point = data.bookingSpaPrice * 0.1;
-      console.log(customer.point, point);
       const response = await db.bookingSpa.create(data);
       customer.point += point;
       await customer.save();

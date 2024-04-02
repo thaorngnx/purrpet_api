@@ -111,7 +111,7 @@ export const vnpayReturn = async (vnp_Params) =>
                 purrPetCode: vnp_Params['vnp_TxnRef'],
               });
               let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
-              paymentType.status = STATUS_ORDER.PAID;
+              paymentType.status = STATUS_ORDER.NEW;
               await paymentType.save();
               resolve({
                 RspCode: '00',

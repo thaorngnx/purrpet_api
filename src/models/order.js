@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_ORDER } from '../utils/constants';
+import { PAYMENT_METHOD, STATUS_ORDER } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -33,12 +33,21 @@ export const orderSchema = new Schema(
       type: String,
       trim: true,
     },
+    payMethod: {
+      type: String,
+      enum: {
+        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY],
+        message: '{VALUE} is not supported',
+      },
+      required: true,
+    },
     status: {
       type: String,
       enum: {
         values: [
           STATUS_ORDER.WAITING_FOR_PAY,
-          STATUS_ORDER.PAID,
+          STATUS_ORDER.NEW,
+          STATUS_ORDER.PREPARE,
           STATUS_ORDER.DELIVERING,
           STATUS_ORDER.CANCEL,
           STATUS_ORDER.DONE,

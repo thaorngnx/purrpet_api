@@ -139,10 +139,13 @@ export const orderDto = Joi.object({
   }).allow(null),
   customerNote: Joi.string().allow(null, ''),
   userPoint: Joi.number().integer().allow(null),
+  payMethod: Joi.string()
+    .valid(Constant.PAYMENT_METHOD.COD, Constant.PAYMENT_METHOD.VNPAY)
+    .required(),
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
-      Constant.STATUS_ORDER.PAID,
+      Constant.STATUS_ORDER.NEW,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,
@@ -349,7 +352,6 @@ export const updateOrderDto = Joi.object({
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
-      Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,
@@ -364,7 +366,6 @@ export const updateOrderStatusDto = Joi.object({
   status: Joi.string()
     .valid(
       Constant.STATUS_ORDER.WAITING_FOR_PAY,
-      Constant.STATUS_ORDER.PAID,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,

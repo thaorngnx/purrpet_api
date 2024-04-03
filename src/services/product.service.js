@@ -55,6 +55,7 @@ export const createProduct = async (data) =>
   });
 
 export const getAllProduct = async ({
+  customerId,
   productCodes,
   page,
   limit,
@@ -97,6 +98,20 @@ export const getAllProduct = async ({
       const response = await db.product
         .find({ ...query, ...search })
         .sort(_sort);
+
+      //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
+      if (customerId) {
+        const reviews = await db.review.find({ user: customerId });
+        response.forEach((product) => {
+          const review = reviews.find(
+            (review) => review.productCode === product.purrPetCode,
+          );
+          if (review) {
+            product._doc.review = review.review;
+            product._doc.rating = review.rating;
+          }
+        });
+      }
       resolve({
         err: response ? 0 : -1,
         message: response

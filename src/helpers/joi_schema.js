@@ -257,6 +257,22 @@ export const reviewDto = Joi.object({
   comment: Joi.string().required(),
 });
 
+export const notificationDto = Joi.object({
+  userId: Joi.number().required(),
+  title: Joi.string().required(),
+  message: Joi.string().required(),
+  type: Joi.string()
+    .valid(
+      Constant.NOTIFICATION_TYPE.ORDER,
+      Constant.NOTIFICATION_TYPE.BOOKING_HOME,
+      Constant.NOTIFICATION_TYPE.BOOKING_SPA,
+      Constant.NOTIFICATION_TYPE.REVIEW,
+    )
+    .required(),
+  action: Joi.string().required(),
+  seen: Joi.boolean().allow(null),
+});
+
 //#endregion
 
 //#region Update

@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 export const notificationSchema = new Schema(
   {
     userId: {
-      type: Number,
+      type: String,
       required: [true, 'Please fill your userId'],
     },
     title: {

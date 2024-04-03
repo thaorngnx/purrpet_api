@@ -14,3 +14,4 @@ export * from './pay.controller';
 export * from './otp.controller';
 export * from './favorite.controller';
 export * from './review.controller';
+export * from './notification.controller';

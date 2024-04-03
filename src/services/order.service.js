@@ -6,9 +6,11 @@ import {
   ROLE,
   PAYMENT_METHOD,
   STATUS_PAYMENT,
+  NOTIFICATION_ACTION,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { pagination } from '../utils/pagination';
+import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
 export const createOrder = async (data) => {
   try {
@@ -92,6 +94,30 @@ export const createOrder = async (data) => {
       customer.point += point;
       await customer.save();
 
+      let notification = {
+        title: 'Đơn hàng mới',
+        message: `Đơn hàng ${response.purrPetCode} đã được tạo`,
+        action: NOTIFICATION_ACTION.NEW_ORDER,
+        type: 'ORDER',
+        userId: customer.id,
+      };
+      await db.notification.create(notification);
+      const userCodeList = [
+        {
+          _id: customer.id,
+          role: ROLE.CUSTOMER,
+          purrPetCode: customer.purrPetCode,
+        },
+      ];
+      const adminList = await db.account
+        .find({ role: ROLE.ADMIN })
+        .select('purrPetCode role');
+      const staffList = await db.account
+        .find({ role: ROLE.STAFF })
+        .select('purrPetCode role');
+      userCodeList.push(...adminList, ...staffList);
+
+      notifyMultiUser(userCodeList, NOTIFICATION_ACTION.NEW_ORDER, response);
       return {
         err: response ? 0 : -1,
         message: response ? 'Tạo đơn hàng thành công' : 'Tạo đơn hàng thất bại',

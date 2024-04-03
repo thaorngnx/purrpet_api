@@ -2,13 +2,13 @@ import db from '../models';
 import { COLLECTION, PREFIX, STATUS_ORDER } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 
-export const createReview = async (userCode, data) =>
+export const createReview = async (user, data) =>
   new Promise(async (resolve, reject) => {
     try {
       //check order exist
       const order = await db.order.findOne({
         purrPetCode: data.orderCode,
-        customerCode: userCode,
+        customerCode: user.purrPetCode,
         status: STATUS_ORDER.DONE,
       });
       if (!order) {
@@ -31,9 +31,10 @@ export const createReview = async (userCode, data) =>
       }
       //check review exist
       const review = await db.review.findOne({
+        user: user.id,
         productCode: data.productCode,
         orderCode: data.orderCode,
-        createBy: userCode,
+        createBy: user.purrPetCode,
       });
       if (review) {
         resolve({
@@ -47,11 +48,12 @@ export const createReview = async (userCode, data) =>
       //create review
       const newReview = await db.review.create({
         purrPetCode: reviewCode,
+        user: user.id,
         productCode: data.productCode,
         orderCode: data.orderCode,
         rating: data.rating,
         comment: data.comment,
-        createBy: userCode,
+        createBy: user.purrPetCode,
       });
 
       resolve({
@@ -94,7 +96,11 @@ export const updateReview = async (reviewCode, data) =>
 export const getReviewByProduct = async (productCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const reviews = await db.review.find({ productCode });
+      const reviews = await db.review.find({ productCode }).populate({
+        path: 'user',
+        select: 'name',
+        model: 'customer',
+      });
       //calculate average rating
       let totalRating = 0;
       reviews.forEach((review) => {

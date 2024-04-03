@@ -56,6 +56,23 @@ export const CATEGORY_TYPE = {
   HOMESTAY: 'Homestay',
 };
 
+export const NOTIFICATION_TYPE = {
+  ORDER: 'order',
+  BOOKING_HOME: 'bookingHome',
+  BOOKING_SPA: 'bookingSpa',
+  REVIEW: 'review',
+};
+
+export const NOTIFICATION_ACTION = {
+  NEW_ORDER: 'newOrder',
+  ORDER_UPDATE: 'orderUpdate',
+  NEW_BOOKING_HOME: 'newBookingHome',
+  BOOKING_HOME_UPDATE: 'bookingHomeUpdate',
+  NEW_BOOKING_SPA: 'newBookingSpa',
+  BOOKING_SPA_UPDATE: 'bookingSpaUpdate',
+  NEW_REVIEW: 'newReview',
+};
+
 export const PREFIX = {
   PRODUCT: 'PRD_',
   SPA: 'SPA_',

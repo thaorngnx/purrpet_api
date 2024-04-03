@@ -6,10 +6,7 @@ export const createReview = async (req, res) => {
   try {
     const { error } = reviewDto.validate(req.body);
     if (error) return badRequest(error.message, res);
-    const response = await services.createReview(
-      req.user.purrPetCode,
-      req.body,
-    );
+    const response = await services.createReview(req.user, req.body);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

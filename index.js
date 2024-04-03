@@ -33,6 +33,8 @@ io.use(function (socket, next) {
   }
 });
 
+io.on('connection', onConnection);
+
 app.use(
   cors({
     origin: [process.env.CLIENT_URL, '*'],
@@ -57,3 +59,4 @@ app.listen(PORT, () => {
 });
 
 cronJob();
+export default io;

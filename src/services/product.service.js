@@ -215,17 +215,112 @@ export const getAllProductStaff = async ({
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const product = await db.product.findOne({ purrPetCode: purrPetCode });
-      //get review of product
-      const reviews = await service.reviewService.getReviewByProduct({
-        productCode: purrPetCode,
-      });
+      const response = await db.product.findOne({ purrPetCode: purrPetCode });
+      //tính số sao trung bình của sản phẩm
+      const reviews = await db.review.find({ productCode: purrPetCode });
+      const averageRating =
+        reviews.reduce((total, review) => {
+          return total + review.rating;
+        }, 0) / reviews.length;
+      //đếm lượt bán ra của sản phẩm
+      const orderQuantity = await db.order.aggregate([
+        { $unwind: '$orderItems' },
+        { $match: { 'orderItems.productCode': purrPetCode } },
+        {
+          $group: {
+            _id: null,
+            totalQuantity: { $sum: '$orderItems.quantity' },
+          },
+        },
+      ]);
       resolve({
         err: response ? 0 : -1,
         message: response
           ? 'Tìm thấy sản phẩm!'
           : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
-        data: response,
+        data: {
+          ...response._doc,
+          averageRating: averageRating,
+          orderQuantity:
+            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+        },
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getDetailProductByCode = async (purrPetCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.product.findOne({ purrPetCode: purrPetCode });
+      //get review of product
+      const reviews = await service.getReviewByProduct(purrPetCode);
+      //đếm lượt bán ra của sản phẩm
+      const orderQuantity = await db.order.aggregate([
+        { $unwind: '$orderItems' },
+        { $match: { 'orderItems.productCode': purrPetCode } },
+        {
+          $group: {
+            _id: null,
+            totalQuantity: { $sum: '$orderItems.quantity' },
+          },
+        },
+      ]);
+      //đếm số sao trung bình của sản phẩm
+      let totalRating = 0;
+      let oneStar = 0;
+      let twoStar = 0;
+      let threeStar = 0;
+      let fourStar = 0;
+      let fiveStar = 0;
+      reviews.data.reviews.forEach((review) => {
+        totalRating += review.rating;
+        switch (review.rating) {
+          case 1:
+            oneStar++;
+            break;
+          case 2:
+            twoStar++;
+            break;
+          case 3:
+            threeStar++;
+            break;
+          case 4:
+            fourStar++;
+            break;
+          case 5:
+            fiveStar++;
+            break;
+        }
+      });
+      const numReview = reviews.data.reviews.length;
+      let averageRating = totalRating / numReview;
+      let starRate = {
+        oneStar: oneStar / numReview,
+        twoStar: twoStar / numReview,
+        threeStar: threeStar / numReview,
+        fourStar: fourStar / numReview,
+        fiveStar: fiveStar / numReview,
+      };
+
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? 'Tìm thấy sản phẩm!'
+          : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
+        data: {
+          product: {
+            ...response._doc,
+            averageRating: averageRating,
+            orderQuantity:
+              orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+          },
+          rating: {
+            starRate,
+            reviews: reviews.data.reviews,
+          },
+        },
       });
     } catch (error) {
       reject(error);

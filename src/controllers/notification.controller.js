@@ -17,7 +17,7 @@ export const createNotification = async (req, res) => {
 export const markAllAsRead = async (req, res) => {
   try {
     const user = req.user;
-    const response = await services.markAllAsRead(user.purrPetCode);
+    const response = await services.markAllAsRead(user.id);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -27,7 +27,7 @@ export const markAllAsRead = async (req, res) => {
 export const getAllNotification = async (req, res) => {
   try {
     const user = req.user;
-    const response = await services.getAllNotification(user.purrPetCode);
+    const response = await services.getAllNotification(user.id);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: error.message });

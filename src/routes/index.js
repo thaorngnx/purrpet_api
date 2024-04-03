@@ -14,6 +14,7 @@ import pay from './pay.router';
 import otp from './otp.router';
 import favorite from './favorite.router';
 import review from './review.router';
+import notification from './notification.router';
 import { notFound } from '../middlewares/handle_errors';
 
 const initRoutes = (app) => {
@@ -33,6 +34,7 @@ const initRoutes = (app) => {
   app.use('/api/otp', otp);
   app.use('/api/favorite', favorite);
   app.use('/api/review', review);
+  app.use('/api/notification', notification);
   app.use(notFound);
 };
 

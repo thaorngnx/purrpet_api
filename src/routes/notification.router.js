@@ -9,3 +9,5 @@ router.use(verifyToken);
 router.post('/create', controllers.createNotification);
 router.put('/mark-all-as-read', controllers.markAllAsRead);
 router.get('/get-all', controllers.getAllNotification);
+
+export default router;

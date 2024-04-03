@@ -99,16 +99,19 @@ export const getAllProduct = async ({
         .find({ ...query, ...search })
         .sort(_sort);
 
+      let review = '';
+      let rating = 0;
+
       //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
       if (customerId) {
         const reviews = await db.review.find({ user: customerId });
         response.forEach((product) => {
-          const review = reviews.find(
+          const rev = reviews.find(
             (review) => review.productCode === product.purrPetCode,
           );
           if (review) {
-            product._doc.review = review.review;
-            product._doc.rating = review.rating;
+            review = rev.review;
+            rating = rev.rating;
           }
         });
       }
@@ -117,7 +120,11 @@ export const getAllProduct = async ({
         message: response
           ? 'Lấy danh sách sản phẩm thành công!'
           : 'Lấy danh sách sản phẩm thất bại!',
-        data: response,
+        data: {
+          ...response,
+          review: review,
+          rating: rating,
+        },
       });
     } catch (error) {
       reject(error);

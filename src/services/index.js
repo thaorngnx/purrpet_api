@@ -13,3 +13,4 @@ export * from './masterData.service';
 export * from './pay.service';
 export * from './otp.service';
 export * from './favorite.service';
+export * from './review.service';

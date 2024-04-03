@@ -1,4 +1,5 @@
 import db from '../models';
+import * as service from './index';
 import {
   COLLECTION,
   PREFIX,
@@ -12,8 +13,6 @@ import {
   checkValidCategory,
   checkDuplicateValue,
 } from '../utils/validationData';
-import moment from 'moment';
-import e from 'express';
 
 export const createProduct = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -216,7 +215,11 @@ export const getAllProductStaff = async ({
 export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.product.findOne({ purrPetCode: purrPetCode });
+      const product = await db.product.findOne({ purrPetCode: purrPetCode });
+      //get review of product
+      const reviews = await service.reviewService.getReviewByProduct({
+        productCode: purrPetCode,
+      });
       resolve({
         err: response ? 0 : -1,
         message: response

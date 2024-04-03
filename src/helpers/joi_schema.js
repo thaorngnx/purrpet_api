@@ -250,6 +250,13 @@ export const verifyOtpDto = Joi.object({
   otp: Joi.number().required(),
 });
 
+export const reviewDto = Joi.object({
+  productCode: Joi.string().required(),
+  orderCode: Joi.string().required(),
+  rating: Joi.number().required(),
+  comment: Joi.string().required(),
+});
+
 //#endregion
 
 //#region Update
@@ -442,5 +449,10 @@ export const updateMasterDataDto = Joi.object({
   description: Joi.string().allow(null),
   createBy: Joi.string().allow(null),
   updateBy: Joi.string().allow(null),
+});
+
+export const updateReviewDto = Joi.object({
+  rating: Joi.number().allow(null),
+  comment: Joi.string().allow(null),
 });
 //#endregion

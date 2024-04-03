@@ -10,6 +10,8 @@ import customer from './customer';
 import masterData from './masterData';
 import otp from './otp';
 import favorite from './favorite';
+import review from './review';
+import notification from './notification';
 
 export default {
   account,
@@ -24,4 +26,6 @@ export default {
   masterData,
   otp,
   favorite,
+  review,
+  notification,
 };

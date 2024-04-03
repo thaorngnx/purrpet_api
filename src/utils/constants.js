@@ -68,6 +68,8 @@ export const PREFIX = {
   CUSTOMER: 'CUS_',
   MASTERDATA: 'MD_',
   OTP: 'OTP_',
+  FAVORITE: 'FAV_',
+  REVIEW: 'REV_',
 };
 
 export const COLLECTION = {
@@ -82,6 +84,8 @@ export const COLLECTION = {
   CUSTOMER: 'customer',
   MASTERDATA: 'masterData',
   OTP: 'otp',
+  FAVORITE: 'favorite',
+  REVIEW: 'review',
 };
 
 export const SPA_TYPE = {

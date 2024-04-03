@@ -17,6 +17,7 @@
     "dayjs": "^1.11.10",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
+    "http": "^0.0.1-security",
     "http-errors": "^2.0.0",
     "isemail": "^3.2.0",
     "joi": "^17.11.0",
@@ -29,7 +30,9 @@
     "nodemailer": "^6.9.7",
     "qs": "^6.11.2",
     "request": "^2.88.2",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "socket.io": "^4.7.5",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",

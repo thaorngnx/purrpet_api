@@ -13,6 +13,7 @@ import masterData from './masterData.router';
 import pay from './pay.router';
 import otp from './otp.router';
 import favorite from './favorite.router';
+import review from './review.router';
 import { notFound } from '../middlewares/handle_errors';
 
 const initRoutes = (app) => {
@@ -31,6 +32,7 @@ const initRoutes = (app) => {
   app.use('/api/pay', pay);
   app.use('/api/otp', otp);
   app.use('/api/favorite', favorite);
+  app.use('/api/review', review);
   app.use(notFound);
 };
 

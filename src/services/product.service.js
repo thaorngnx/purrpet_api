@@ -366,7 +366,11 @@ export const getDetailProductByCodeAndCustomer = async (
 ) =>
   new Promise(async (resolve, reject) => {
     try {
-      const review = await db.review.findOne({
+      let review = {
+        rating: 0,
+        comment: '',
+      };
+      review = await db.review.findOne({
         productCode,
         orderCode,
         user: user.id,
@@ -379,7 +383,7 @@ export const getDetailProductByCodeAndCustomer = async (
           : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
         data: {
           rating: review ? review.rating : 0,
-          comment: review ? review.comment : '',
+          review: review ? review.comment : '',
         },
       });
     } catch (error) {

@@ -103,7 +103,7 @@ export const getAllProduct = async ({
 
       //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
       if (customerId) {
-        const reviews = await db.review.find({ user: customerId });
+        const reviews = await db.review.find({ createdBy: customerId });
         products.forEach((product) => {
           const rev = reviews.find(
             (review) => review.productCode === product.purrPetCode,

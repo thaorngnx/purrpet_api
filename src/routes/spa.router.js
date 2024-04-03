@@ -12,6 +12,7 @@ router.get('/query-customer', controllers.getAllSpaCustomer);
 router.get('/:purrPetCode', controllers.getSpaByCode);
 router.use(verifyToken);
 router.post('/create', upload.array('images'), controllers.createSpa);
+
 router.put(
   '/update/:purrPetCode',
   upload.array('images'),

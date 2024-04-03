@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.post('/createPaymentUrl', controllers.createPaymentUrl);
 router.get('/vnpayReturn', controllers.vnpayReturn);
-
+router.post('/financialReport', controllers.financialReport);
 module.exports = router;

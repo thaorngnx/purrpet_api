@@ -1,10 +1,15 @@
 import moment from 'moment';
 import dotenv from 'dotenv';
 import db from '../models';
-import { STATUS_ORDER, STATUS_PAYMENT } from '../utils/constants';
+import {
+  STATUS_BOOKING,
+  STATUS_ORDER,
+  STATUS_PAYMENT,
+} from '../utils/constants';
+
 import querystring from 'qs';
 import crypto from 'crypto';
-import { Console } from 'console';
+import * as CONST from '../utils/constants';
 
 dotenv.config();
 
@@ -110,9 +115,15 @@ export const vnpayReturn = async (vnp_Params) =>
               const exsitBookingSpa = await db.bookingSpa.findOne({
                 purrPetCode: vnp_Params['vnp_TxnRef'],
               });
-              let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
-              paymentType.paymentStatus = STATUS_PAYMENT.PAID;
-              await paymentType.save();
+              if (exsitOrder) {
+                exsitOrder.paymentStatus = STATUS_ORDER.DONE;
+                await exsitOrder.save();
+              }
+              if (exsitBooking || exsitBookingSpa) {
+                let booking = exsitBooking ?? exsitBookingSpa;
+                booking.status = STATUS_BOOKING.PAID;
+                await booking.save();
+              }
               resolve({
                 RspCode: '00',
                 Message: 'Thanh toán thành công',
@@ -176,3 +187,80 @@ function sortObject(obj) {
   }
   return sorted;
 }
+
+export const financialReport = async (data) => {
+  try {
+    const startDate = new Date(data.startDate);
+    startDate.setUTCHours(0, 0, 0, 0);
+    const endDate = new Date(data.endDate);
+    endDate.setUTCHours(23, 59, 59, 999);
+    let totalVNPAY = 0;
+    let totalCOD = 0;
+    let total = 0;
+    let totalOrder = [0, totalCOD, totalVNPAY];
+    let totalBookingHome = [0, totalCOD, totalVNPAY];
+    let totalBookingSpa = [0, totalCOD, totalVNPAY];
+    let order = await db.order.find({
+      status: STATUS_ORDER.DONE,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+    let bookingHome = await db.bookingHome.find({
+      status: STATUS_BOOKING.PAID,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+    let bookingSpa = await db.bookingSpa.find({
+      status: STATUS_BOOKING.PAID,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+    let COD = 0;
+    let VNPAY = 0;
+    const countOrder = [order.length, COD, VNPAY];
+    const countBookingHome = [bookingHome.length, COD, VNPAY];
+    const countBookingSpa = [bookingSpa.length, COD, VNPAY];
+
+    order.map((item) => {
+      totalOrder[0] += item.orderPrice;
+      if (item.payMethod === CONST.PAYMENT_METHOD.VNPAY) {
+        countOrder[2] += 1;
+        totalOrder[2] += item.orderPrice;
+      } else {
+        countOrder[1] += 1;
+        totalOrder[1] += item.orderPrice;
+      }
+    });
+    bookingHome.map((item) => {
+      totalBookingHome[0] += item.bookingHomePrice;
+      totalBookingHome[2] += item.bookingHomePrice;
+      countBookingHome[2] += 1;
+    });
+    bookingSpa.map((item) => {
+      totalBookingSpa[0] += item.bookingSpaPrice;
+      totalBookingSpa[2] += item.bookingSpaPrice;
+      countBookingSpa[2] += 1;
+    });
+    total = totalOrder[0] + totalBookingHome[0] + totalBookingSpa[0];
+    return {
+      message: 'Thống kê thành công',
+      data: {
+        countOrder,
+        countBookingHome,
+        countBookingSpa,
+        total,
+        totalOrder,
+        totalBookingHome,
+        totalBookingSpa,
+      },
+    };
+  } catch (error) {
+    throw error;
+  }
+};

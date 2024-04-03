@@ -344,6 +344,8 @@ export const updateStatusOrder = async (data, purrPetCode) =>
             break;
           case STATUS_ORDER.DELIVERING:
             if (data.status === STATUS_ORDER.DONE) {
+              response.paymentStatus = STATUS_PAYMENT.PAID;
+
               validStatus = true;
             }
             break;

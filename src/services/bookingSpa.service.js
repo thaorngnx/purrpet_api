@@ -33,6 +33,7 @@ export const createBookingSpa = async (data) =>
           message: 'Không tìm thấy khách hàng',
         });
       }
+      let totalPayment = data.bookingSpaPrice;
       let availablePoint = data.bookingHomePrice * 0.01;
       if (!data.userPoint) data.userPoint = 0;
       if (
@@ -46,15 +47,20 @@ export const createBookingSpa = async (data) =>
         };
       } else {
         customer.point -= data.userPoint;
-        data.bookingSpaPrice -= data.userPoint;
+        totalPayment = data.bookingSpaPrice - data.userPoint;
       }
+      const pointUsed = data.userPoint;
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
         PREFIX.BOOKING_SPA,
       );
 
       const point = data.bookingSpaPrice * 0.1;
-      const response = await db.bookingSpa.create(data);
+      const response = await db.bookingSpa.create({
+        ...data,
+        totalPayment: totalPayment,
+        pointUsed: pointUsed,
+      });
       customer.point += point;
       await customer.save();
       resolve({

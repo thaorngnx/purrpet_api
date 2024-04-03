@@ -39,6 +39,10 @@ export const createBookingHome = async (data) =>
         });
       }
 
+      //Todo: check home price
+
+      let totalPayment = data.bookingHomePrice;
+
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_HOME,
         PREFIX.BOOKING_HOME,
@@ -56,11 +60,16 @@ export const createBookingHome = async (data) =>
         };
       } else {
         customer.point -= data.userPoint;
-        data.bookingHomePrice -= data.userPoint;
+        totalPayment = data.bookingHomePrice - data.userPoint;
       }
+      const pointUsed = data.userPoint;
       const point = data.bookingHomePrice * 0.01;
       console.log(customer.point, point);
-      const response = await db.bookingHome.create(data);
+      const response = await db.bookingHome.create({
+        ...data,
+        pointUsed,
+        totalPayment,
+      });
       customer.point += point;
       await customer.save();
       resolve({

@@ -55,6 +55,22 @@ export const bookingHomeSchema = new Schema(
       },
       default: STATUS_BOOKING.WAITING_FOR_PAY,
     },
+    // paymentStatus: {
+    //   type: String,
+    //   enum: {
+    //     values: [STATUS_PAYMENT.WAITING_FOR_PAY, STATUS_PAYMENT.PAID],
+    //     message: '{VALUE} is not supported',
+    //   },
+    //   default: STATUS_PAYMENT.WAITING_FOR_PAY,
+    // },
+    pointUsed: {
+      type: Number,
+      default: 0,
+    },
+    totalPayment: {
+      type: Number,
+      required: true,
+    },
     createBy: {
       type: String,
     },

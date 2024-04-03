@@ -53,13 +53,28 @@ export const getDetailProductByCode = async (req, res) => {
   }
 };
 
+export const getProductsOrderReview = async (req, res) => {
+  try {
+    console.log(req.user);
+    const response = await services.getProductsOrderReview(
+      req.params.orderCode,
+      req.user.purrPetCode,
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
 export const getDetailProductByCodeAndCustomer = async (req, res) => {
   try {
-    const { error } = purrPetCode.validate(req.params);
-    if (error) return badRequest(error.message, res);
+    // const { error } = purrPetCode.validate(req.params);
+    // if (error) return badRequest(error.message, res);
     const response = await services.getDetailProductByCodeAndCustomer(
       req.user,
-      req.params.purrPetCode,
+      req.params.productCode,
+      req.params.orderCode,
     );
     return res.status(200).json(response);
   } catch (error) {

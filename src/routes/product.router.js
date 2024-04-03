@@ -34,8 +34,14 @@ router.put('/update-status/:purrPetCode', controllers.updateProductStatus);
 router.delete('/delete/:purrPetCode', controllers.deleteProduct);
 router.get('/detail/:purrPetCode', controllers.getDetailProductByCode);
 router.get(
-  '/customer/detail/:purrPetCode',
+  '/customer/:orderCode/:productCode',
+  verifyToken,
   controllers.getDetailProductByCodeAndCustomer,
+);
+router.get(
+  '/order/:orderCode',
+  verifyToken,
+  controllers.getProductsOrderReview,
 );
 router.get('/:purrPetCode', controllers.getProductByCode);
 

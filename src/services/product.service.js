@@ -55,6 +55,7 @@ export const createProduct = async (data) =>
   });
 
 export const getAllProduct = async ({
+  orderCode,
   customerId,
   productCodes,
   page,
@@ -102,18 +103,24 @@ export const getAllProduct = async ({
       let response = [];
 
       //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
-      if (customerId) {
-        const reviews = await db.review.find({ createdBy: customerId });
-        products.forEach((product) => {
-          const rev = reviews.find(
-            (review) => review.productCode === product.purrPetCode,
-          );
+      if (customerId && orderCode) {
+        console.log('customerId', customerId);
+        console.log('orderCode', orderCode);
+        // const reviews = await db.review.find({ createdBy: customerId });
+        // console.log('reviews', reviews);
+        products.forEach(async (product) => {
+          const review = await db.review.findOne({
+            productCode: product.purrPetCode,
+            createdBy: customerId,
+            orderCode: orderCode,
+          });
+          console.log(review);
           if (review) {
             //thêm review vào product
             let newProduct = {
               ...product,
-              review: rev.review || '',
-              rating: rev.rating || 0,
+              review: review.review || '',
+              rating: review.rating || 0,
             };
             response.push(newProduct);
           } else {
@@ -134,6 +141,36 @@ export const getAllProduct = async ({
       reject(error);
     }
   });
+
+export const getProductsOrderReview = async (orderCode, customerCode) => {
+  try {
+    const order = await db.order.findOne({ orderCode: orderCode });
+    if (!order) {
+      return {
+        err: -1,
+        message: 'Đơn hàng không tồn tại!',
+      };
+    }
+    const products = await db.product.find({
+      purrPetCode: { $in: order.orderItems.map((item) => item.productCode) },
+    });
+    const response = products.map(async (product) => {
+      const review = await db.review.findOne({
+        productCode: product.purrPetCode,
+        createdBy: customerCode,
+        orderCode: orderCode,
+      });
+      return {
+        ...product._doc,
+        review: review ? review.review : '',
+        rating: review ? review.rating : 0,
+      };
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export const getAllProductCustomer = async ({
   page,
@@ -354,33 +391,27 @@ export const getDetailProductByCode = async (purrPetCode) =>
     }
   });
 
-export const getDetailProductByCodeAndCustomer = async (purrPetCode, user) =>
+export const getDetailProductByCodeAndCustomer = async (
+  user,
+  productCode,
+  orderCode,
+) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.product.findOne({ purrPetCode: purrPetCode });
-      //get review of product
-      let review = {
-        rating: 0,
-        review: '',
-      };
-      if (user.role === ROLE.CUSTOMER) {
-        review = await db.review.findOne({
-          productCode: purrPetCode,
-          user: user.id,
-        });
-      }
+      const review = await db.review.findOne({
+        productCode,
+        orderCode,
+        user: user.id,
+      });
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: review ? 0 : -1,
+        message: review
           ? 'Tìm thấy sản phẩm!'
           : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
         data: {
-          product: {
-            ...response._doc,
-            rating: reviews ? reviews.rating : 0,
-            review: reviews ? reviews.review : '',
-          },
+          rating: review ? review.rating : 0,
+          review: review ? review.comment : '',
         },
       });
     } catch (error) {

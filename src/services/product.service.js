@@ -377,7 +377,7 @@ export const getDetailProductByCodeAndCustomer = async (
         message: 'Tìm thấy sản phẩm!',
         data: {
           rating: review ? review.rating : 0,
-          review: review ? review.comment : '',
+          comment: review ? review.comment : '',
         },
       });
     } catch (error) {

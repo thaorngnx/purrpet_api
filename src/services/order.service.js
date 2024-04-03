@@ -7,6 +7,7 @@ import {
   PAYMENT_METHOD,
   STATUS_PAYMENT,
   NOTIFICATION_ACTION,
+  NOTIFICATION_TYPE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { pagination } from '../utils/pagination';
@@ -98,7 +99,8 @@ export const createOrder = async (data) => {
         title: 'Đơn hàng mới',
         message: `Đơn hàng ${response.purrPetCode} đã được tạo`,
         action: NOTIFICATION_ACTION.NEW_ORDER,
-        type: 'ORDER',
+        type: NOTIFICATION_TYPE.ORDER,
+        orderCode: response.purrPetCode,
         userId: customer.id,
       };
       await db.notification.create(notification);

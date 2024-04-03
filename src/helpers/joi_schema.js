@@ -269,6 +269,7 @@ export const notificationDto = Joi.object({
       Constant.NOTIFICATION_TYPE.REVIEW,
     )
     .required(),
+  orderCode: Joi.string().required(),
   action: Joi.string().required(),
   seen: Joi.boolean().allow(null),
 });

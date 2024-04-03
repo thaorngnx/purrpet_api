@@ -1,4 +1,5 @@
 import db from '../models';
+import { pagination } from '../utils/pagination';
 
 export const createNotification = async (data) =>
   new Promise(async (resolve, reject) => {

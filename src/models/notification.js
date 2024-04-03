@@ -22,6 +22,10 @@ export const notificationSchema = new Schema(
       type: String,
       default: '',
     },
+    orderCode: {
+      type: String,
+      default: '',
+    },
     action: {
       type: String,
       default: '',

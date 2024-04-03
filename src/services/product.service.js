@@ -55,8 +55,6 @@ export const createProduct = async (data) =>
   });
 
 export const getAllProduct = async ({
-  orderCode,
-  customerId,
   productCodes,
   page,
   limit,
@@ -96,40 +94,10 @@ export const getAllProduct = async ({
         const [key, value] = order.split('.');
         _sort[key] = value === 'asc' ? 1 : -1;
       }
-      const products = await db.product
+      const response = await db.product
         .find({ ...query, ...search })
         .sort(_sort);
 
-      let response = [];
-
-      //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
-      if (customerId && orderCode) {
-        console.log('customerId', customerId);
-        console.log('orderCode', orderCode);
-        // const reviews = await db.review.find({ createdBy: customerId });
-        // console.log('reviews', reviews);
-        products.forEach(async (product) => {
-          const review = await db.review.findOne({
-            productCode: product.purrPetCode,
-            createdBy: customerId,
-            orderCode: orderCode,
-          });
-          console.log(review);
-          if (review) {
-            //thêm review vào product
-            let newProduct = {
-              ...product,
-              review: review.review || '',
-              rating: review.rating || 0,
-            };
-            response.push(newProduct);
-          } else {
-            response.push(product);
-          }
-        });
-      } else {
-        response = products;
-      }
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -411,7 +379,7 @@ export const getDetailProductByCodeAndCustomer = async (
           : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
         data: {
           rating: review ? review.rating : 0,
-          review: review ? review.comment : '',
+          comment: review ? review.comment : '',
         },
       });
     } catch (error) {

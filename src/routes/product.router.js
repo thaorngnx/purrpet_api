@@ -33,6 +33,10 @@ router.put(
 router.put('/update-status/:purrPetCode', controllers.updateProductStatus);
 router.delete('/delete/:purrPetCode', controllers.deleteProduct);
 router.get('/detail/:purrPetCode', controllers.getDetailProductByCode);
+router.get(
+  '/customer/detail/:purrPetCode',
+  controllers.getDetailProductByCodeAndCustomer,
+);
 router.get('/:purrPetCode', controllers.getProductByCode);
 
 module.exports = router;

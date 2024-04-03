@@ -6,6 +6,7 @@ import {
   CATEGORY_TYPE,
   STATUS_PRODUCT,
   VALIDATE_DUPLICATE,
+  ROLE,
 } from '../utils/constants';
 import { pagination } from '../utils/pagination';
 import { generateCode } from '../utils/generateCode';
@@ -319,6 +320,40 @@ export const getDetailProductByCode = async (purrPetCode) =>
           rating: {
             starRate,
             reviews: reviews.data.reviews,
+          },
+        },
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getDetailProductByCodeAndCustomer = async (purrPetCode, user) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.product.findOne({ purrPetCode: purrPetCode });
+      //get review of product
+      let review = {
+        rating: 0,
+        review: '',
+      };
+      if (user.role === ROLE.CUSTOMER) {
+        review = await db.review.findOne({
+          productCode: purrPetCode,
+          user: user.id,
+        });
+      }
+
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? 'Tìm thấy sản phẩm!'
+          : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
+        data: {
+          product: {
+            ...response._doc,
+            rating: reviews ? reviews.rating : 0,
+            review: reviews ? reviews.review : '',
           },
         },
       });

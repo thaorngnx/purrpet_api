@@ -53,6 +53,21 @@ export const getDetailProductByCode = async (req, res) => {
   }
 };
 
+export const getDetailProductByCodeAndCustomer = async (req, res) => {
+  try {
+    const { error } = purrPetCode.validate(req.params);
+    if (error) return badRequest(error.message, res);
+    const response = await services.getDetailProductByCodeAndCustomer(
+      req.user,
+      req.params.purrPetCode,
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+
 export const createProduct = async (req, res) => {
   try {
     const images = req.files;

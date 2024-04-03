@@ -95,36 +95,38 @@ export const getAllProduct = async ({
         const [key, value] = order.split('.');
         _sort[key] = value === 'asc' ? 1 : -1;
       }
-      const response = await db.product
+      const products = await db.product
         .find({ ...query, ...search })
         .sort(_sort);
 
-      let review = '';
-      let rating = 0;
+      let response = [];
 
       //nếu có customerId thì lấy ra review mà khách hàng đã đánh giá cho các sản phẩm trong danh sách
       if (customerId) {
         const reviews = await db.review.find({ user: customerId });
-        response.forEach((product) => {
+        products.forEach((product) => {
           const rev = reviews.find(
             (review) => review.productCode === product.purrPetCode,
           );
           if (review) {
-            review = rev.review;
-            rating = rev.rating;
+            //thêm review vào product
+            let newProduct = {
+              ...product,
+              review: rev.review || '',
+              rating: rev.rating || 0,
+            };
+            response.push(newProduct);
           }
         });
+      } else {
+        response = products;
       }
       resolve({
         err: response ? 0 : -1,
         message: response
           ? 'Lấy danh sách sản phẩm thành công!'
           : 'Lấy danh sách sản phẩm thất bại!',
-        data: {
-          ...response,
-          review: review,
-          rating: rating,
-        },
+        data: response,
       });
     } catch (error) {
       reject(error);

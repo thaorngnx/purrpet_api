@@ -116,6 +116,8 @@ export const getAllProduct = async ({
               rating: rev.rating || 0,
             };
             response.push(newProduct);
+          } else {
+            response.push(product);
           }
         });
       } else {

@@ -574,16 +574,14 @@ export const getAllSellingProduct = async (query) =>
         },
       ]);
       //nếu không có sản phẩm nào được bán thì lấy 10 sản phẩm có inventory lớn nhất
-      if (result.length === 0) {
+      if (result.length < 10) {
         const products = await db.product
           .find({ inventory: { $gt: 0 } })
           .sort({ inventory: -1 })
-          .limit(10);
-        return resolve({
-          err: 0,
-          message: 'Lấy danh sách sản phẩm bán chạy thành công!',
-          data: products,
-        });
+          .limit(10 - result.length);
+
+        //nối 2 mảng lại
+        result.push(...products);
       }
       resolve({
         err: 0,

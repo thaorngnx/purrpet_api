@@ -22,7 +22,7 @@ const io = new Server(server, {
 io.use(function (socket, next) {
   console.log('handshake', socket.handshake.query.token);
   if (socket.handshake.query && socket.handshake.query.token) {
-    const decode = jwt.verify(
+    jwt.verify(
       socket.handshake.query.token,
       process.env.ACCESS_TOKEN_SECRET,
       function (err) {
@@ -30,8 +30,6 @@ io.use(function (socket, next) {
         next();
       },
     );
-    console.log('query', socket.handshake.query.token);
-    console.log('decode', decode);
   } else {
     next(new Error('Authentication error'));
   }

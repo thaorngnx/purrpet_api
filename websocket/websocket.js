@@ -25,9 +25,9 @@ export const onConnection = async (socket) => {
     decoded.role === Constant.ROLE.STAFF ||
     decoded.role === Constant.ROLE.ADMIN
   ) {
-    user = await db.account.findOne({ _id: decoded.userId });
+    user = await db.account.findOne({ id: decoded.id });
   } else if (decoded.role === Constant.ROLE.CUSTOMER) {
-    user = await db.customer.findOne({ _id: decoded.userId });
+    user = await db.customer.findOne({ id: decoded.id });
   } else {
     socket.disconnect();
     return;

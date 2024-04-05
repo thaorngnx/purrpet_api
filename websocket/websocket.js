@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import * as Constant from '../src/utils/constants';
 
 export const onConnection = async (socket) => {
+  console.log('user ' + socket.id + ' connected');
+  console.log('token ' + socket.handshake.query.token + 'connected');
   socket.on('disconnect', function () {
     console.log('user ' + socket.id + ' disconnected');
   });
@@ -10,11 +12,12 @@ export const onConnection = async (socket) => {
   // console.log("transactionId", transactionId);
   const token = socket.handshake.query.token;
   console.log('token', token);
+  let decoded;
   if (!token) {
     socket.disconnect();
     return;
   } else {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     console.log('decoded', decoded);
   }
   let user;

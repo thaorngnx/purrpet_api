@@ -108,15 +108,14 @@ export const createOrder = async (data) => {
         {
           _id: customer.id,
           role: ROLE.CUSTOMER,
-          purrPetCode: customer.purrPetCode,
         },
       ];
       const adminList = await db.account
         .find({ role: ROLE.ADMIN })
-        .select('purrPetCode role');
+        .select('role');
       const staffList = await db.account
         .find({ role: ROLE.STAFF })
-        .select('purrPetCode role');
+        .select('role');
       userCodeList.push(...adminList, ...staffList);
 
       notifyMultiUser(userCodeList, NOTIFICATION_ACTION.NEW_ORDER, response);

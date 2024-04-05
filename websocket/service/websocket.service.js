@@ -8,9 +8,9 @@ export async function notifyToUser(userResquest, action, data) {
     userResquest.role === Constant.ROLE.STAFF ||
     userResquest.role === Constant.ROLE.ADMIN
   ) {
-    user = await db.account.findOne({ _id: userResquest.userId });
+    user = await db.account.findById(userResquest.id);
   } else if (userResquest.role === Constant.ROLE.CUSTOMER) {
-    user = await db.customer.findOne({ _id: userResquest.userId });
+    user = await db.customer.findById(userResquest.id);
   } else {
     return;
   }
@@ -33,9 +33,10 @@ export async function notifyMultiUser(userList, action, data) {
         userResquest.role === Constant.ROLE.STAFF ||
         userResquest.role === Constant.ROLE.ADMIN
       ) {
-        user = await db.account.findOne({ purrPetCode: userResquest.userId });
+        user = await db.account.findById(userResquest.id);
       } else if (userResquest.role === Constant.ROLE.CUSTOMER) {
-        user = await db.customer.findOne({ purrPetCode: userResquest.userId });
+        user = await db.customer.findById(userResquest.id);
+        console.log('user', user);
       } else {
         console.log('user not valid');
         return;

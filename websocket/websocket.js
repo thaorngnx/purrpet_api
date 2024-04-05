@@ -11,23 +11,21 @@ export const onConnection = async (socket) => {
   // const transactionId = socket.handshake.query.transactionId;
   // console.log("transactionId", transactionId);
   const token = socket.handshake.query.token;
-  console.log('token', token);
   let decoded;
   if (!token) {
     socket.disconnect();
     return;
   } else {
     decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log('decoded', decoded);
   }
   let user;
   if (
     decoded.role === Constant.ROLE.STAFF ||
     decoded.role === Constant.ROLE.ADMIN
   ) {
-    user = await db.account.findOne({ id: decoded.id });
+    user = await db.account.findById(decoded.id);
   } else if (decoded.role === Constant.ROLE.CUSTOMER) {
-    user = await db.customer.findOne({ id: decoded.id });
+    user = await db.customer.findById(decoded.id);
   } else {
     socket.disconnect();
     return;

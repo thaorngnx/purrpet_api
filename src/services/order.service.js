@@ -315,6 +315,9 @@ export const updateStatusOrder = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.order.findOne({ purrPetCode: purrPetCode });
+      const customer = await db.customer.findOne({
+        purrPetCode: response.customerCode,
+      });
       if (!response) {
         resolve({
           err: -1,
@@ -365,6 +368,9 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               product.inventory += item.quantity;
               await product.save();
             });
+            customer.point += response.pointUsed;
+            customer.point -= Math.floor(response.orderPrice * 0.01);
+            await customer.save();
           }
           resolve({
             err: 0,

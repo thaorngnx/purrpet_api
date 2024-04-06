@@ -13,10 +13,9 @@ export const cronJob = () => {
       const bookingHome = await db.bookingHome.find({
         status: STATUS_BOOKING.WAITING_FOR_PAY,
       });
-      const orderWaitingForPay = await db.order.find({
-        status: STATUS_ORDER.WAITING_FOR_PAY,
+      const order = await db.order.find({
+        paymentStatus: STATUS_ORDER.WAITING_FOR_PAY,
       });
-      const orderNew = await db.order.find({ status: STATUS_ORDER.NEW });
       bookingSpa.forEach(async (booking) => {
         const now = new Date();
         const timeDiff = now.getTime() - booking.createdAt.getTime();
@@ -37,7 +36,7 @@ export const cronJob = () => {
           });
         }
       });
-      orderWaitingForPay.forEach(async (order) => {
+      order.forEach(async (order) => {
         const now = new Date();
         const timeDiff = now.getTime() - order.createdAt.getTime();
         const minutes = Math.floor(timeDiff / 60000);
@@ -53,16 +52,6 @@ export const cronJob = () => {
             });
             product.inventory += item.quantity;
             await product.save();
-          });
-        }
-      });
-      orderNew.forEach(async (order) => {
-        const now = new Date();
-        const timeDiff = now.getTime() - order.createdAt.getTime();
-        const minutes = Math.floor(timeDiff / 60000);
-        if (minutes >= 30) {
-          await db.order.findByIdAndUpdate(order.id, {
-            status: STATUS_ORDER.PREPARE,
           });
         }
       });

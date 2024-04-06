@@ -388,7 +388,7 @@ export const updateOrderStatusDto = Joi.object({
   purrPetCode: Joi.string().required(),
   status: Joi.string()
     .valid(
-      // Constant.STATUS_ORDER.WAITING_FOR_PAY,
+      Constant.STATUS_ORDER.PREPARE,
       Constant.STATUS_ORDER.DELIVERING,
       Constant.STATUS_ORDER.CANCEL,
       Constant.STATUS_ORDER.DONE,

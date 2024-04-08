@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket Event Listener</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Socket Event Listener</h1>
+    <label for="token">Token:</label>
+    <input type="text" id="token" />
+    <button onclick="connectSocket()">Connect</button>
+
+    <script>
+      function connectSocket() {
+        const token = document.getElementById('token').value;
+        const socket = io('http://localhost:3000', {
+          path: '/socket',
+          query: {
+            token: token,
+          },
+        });
+
+        // Socket event listeners
+        socket.on(token, (data) => {
+          console.log('Event 1:', data);
+        });
+
+        socket.on('connection', () => {
+          console.log('Connected to the server');
+        });
+
+        // Add more event listeners as needed
+
+        // Disconnect socket when the page is closed or refreshed
+        window.addEventListener('beforeunload', () => {
+          socket.disconnect();
+        });
+      }
+    </script>
+  </body>
+</html>

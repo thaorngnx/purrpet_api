@@ -27,7 +27,7 @@ export const markAllAsRead = async (req, res) => {
 export const getAllNotification = async (req, res) => {
   try {
     const user = req.user;
-    const response = await services.getAllNotification(user.id);
+    const response = await services.getAllNotification(user.id, req.query);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: error.message });

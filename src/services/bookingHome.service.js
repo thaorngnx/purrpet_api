@@ -13,7 +13,7 @@ import {
   checkValidStatusBooking,
 } from '../utils/validationData';
 import dayjs from 'dayjs';
-import { pagination } from '../utils/pagination';
+import { pagination, paginationQuery } from '../utils/pagination';
 
 export const createBookingHome = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -119,25 +119,22 @@ export const getAllBookingHome = async (
       }
 
       //sort
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      const response = await db.bookingHome
-        .find({ ...query, ...search })
-        .sort(_sort);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.BOOKING_HOME,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách đơn đặt phòng thành công'
           : 'Lấy danh sách đơn đặt phòng thất bại',
         data: result.data,

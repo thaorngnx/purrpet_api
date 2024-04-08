@@ -9,7 +9,7 @@ import {
   checkValidStatusBooking,
 } from '../utils/validationData';
 dayjs.extend(customParseFormat);
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 
 export const createBookingSpa = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -110,22 +110,19 @@ export const getAllBookingSpa = async (
       }
 
       //sort
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      const response = await db.bookingSpa
-        .find({ ...query, ...search })
-        .sort(_sort);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.BOOKING_SPA,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
       resolve({
         err: response ? 0 : -1,
         message: response

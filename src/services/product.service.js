@@ -8,7 +8,7 @@ import {
   VALIDATE_DUPLICATE,
   ROLE,
 } from '../utils/constants';
-import { pagination } from '../utils/pagination';
+import { pagination, paginationQuery } from '../utils/pagination';
 import { generateCode } from '../utils/generateCode';
 import {
   checkValidCategory,
@@ -84,26 +84,28 @@ export const getAllProduct = async ({
           ],
         };
       }
-      //pagination
-      const _limit = parseInt(limit) || 12;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
       //sort
-      let _sort = { inventory: -1 };
+      let sort = { inventory: -1 };
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
-      const response = await db.product
-        .find({ ...query, ...search })
-        .sort(_sort);
+
+      const result = await paginationQuery(
+        COLLECTION.PRODUCT,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách sản phẩm thành công!'
           : 'Lấy danh sách sản phẩm thất bại!',
-        data: response,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);
@@ -162,28 +164,26 @@ export const getAllProductCustomer = async ({
         ];
       }
       //Săp xếp
-      let _sort = {};
+      let sort = {};
 
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       } else {
-        _sort = { inventory: -1 };
+        sort = { inventory: -1 };
       }
-      const response = await db.product
-        .find({ ...query, ...search, status: status })
-        .sort(_sort);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+
+      const result = await paginationQuery(
+        COLLECTION.PRODUCT,
+        { ...query, ...search, status: status },
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách sản phẩm thành công!'
           : 'Lấy danh sách sản phẩm thất bại!',
         data: result.data,

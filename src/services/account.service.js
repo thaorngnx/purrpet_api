@@ -6,7 +6,7 @@ import {
   VALIDATE_DUPLICATE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import { checkDuplicateValue } from '../utils/validationData';
 import bcrypt from 'bcryptjs';
 
@@ -48,20 +48,19 @@ export const createAccount = async (data) =>
     }
   });
 
-export const getAllAccount = async () =>
+export const getAllAccount = async ({ page, limit, sort, query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.account.find();
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.ACCOUNT,
+        query,
+        limit,
+        page,
+        sort,
+      );
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách tài khoản thành công'
           : 'Lấy danh sách tài khoản thất bại',
         data: result.data,

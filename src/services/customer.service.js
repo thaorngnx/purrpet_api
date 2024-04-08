@@ -11,23 +11,22 @@ import {
   VALIDATE_DUPLICATE,
   COOKIES_PATH,
 } from '../utils/constants';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 
-export const getAllCustomer = async ({ page, limit, order, key, ...query }) =>
+export const getAllCustomer = async ({ page, limit, sort, query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.customer.find(query);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.CUSTOMER,
+        query,
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách khách hàng thành công'
           : 'Lấy danh sách khách hàng thất bại',
         data: result.data,

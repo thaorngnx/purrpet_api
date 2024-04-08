@@ -1,21 +1,21 @@
 import db from '../models/index.js';
-import { pagination } from '../utils/pagination.js';
+import { COLLECTION } from '../utils/constants.js';
+import { paginationQuery } from '../utils/pagination.js';
 
-export const getAllFavorite = async ({ page, limit, order, key, ...query }) =>
+export const getAllFavorite = async ({ page, limit, sort, query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.favorite.find(query);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.FAVORITE,
+        query,
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách yêu thích thành công'
           : 'Lấy danh sách yêu thích thất bại',
         data: result.data,

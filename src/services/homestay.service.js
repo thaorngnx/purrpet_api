@@ -7,7 +7,7 @@ import {
   VALIDATE_DUPLICATE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import {
   checkValidCategory,
   checkDuplicateValueV3,
@@ -82,28 +82,24 @@ export const getAllHomestay = async ({ page, limit, order, key, ...query }) =>
           ],
         };
       }
-      //pagination
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-      //sort
-      const _sort = {};
+      // Sắp xếp
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
-      const response = await db.homestay.find({ ...query, ...search });
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+
+      const result = await paginationQuery(
+        COLLECTION.HOMESTAY,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response ? 'Tạo homestay thành công' : 'Taọ homestay thất bại',
+        err: result ? 0 : -1,
+        message: result ? 'Tạo homestay thành công' : 'Taọ homestay thất bại',
         data: result.data,
         pagination: result.pagination,
       });
@@ -132,30 +128,28 @@ export const getAllHomestayCustomer = async ({
         ];
       }
 
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
       // Sắp xếp
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      // Truy vấn MongoDB
-      const response = await db.homestay.find({ ...query, ...search });
-      // .limit(_limit)
-      // .skip(_skip)
-      // .sort(_sort);
+      const result = await paginationQuery(
+        COLLECTION.HOMESTAY,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách homestay thành công'
           : 'Lấy danh sách homestay thất bại',
-        data: response,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

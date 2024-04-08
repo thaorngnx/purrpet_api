@@ -1,5 +1,6 @@
 import db from '../models';
-import { pagination } from '../utils/pagination';
+import { COLLECTION } from '../utils/constants';
+import { paginationQuery } from '../utils/pagination';
 
 export const createNotification = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -34,16 +35,21 @@ export const markAllAsRead = async (userId) =>
     }
   });
 
-export const getAllNotification = async (userId) =>
+export const getAllNotification = async (userId, { page, limit, sort }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.notification.find({ userId: userId });
+      const result = await paginationQuery(
+        COLLECTION.NOTIFICATION,
+        { userId: userId },
+        limit,
+        page,
+        sort,
+      );
       resolve({
-        err: response ? 0 : -1,
-        message: response
-          ? 'Lấy thông báo thành công'
-          : 'Lấy thông báo thất bại',
-        data: response,
+        err: result ? 0 : -1,
+        message: result ? 'Lấy thông báo thành công' : 'Lấy thông báo thất bại',
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       reject(error);

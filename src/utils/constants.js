@@ -103,6 +103,7 @@ export const COLLECTION = {
   OTP: 'otp',
   FAVORITE: 'favorite',
   REVIEW: 'review',
+  NOTIFICATION: 'notification',
 };
 
 export const SPA_TYPE = {

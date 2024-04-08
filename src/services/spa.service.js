@@ -7,7 +7,7 @@ import {
   VALIDATE_DUPLICATE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import {
   checkValidCategory,
   checkDuplicateValueV3,
@@ -62,29 +62,24 @@ export const getAllSpa = async ({ page, limit, order, key, ...query }) =>
         ];
       }
 
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
       // Sắp xếp
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      const response = await db.spa.find({ ...query, ...search });
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.SPA,
+        { ...search, ...query },
+        limit,
+        page,
+        sort,
+      );
+
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách spa thành công'
           : 'Lấy danh sách spa thất bại',
         data: result.data,

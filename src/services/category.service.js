@@ -6,7 +6,7 @@ import {
   VALIDATE_DUPLICATE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import { checkDuplicateValue } from '../utils/validationData';
 
 export const createCategory = async (data) =>
@@ -53,35 +53,24 @@ export const getAllCategory = async ({ page, limit, order, key, ...query }) =>
         ];
       }
 
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
       // Sắp xếp
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      // Truy vấn MongoDB
-      const response = await db.category.find({ ...query, ...search });
-      // .limit(_limit)
-      // .skip(_skip)
-      // .sort(_sort);
-
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.CATEGORY,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
 
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách danh mục thành công'
           : 'Lấy danh sách danh mục thất bại',
         data: result.data,
@@ -113,33 +102,23 @@ export const getAllCategoryCustomer = async ({
         ];
       }
 
-      // Phân trang
-      const _limit = parseInt(limit) || 10;
-      const _page = parseInt(page) || 1;
-      const _skip = (_page - 1) * _limit;
-
       // Sắp xếp
-      const _sort = {};
+      const sort = {};
       if (order) {
         const [key, value] = order.split('.');
-        _sort[key] = value === 'asc' ? 1 : -1;
+        sort[key] = value === 'asc' ? 1 : -1;
       }
 
-      // Truy vấn MongoDB
-      const response = await db.category
-        .find({ ...query, ...search, status: status })
-        .sort(_sort);
-
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      const result = await paginationQuery(
+        COLLECTION.CATEGORY,
+        { ...query, ...search },
+        limit,
+        page,
+        sort,
+      );
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách danh mục thành công'
           : 'Lấy danh sách danh mục thất bại',
         data: result.data,

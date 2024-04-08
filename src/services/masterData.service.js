@@ -1,7 +1,7 @@
 import db from '../models';
 import { COLLECTION, PREFIX, VALIDATE_DUPLICATE } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import { checkDuplicateValueV2 } from '../utils/validationData';
 
 export const createMasterData = async (data) =>
@@ -38,20 +38,27 @@ export const createMasterData = async (data) =>
     }
   });
 
-export const getAllMasterData = async ({ limit, page, query }) =>
+export const getAllMasterData = async ({ limit, page, order, query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.masterData.find(query);
-      const count = response.length;
-      const result = pagination({
-        data: response,
-        total: count,
-        limit: limit,
-        page: page,
-      });
+      // Sắp xếp
+      const sort = {};
+      if (order) {
+        const [key, value] = order.split('.');
+        sort[key] = value === 'asc' ? 1 : -1;
+      }
+
+      const result = await paginationQuery(
+        COLLECTION.MASTERDATA,
+        query,
+        limit,
+        page,
+        sort,
+      );
+
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách masterData thành công'
           : 'Lấy danh sách masterData thất bại',
         data: result.data,

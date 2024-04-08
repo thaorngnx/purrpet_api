@@ -10,7 +10,7 @@ import {
   NOTIFICATION_TYPE,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { pagination } from '../utils/pagination';
+import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
 export const createOrder = async (data) => {
@@ -175,24 +175,23 @@ export const getAllOrder = async (
       };
     }
 
-    const _sort = {};
+    const sort = {};
     if (order) {
       const [key, value] = order.split('.');
-      _sort[key] = value === 'asc' ? 1 : -1;
+      sort[key] = value === 'asc' ? 1 : -1;
     }
 
-    const response = await db.order.find({ ...query, ...search }).sort(_sort);
-    const count = response.length;
-    const result = pagination({
-      data: response,
-      total: count,
-      limit: limit,
-      page: page,
-    });
+    const result = await paginationQuery(
+      COLLECTION.ORDER,
+      { ...query, ...search },
+      limit,
+      page,
+      sort,
+    );
 
     return {
-      err: response ? 0 : -1,
-      message: response
+      err: result ? 0 : -1,
+      message: result
         ? 'Lấy danh sách đơn hàng thành công'
         : 'Lấy danh sách đơn hàng thất bại',
       data: result.data,

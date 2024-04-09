@@ -1,6 +1,8 @@
 import db from '../models';
 import {
   COLLECTION,
+  NOTIFICATION_ACTION,
+  NOTIFICATION_TYPE,
   PREFIX,
   ROLE,
   STATUS_BOOKING,
@@ -72,6 +74,36 @@ export const createBookingHome = async (data) =>
       });
       customer.point += point;
       await customer.save();
+
+      let notification = {
+        title: 'Đơn đặt phòng mới',
+        message: `Đơn đặt phòng ${response.purrPetCode} đã được tạo`,
+        action: NOTIFICATION_ACTION.NEW_BOOKING_HOME,
+        type: NOTIFICATION_TYPE.BOOKING_HOME,
+        orderCode: response.purrPetCode,
+        userId: customer.id,
+      };
+      await db.notification.create(notification);
+      const userCodeList = [
+        {
+          _id: customer.id,
+          role: ROLE.CUSTOMER,
+        },
+      ];
+      const adminList = await db.account
+        .find({ role: ROLE.ADMIN })
+        .select('role');
+      const staffList = await db.account
+        .find({ role: ROLE.STAFF })
+        .select('role');
+      userCodeList.push(...adminList, ...staffList);
+
+      notifyMultiUser(
+        userCodeList,
+        NOTIFICATION_ACTION.NEW_BOOKING_HOME,
+        response,
+      );
+
       resolve({
         err: response ? 0 : -1,
         message: response

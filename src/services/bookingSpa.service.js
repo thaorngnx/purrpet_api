@@ -1,5 +1,11 @@
 import db from '../models';
-import { COLLECTION, PREFIX, ROLE } from '../utils/constants';
+import {
+  COLLECTION,
+  NOTIFICATION_ACTION,
+  NOTIFICATION_TYPE,
+  PREFIX,
+  ROLE,
+} from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -63,6 +69,36 @@ export const createBookingSpa = async (data) =>
       });
       customer.point += point;
       await customer.save();
+
+      let notification = {
+        title: 'Đơn đặt lịch spa mới',
+        message: `Lịch đặt spa ${response.purrPetCode} đã được tạo`,
+        action: NOTIFICATION_ACTION.NEW_BOOKING_SPA,
+        type: NOTIFICATION_TYPE.BOOKING_SPA,
+        orderCode: response.purrPetCode,
+        userId: customer.id,
+      };
+      await db.notification.create(notification);
+      const userCodeList = [
+        {
+          _id: customer.id,
+          role: ROLE.CUSTOMER,
+        },
+      ];
+      const adminList = await db.account
+        .find({ role: ROLE.ADMIN })
+        .select('role');
+      const staffList = await db.account
+        .find({ role: ROLE.STAFF })
+        .select('role');
+      userCodeList.push(...adminList, ...staffList);
+
+      notifyMultiUser(
+        userCodeList,
+        NOTIFICATION_ACTION.NEW_BOOKING_SPA,
+        response,
+      );
+
       resolve({
         err: response ? 0 : -1,
         message: response

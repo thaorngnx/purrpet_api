@@ -55,3 +55,21 @@ export const getAllNotification = async (userId, { page, limit, sort }) =>
       reject(error);
     }
   });
+
+export const viewNotification = async (userId, id) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await db.notification.updateOne(
+        { _id: id, userId: userId },
+        { $set: { seen: true } },
+      );
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? 'Đánh dấu thông báo là đã đọc'
+          : 'Đánh dấu thất bại',
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

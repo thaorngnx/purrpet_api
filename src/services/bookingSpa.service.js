@@ -161,8 +161,8 @@ export const getAllBookingSpa = async (
         sort,
       );
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: result ? 0 : -1,
+        message: result
           ? 'Lấy danh sách đơn đặt lịch spa thành công'
           : 'Lấy danh sách đơn đặt lịch spa thất bại',
         data: result.data,
@@ -273,8 +273,6 @@ export const updateBookingSpa = async (data, purrPetCode) =>
 export const updateStatusBookingSpa = async (data, purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(data);
-      console.log(purrPetCode);
       const response = await db.bookingSpa.findOne({
         purrPetCode: purrPetCode,
       });

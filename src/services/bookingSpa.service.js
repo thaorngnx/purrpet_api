@@ -16,6 +16,7 @@ import {
 } from '../utils/validationData';
 dayjs.extend(customParseFormat);
 import { paginationQuery } from '../utils/pagination';
+import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
 export const createBookingSpa = async (data) =>
   new Promise(async (resolve, reject) => {

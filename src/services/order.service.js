@@ -74,6 +74,7 @@ export const createOrder = async (data) => {
 
     const inventoryCheck = products.map((item) => item.inventory);
     const inventory = inventoryCheck.every((item) => item > -1);
+    console.log('inventory', inventory);
 
     if (!inventory) {
       isOutOfStock = true;
@@ -125,6 +126,12 @@ export const createOrder = async (data) => {
         data: response,
       };
     } else {
+      products.forEach(async (item) => {
+        item.inventory += data.orderItems.find(
+          (i) => i.productCode === item.purrPetCode,
+        ).quantity;
+        await item.save();
+      });
       return {
         err: -1,
         message: 'Sản phẩm đã hết hàng',

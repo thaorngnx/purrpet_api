@@ -8,7 +8,7 @@ import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
 export const getAllAccount = async (req, res) => {
   try {
-    const response = await services.getAllAccount();
+    const response = await services.getAllAccount(req.query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

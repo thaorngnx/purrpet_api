@@ -83,6 +83,8 @@ export const createBookingHome = async (data) =>
         type: NOTIFICATION_TYPE.BOOKING_HOME,
         orderCode: response.purrPetCode,
         userId: customer.id,
+        admin: true,
+        staff: true,
       };
       await db.notification.create(notification);
       const userCodeList = [

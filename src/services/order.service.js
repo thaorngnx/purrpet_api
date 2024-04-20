@@ -103,6 +103,8 @@ export const createOrder = async (data) => {
         type: NOTIFICATION_TYPE.ORDER,
         orderCode: response.purrPetCode,
         userId: customer.id,
+        admin: true,
+        staff: true,
       };
       await db.notification.create(notification);
       const userCodeList = [

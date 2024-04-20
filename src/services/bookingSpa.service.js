@@ -78,6 +78,8 @@ export const createBookingSpa = async (data) =>
         type: NOTIFICATION_TYPE.BOOKING_SPA,
         orderCode: response.purrPetCode,
         userId: customer.id,
+        admin: true,
+        staff: true,
       };
       await db.notification.create(notification);
       const userCodeList = [

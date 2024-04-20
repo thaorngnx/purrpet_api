@@ -1,5 +1,5 @@
 import db from '../models';
-import { COLLECTION } from '../utils/constants';
+import { COLLECTION, ROLE } from '../utils/constants';
 import { paginationQuery } from '../utils/pagination';
 
 export const createNotification = async (data) =>
@@ -35,12 +35,18 @@ export const markAllAsRead = async (userId) =>
     }
   });
 
-export const getAllNotification = async (userId, { page, limit, sort }) =>
+export const getAllNotification = async (user, { page, limit, sort }) =>
   new Promise(async (resolve, reject) => {
+    let query = { userId: user.id };
+    if (user.role === ROLE.ADMIN) {
+      query = { admin: true };
+    } else if (user.role === ROLE.STAFF) {
+      query = { staff: true };
+    }
     try {
       const result = await paginationQuery(
         COLLECTION.NOTIFICATION,
-        { userId: userId },
+        query,
         limit,
         page,
         sort,

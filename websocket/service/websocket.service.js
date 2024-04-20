@@ -29,7 +29,6 @@ export async function notifyMultiUser(userList, action, data) {
   if (userList.length > 0) {
     userList.forEach(async (userResquest) => {
       let user;
-      console.log('userResquest', userResquest);
       if (
         userResquest.role === Constant.ROLE.STAFF ||
         userResquest.role === Constant.ROLE.ADMIN
@@ -37,7 +36,6 @@ export async function notifyMultiUser(userList, action, data) {
         user = await db.account.findById(userResquest._id);
       } else if (userResquest.role === Constant.ROLE.CUSTOMER) {
         user = await db.customer.findById(userResquest._id);
-        console.log('user', user);
       } else {
         console.log('user not valid');
         return;

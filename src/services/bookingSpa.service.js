@@ -85,17 +85,17 @@ export const createBookingSpa = async (data) =>
         .select('role');
       userCodeList.push(...adminList, ...staffList);
 
-      // userCodeList.forEach(async (user) => {
-      //   let notification = {
-      //     title: 'Đơn đặt lịch spa mới',
-      //     message: `Lịch đặt spa ${response.purrPetCode} đã được tạo`,
-      //     action: NOTIFICATION_ACTION.NEW_BOOKING_SPA,
-      //     type: NOTIFICATION_TYPE.BOOKING_SPA,
-      //     orderCode: response.purrPetCode,
-      //     userId: user._id,
-      //   };
-      //   await db.notification.create(notification);
-      // });
+      userCodeList.forEach(async (user) => {
+        let notification = {
+          title: 'Đơn đặt lịch spa mới',
+          message: `Lịch đặt spa ${response.purrPetCode} đã được tạo`,
+          action: NOTIFICATION_ACTION.NEW_BOOKING_SPA,
+          type: NOTIFICATION_TYPE.BOOKING_SPA,
+          orderCode: response.purrPetCode,
+          userId: user._id,
+        };
+        await db.notification.create(notification);
+      });
 
       notifyMultiUser(
         userCodeList,

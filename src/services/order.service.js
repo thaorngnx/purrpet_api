@@ -74,7 +74,6 @@ export const createOrder = async (data) => {
 
     const inventoryCheck = products.map((item) => item.inventory);
     const inventory = inventoryCheck.every((item) => item > -1);
-    console.log('inventory', inventory);
 
     if (!inventory) {
       isOutOfStock = true;

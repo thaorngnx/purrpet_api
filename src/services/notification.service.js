@@ -38,11 +38,6 @@ export const markAllAsRead = async (userId) =>
 export const getAllNotification = async (user, { page, limit, sort }) =>
   new Promise(async (resolve, reject) => {
     let query = { userId: user.id };
-    if (user.role === ROLE.ADMIN) {
-      query = { admin: true };
-    } else if (user.role === ROLE.STAFF) {
-      query = { staff: true };
-    }
     try {
       const result = await paginationQuery(
         COLLECTION.NOTIFICATION,

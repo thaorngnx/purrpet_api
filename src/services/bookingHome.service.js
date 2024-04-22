@@ -27,7 +27,7 @@ export const createBookingHome = async (data) =>
         data.homeCode,
       );
       if (checkValidBookingDate.err !== 0) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Ngày đặt phòng không hợp lệ',
         });
@@ -36,7 +36,7 @@ export const createBookingHome = async (data) =>
         purrPetCode: data.customerCode,
       });
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -50,6 +50,7 @@ export const createBookingHome = async (data) =>
         COLLECTION.BOOKING_HOME,
         PREFIX.BOOKING_HOME,
       );
+
       let availablePoint = data.bookingHomePrice * 0.1;
       if (!data.userPoint) data.userPoint = 0;
       if (
@@ -67,7 +68,6 @@ export const createBookingHome = async (data) =>
       }
       const pointUsed = data.userPoint;
       const point = data.bookingHomePrice * 0.01;
-      console.log(customer.point, point);
       const response = await db.bookingHome.create({
         ...data,
         pointUsed,
@@ -76,17 +76,6 @@ export const createBookingHome = async (data) =>
       customer.point += point;
       await customer.save();
 
-      let notification = {
-        title: 'Đơn đặt phòng mới',
-        message: `Đơn đặt phòng ${response.purrPetCode} đã được tạo`,
-        action: NOTIFICATION_ACTION.NEW_BOOKING_HOME,
-        type: NOTIFICATION_TYPE.BOOKING_HOME,
-        orderCode: response.purrPetCode,
-        userId: customer.id,
-        admin: true,
-        staff: true,
-      };
-      await db.notification.create(notification);
       const userCodeList = [
         {
           _id: customer.id,
@@ -100,6 +89,18 @@ export const createBookingHome = async (data) =>
         .find({ role: ROLE.STAFF })
         .select('role');
       userCodeList.push(...adminList, ...staffList);
+
+      userCodeList.forEach(async (user) => {
+        let notification = {
+          title: 'Đơn đặt phòng mới',
+          message: `Đơn đặt phòng ${response.purrPetCode} đã được tạo`,
+          action: NOTIFICATION_ACTION.NEW_BOOKING_HOME,
+          type: NOTIFICATION_TYPE.BOOKING_HOME,
+          orderCode: response.purrPetCode,
+          userId: user._id,
+        };
+        await db.notification.create(notification);
+      });
 
       notifyMultiUser(
         userCodeList,
@@ -188,7 +189,7 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       });
 
       if (!bookingHome) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn đặt phòng',
         });
@@ -198,7 +199,7 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
         user.role === ROLE.CUSTOMER &&
         user.purrPetCode !== bookingHome.customerCode
       ) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Bạn không có quyền truy cập đơn đặt phòng này',
         });
@@ -208,7 +209,7 @@ export const getBookingHomeByCode = async (user, purrPetCode) =>
       });
 
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -243,7 +244,7 @@ export const getBookingHomeByCustomer = async (id) =>
     try {
       const customer = await db.customer.findById(id);
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -288,7 +289,7 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
         purrPetCode: purrPetCode,
       });
       if (!response) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn đặt phòng',
         });
@@ -298,7 +299,7 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
           data.status,
         );
         if (checkValid !== 0) {
-          resolve({
+          return resolve({
             err: -1,
             message: 'Không thể cập nhật trạng thái',
           });

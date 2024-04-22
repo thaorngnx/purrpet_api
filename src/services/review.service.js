@@ -12,7 +12,7 @@ export const createReview = async (user, data) =>
         status: STATUS_ORDER.DONE,
       });
       if (!order) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn hàng',
           data: null,
@@ -23,7 +23,7 @@ export const createReview = async (user, data) =>
         (item) => item.productCode === data.productCode,
       );
       if (!product) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy sản phẩm trong đơn hàng',
           data: null,
@@ -37,7 +37,7 @@ export const createReview = async (user, data) =>
         createBy: user.purrPetCode,
       });
       if (review) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Bạn đã đánh giá sản phẩm này',
           data: null,
@@ -73,7 +73,7 @@ export const updateReview = async (reviewCode, data) =>
         purrPetCode: reviewCode,
       });
       if (!review) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đánh giá',
           data: null,

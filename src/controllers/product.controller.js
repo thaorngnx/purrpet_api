@@ -55,7 +55,6 @@ export const getDetailProductByCode = async (req, res) => {
 
 export const getProductsOrderReview = async (req, res) => {
   try {
-    console.log(req.user);
     const response = await services.getProductsOrderReview(
       req.params.orderCode,
       req.user.purrPetCode,

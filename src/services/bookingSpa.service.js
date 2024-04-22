@@ -26,7 +26,7 @@ export const createBookingSpa = async (data) =>
         data.bookingTime,
       );
       if (checkValidBookingDateTime.err !== 0) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Giờ đặt lịch không hợp lệ',
         });
@@ -35,7 +35,7 @@ export const createBookingSpa = async (data) =>
         purrPetCode: data.customerCode,
       });
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -48,10 +48,10 @@ export const createBookingSpa = async (data) =>
         data.userPoint < 0 ||
         data.userPoint > customer.point
       ) {
-        return {
+        return resolve({
           err: -1,
           message: 'Điểm tích lũy không đủ',
-        };
+        });
       } else {
         customer.point -= data.userPoint;
         totalPayment = data.bookingSpaPrice - data.userPoint;
@@ -71,17 +71,6 @@ export const createBookingSpa = async (data) =>
       customer.point += point;
       await customer.save();
 
-      let notification = {
-        title: 'Đơn đặt lịch spa mới',
-        message: `Lịch đặt spa ${response.purrPetCode} đã được tạo`,
-        action: NOTIFICATION_ACTION.NEW_BOOKING_SPA,
-        type: NOTIFICATION_TYPE.BOOKING_SPA,
-        orderCode: response.purrPetCode,
-        userId: customer.id,
-        admin: true,
-        staff: true,
-      };
-      await db.notification.create(notification);
       const userCodeList = [
         {
           _id: customer.id,
@@ -95,6 +84,18 @@ export const createBookingSpa = async (data) =>
         .find({ role: ROLE.STAFF })
         .select('role');
       userCodeList.push(...adminList, ...staffList);
+
+      // userCodeList.forEach(async (user) => {
+      //   let notification = {
+      //     title: 'Đơn đặt lịch spa mới',
+      //     message: `Lịch đặt spa ${response.purrPetCode} đã được tạo`,
+      //     action: NOTIFICATION_ACTION.NEW_BOOKING_SPA,
+      //     type: NOTIFICATION_TYPE.BOOKING_SPA,
+      //     orderCode: response.purrPetCode,
+      //     userId: user._id,
+      //   };
+      //   await db.notification.create(notification);
+      // });
 
       notifyMultiUser(
         userCodeList,
@@ -183,7 +184,7 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       });
 
       if (!bookingSpa) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn đặt lịch spa',
         });
@@ -193,7 +194,7 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
         user.role === ROLE.CUSTOMER &&
         user.purrPetCode !== bookingSpa.customerCode
       ) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Bạn không có quyền truy cập đơn đặt lịch này',
         });
@@ -204,7 +205,7 @@ export const getBookingSpaByCode = async (user, purrPetCode) =>
       });
 
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -232,7 +233,7 @@ export const getBookingSpaByCustomer = async (id) =>
     try {
       const customer = await db.customer.findOne({ _id: id });
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -279,7 +280,7 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
         purrPetCode: purrPetCode,
       });
       if (!response) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn đặt lịch spa',
         });
@@ -329,7 +330,7 @@ export const getAvailableTime = async (bookingDate) =>
     try {
       const response = await getAvailableTimeInDayOfSpa(bookingDate);
       if (response.err !== 0) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Lấy thời gian trống thất bại',
         });

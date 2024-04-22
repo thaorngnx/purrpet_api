@@ -205,6 +205,7 @@ export const checkValidBookingDateTimeOfSpa = async (
       const listValidTimeInBookingDate = await getAvailableTimeInDayOfSpa(
         bookingDate,
       );
+
       if (listValidTimeInBookingDate.err !== 0) {
         return resolve({
           err: -1,

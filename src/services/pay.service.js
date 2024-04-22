@@ -87,7 +87,6 @@ export const createPaymentUrl = async (data) =>
 
 export const vnpayReturn = async (vnp_Params) =>
   new Promise(async (resolve, reject) => {
-    console.log(vnp_Params);
     var secureHash = vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];

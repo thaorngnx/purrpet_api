@@ -50,7 +50,7 @@ export const createHomestay = async (data) =>
         purrPetCode: data.categoryCode,
       });
       if (!category) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Danh mục không tồn tại',
         });
@@ -161,7 +161,7 @@ export const getHomestayByCode = async (purrPetCode) =>
     try {
       const homestay = await db.homestay.findOne({ purrPetCode: purrPetCode });
       if (!homestay) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Homestay không tồn tại',
         });
@@ -237,7 +237,7 @@ export const updateStatusHomestay = async (purrPetCode) =>
     try {
       const response = await db.homestay.findOne({ purrPetCode: purrPetCode });
       if (!response) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Homestay không tồn tại',
         });

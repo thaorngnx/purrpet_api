@@ -121,6 +121,18 @@ export const createOrder = async (data) => {
         .select('role');
       userCodeList.push(...adminList, ...staffList);
 
+      userCodeList.forEach(async (user) => {
+        let notification = {
+          title: 'Đơn hàng mới',
+          message: `Đơn hàng ${response.purrPetCode} đã được tạo`,
+          action: NOTIFICATION_ACTION.NEW_ORDER,
+          type: NOTIFICATION_TYPE.ORDER,
+          orderCode: response.purrPetCode,
+          userId: user.id,
+        };
+        await db.notification.create(notification);
+      });
+
       notifyMultiUser(userCodeList, NOTIFICATION_ACTION.NEW_ORDER, response);
       return {
         err: response ? 0 : -1,
@@ -217,7 +229,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       const order = await db.order.findOne({ purrPetCode: purrPetCode });
 
       if (!order) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn hàng',
         });
@@ -227,7 +239,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
         user.role === ROLE.CUSTOMER &&
         user.purrPetCode !== order.customerCode
       ) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Bạn không có quyền truy cập đơn hàng này',
         });
@@ -238,7 +250,7 @@ export const getOrderByCode = async (user, purrPetCode) =>
       });
 
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -265,7 +277,7 @@ export const getOrderByCustomer = async (id) =>
     try {
       const customer = await db.customer.findOne({ _id: id });
       if (!customer) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy khách hàng',
         });
@@ -327,7 +339,7 @@ export const updateStatusOrder = async (data, purrPetCode) =>
         purrPetCode: response.customerCode,
       });
       if (!response) {
-        resolve({
+        return resolve({
           err: -1,
           message: 'Không tìm thấy đơn hàng',
         });

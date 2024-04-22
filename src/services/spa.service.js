@@ -96,8 +96,6 @@ export const getAllSpaCustomer = async () =>
       // Truy vấn MongoDB
       const response = await db.spa.find({ status: STATUS_SPA.ACTIVE });
 
-      console.log(response);
-
       resolve({
         err: response ? 0 : -1,
         message: response

@@ -29,8 +29,6 @@ export const getAllFavorite = async ({ page, limit, sort, query }) =>
 export const favoriteProduct = async (userCode, productCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log(userCode);
-      console.log(productCode);
       //check if product is already in favorite list
       const check = await db.favorite.findOne({
         userCode,
@@ -42,7 +40,7 @@ export const favoriteProduct = async (userCode, productCode) =>
           userCode,
           productCode,
         });
-        resolve({
+        return resolve({
           err: 0,
           message: 'Xóa sản phẩm khỏi danh sách yêu thích thành công',
         });

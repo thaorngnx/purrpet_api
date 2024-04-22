@@ -8,8 +8,6 @@ export const onConnection = async (socket) => {
   socket.on('disconnect', function () {
     console.log('user ' + socket.id + ' disconnected');
   });
-  // const transactionId = socket.handshake.query.transactionId;
-  // console.log("transactionId", transactionId);
   const token = socket.handshake.query.token;
   let decoded;
   if (!token) {

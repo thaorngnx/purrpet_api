@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { STATUS_BOOKING } from '../utils/constants';
+import { STATUS_BOOKING, PAYMENT_METHOD } from '../utils/constants';
 
 mongoose.set('runValidators', true);
 
@@ -55,14 +55,14 @@ export const bookingSpaSchema = new Schema(
       },
       default: STATUS_BOOKING.WAITING_FOR_PAY,
     },
-    // paymentStatus: {
-    //   type: String,
-    //   enum: {
-    //     values: [STATUS_PAYMENT.WAITING_FOR_PAY, STATUS_PAYMENT.PAID],
-    //     message: '{VALUE} is not supported',
-    //   },
-    //   default: STATUS_PAYMENT.WAITING_FOR_PAY,
-    // },
+    payMethod: {
+      type: String,
+      enum: {
+        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY],
+        message: '{VALUE} is not supported',
+      },
+      required: true,
+    },
     pointUsed: {
       type: Number,
       default: 0,

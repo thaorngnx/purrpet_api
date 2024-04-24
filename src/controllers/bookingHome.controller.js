@@ -57,7 +57,7 @@ export const createBookingHome = async (req, res) => {
   try {
     const { error } = bookingHomeDto.validate(req.body);
     if (error) return badRequest(error.message, res);
-    const response = await services.createBookingHome(req.body);
+    const response = await services.createBookingHome(req.user, req.body);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

@@ -13,11 +13,19 @@ import { generateCode } from '../utils/generateCode';
 import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
-export const createOrder = async (data) => {
+export const createOrder = async (user, data) => {
   try {
+    if (user.role === ROLE.CUSTOMER && user.purrPetCode !== data.customerCode) {
+      return {
+        err: -1,
+        message: 'Bạn không có quyền tạo đơn hàng cho người khác',
+      };
+    }
+
     const customer = await db.customer.findOne({
       purrPetCode: data.customerCode,
     });
+
     if (!customer) {
       return {
         err: -1,

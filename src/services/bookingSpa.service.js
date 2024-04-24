@@ -20,9 +20,19 @@ dayjs.extend(customParseFormat);
 import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
-export const createBookingSpa = async (data) =>
+export const createBookingSpa = async (user, data) =>
   new Promise(async (resolve, reject) => {
     try {
+      if (
+        user.role === ROLE.CUSTOMER &&
+        user.purrPetCode !== data.customerCode
+      ) {
+        return resolve({
+          err: -1,
+          message: 'Bạn không có quyền tạo đơn đặt lịch cho người khác',
+        });
+      }
+
       const checkValidBookingDateTime = await checkValidBookingDateTimeOfSpa(
         data.bookingDate,
         data.bookingTime,

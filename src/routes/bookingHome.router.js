@@ -14,7 +14,7 @@ router.get(
   controllers.getBookingHomeByCustomer,
 );
 router.get('/:purrPetCode', verifyToken, controllers.getBookingHomeByCode);
-router.post('/create', controllers.createBookingHome);
+router.post('/create', verifyToken, controllers.createBookingHome);
 router.put('/update/:purrPetCode', controllers.updateBookingHome);
 router.put('/update-status/:purrPetCode', controllers.updateStatusBookingHome);
 router.delete('/delete/:purrPetCode', controllers.deleteBookingHome);

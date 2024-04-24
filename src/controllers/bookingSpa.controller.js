@@ -62,7 +62,7 @@ export const createBookingSpa = async (req, res) => {
   try {
     const { error } = bookingSpaDto.validate(req.body);
     if (error) return badRequest(error.message, res);
-    const response = await services.createBookingSpa(req.body);
+    const response = await services.createBookingSpa(req.user, req.body);
     return res.status(200).json(response);
   } catch (error) {
     return internalServerError(res);

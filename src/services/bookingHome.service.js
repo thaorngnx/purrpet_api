@@ -19,9 +19,19 @@ import dayjs from 'dayjs';
 import { pagination, paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
-export const createBookingHome = async (data) =>
+export const createBookingHome = async (user, data) =>
   new Promise(async (resolve, reject) => {
     try {
+      if (
+        user.role === ROLE.CUSTOMER &&
+        user.purrPetCode !== data.customerCode
+      ) {
+        return resolve({
+          err: -1,
+          message: 'Bạn không có quyền tạo đơn đặt phòng cho người khác',
+        });
+      }
+
       const checkValidBookingDate = await checkValidBookingDateOfHome(
         data.checkIn,
         data.checkOut,

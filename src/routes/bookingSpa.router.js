@@ -14,7 +14,7 @@ router.get(
   controllers.getBookingSpaByCustomer,
 );
 router.get('/:purrPetCode', verifyToken, controllers.getBookingSpaByCode);
-router.post('/create', controllers.createBookingSpa);
+router.post('/create', verifyToken, controllers.createBookingSpa);
 router.put('/update/:purrPetCode', controllers.updateBookingSpa);
 router.put(
   '/update-status/:purrPetCode',

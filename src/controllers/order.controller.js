@@ -53,7 +53,7 @@ export const createOrder = async (req, res) => {
   try {
     const { error } = orderDto.validate(req.body);
     if (error) return badRequest(error.message, res);
-    const response = await services.createOrder(req.body);
+    const response = await services.createOrder(req.user, req.body);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

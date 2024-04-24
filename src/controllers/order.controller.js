@@ -5,6 +5,7 @@ import {
   updateOrderStatusDto,
 } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import { sendToQueue } from '../queue/rabbitmq';
 
 export const getAllOrder = async (req, res) => {
   try {
@@ -40,6 +41,15 @@ export const getOrderByCustomer = async (req, res) => {
 };
 
 export const createOrder = async (req, res) => {
+  // try {
+  //   const { error } = orderDto.validate(req.body);
+  //   if (error) return badRequest(error.message, res);
+  //   await sendToQueue('order_queue', req.body);
+  //   return res.status(200).json({ message: 'added to queue' });
+  // } catch (error) {
+  //   console.log(error);
+  //   return internalServerError(res);
+  // }
   try {
     const { error } = orderDto.validate(req.body);
     if (error) return badRequest(error.message, res);
@@ -98,3 +108,19 @@ export const deleteOrder = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+// export const requestRefundOrder = async (req, res) => {
+//   try {
+//     // const { error } = purrPetCode.validate(req.params);
+//     // if (error) return badRequest(error.message, res);
+//     const data = req.body;
+//     const response = await services.requestRefundOrder(
+//       req.params.purrPetCode,
+//       data,
+//     );
+//     return res.status(200).json(response);
+//   } catch (error) {
+//     console.log(error);
+//     return internalServerError(res);
+//   }
+// };

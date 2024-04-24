@@ -7,6 +7,8 @@ import {
   bookingDate,
 } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import { sendToQueue } from '../queue/rabbitmq';
+import { startConsumer } from '../queue/consumer';
 
 export const getAllBookingSpa = async (req, res) => {
   try {
@@ -43,6 +45,19 @@ export const getBookingSpaByCustomer = async (req, res) => {
   }
 };
 
+// export const createBookingSpa = async (req, res) => {
+//   try {
+//     const { error } = bookingSpaDto.validate(req.body);
+//     if (error) return badRequest(error.message, res);
+//     await sendToQueue('booking_spa_queue', req.body);
+//     return res.status(200).json({ message: 'Booking spa successfully' });
+//     // const response = await startConsumer();
+//     // return res.status(200).json(response);
+//   } catch (error) {
+//     console.log(error);
+//     return internalServerError(res);
+//   }
+// };
 export const createBookingSpa = async (req, res) => {
   try {
     const { error } = bookingSpaDto.validate(req.body);
@@ -50,11 +65,9 @@ export const createBookingSpa = async (req, res) => {
     const response = await services.createBookingSpa(req.body);
     return res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     return internalServerError(res);
   }
 };
-
 export const updateBookingSpa = async (req, res) => {
   try {
     const { error } = updateBookingSpaDto.validate({

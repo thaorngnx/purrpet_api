@@ -101,14 +101,14 @@ export const createOrder = async (data) => {
         action: NOTIFICATION_ACTION.NEW_ORDER,
         type: NOTIFICATION_TYPE.ORDER,
         orderCode: response.purrPetCode,
-        userId: customer.id,
+        userId: customer._id,
         admin: true,
         staff: true,
       };
       await db.notification.create(notification);
       const userCodeList = [
         {
-          _id: customer.id,
+          _id: customer._id,
           role: ROLE.CUSTOMER,
         },
       ];
@@ -127,7 +127,7 @@ export const createOrder = async (data) => {
           action: NOTIFICATION_ACTION.NEW_ORDER,
           type: NOTIFICATION_TYPE.ORDER,
           orderCode: response.purrPetCode,
-          userId: user.id,
+          userId: user._id,
         };
         await db.notification.create(notification);
       });

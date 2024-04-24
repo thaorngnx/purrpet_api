@@ -7,6 +7,7 @@ import {
   masterDataCode,
 } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import { sendToQueue } from '../queue/rabbitmq';
 
 export const getAllBookingHome = async (req, res) => {
   try {
@@ -44,6 +45,15 @@ export const getBookingHomeByCustomer = async (req, res) => {
 };
 
 export const createBookingHome = async (req, res) => {
+  // try {
+  //   const { error } = bookingHomeDto.validate(req.body);
+  //   if (error) return badRequest(error.message, res);
+  //   await sendToQueue('booking_home_queue', req.body);
+  //   return res.status(200).json({ message: 'added to queue' });
+  // } catch (error) {
+  //   console.log(error);
+  //   return internalServerError(res);
+  // }
   try {
     const { error } = bookingHomeDto.validate(req.body);
     if (error) return badRequest(error.message, res);

@@ -71,6 +71,7 @@ export const NOTIFICATION_ACTION = {
   NEW_BOOKING_SPA: 'newBookingSpa',
   BOOKING_SPA_UPDATE: 'bookingSpaUpdate',
   NEW_REVIEW: 'newReview',
+  REFUND_ORDER: 'orderRefund',
 };
 
 export const PREFIX = {

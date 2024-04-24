@@ -7,6 +7,7 @@ import {
   ROLE,
   STATUS_BOOKING,
   STATUS_ORDER,
+  PAYMENT_METHOD,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import {
@@ -68,6 +69,11 @@ export const createBookingHome = async (data) =>
       }
       const pointUsed = data.userPoint;
       const point = data.bookingHomePrice * 0.01;
+      if (data.payMethod === PAYMENT_METHOD.COD) {
+        data.status = STATUS_BOOKING.PAID;
+      } else {
+        data.status = STATUS_BOOKING.WAITING_FOR_PAY;
+      }
       const response = await db.bookingHome.create({
         ...data,
         pointUsed,

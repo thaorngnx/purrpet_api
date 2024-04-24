@@ -166,7 +166,6 @@ export const bookingSpaDto = Joi.object({
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
   userPoint: Joi.number().integer().allow(null),
-  payMethod: Joi.string().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,
@@ -191,7 +190,6 @@ export const bookingHomeDto = Joi.object({
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
   userPoint: Joi.number().integer().allow(null),
-  payMethod: Joi.string().allow(null),
   status: Joi.string()
     .valid(
       Constant.STATUS_BOOKING.WAITING_FOR_PAY,

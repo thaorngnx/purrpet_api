@@ -3,8 +3,6 @@ import express from 'express';
 import { verifyToken } from '../middlewares/verify_token';
 import { isAdmin, isCustomer, isStaff } from '../middlewares/verify_role';
 
-import { sendToQueue } from '../queue/rabbitmq';
-
 const router = express.Router();
 
 router.get('/query', verifyToken, controllers.getAllBookingSpa);

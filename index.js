@@ -9,7 +9,6 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { onConnection } from './websocket/websocket.js';
 import jwt from 'jsonwebtoken';
-//import { startConsumer } from './src/queue/consumer.js';
 
 const app = express();
 
@@ -68,8 +67,6 @@ const PORT = process.env.PORT || 8888;
 server.listen(PORT, () => {
   console.log(`Application is running on port ${PORT}`);
 });
-
-//startConsumer();
 
 process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION!!!  shutting down ...');

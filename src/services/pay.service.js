@@ -41,8 +41,8 @@ export const createPaymentUrl = async (data) =>
       let amount = exsitOrder
         ? exsitOrder.orderPrice * 100
         : exsitBookingHome
-        ? exsitBookingHome.totalPayment * 100
-        : exsitBookingSpa.totalPayment * 100;
+        ? exsitBookingHome.bookingHomePrice * 100
+        : exsitBookingSpa.bookingSpaPrice * 100;
       let bankCode = '';
       let currCode = 'VND';
       let vnp_Params = {};
@@ -237,25 +237,14 @@ export const financialReport = async (data) => {
       }
     });
     bookingHome.map((item) => {
-      totalBookingHome[0] += item.totalPayment;
-      if (item.payMethod === CONST.PAYMENT_METHOD.VNPAY) {
-        countBookingHome[2] += 1;
-        totalBookingHome[2] += item.totalPayment;
-      } else {
-        console.log(item);
-        countBookingHome[1] += 1;
-        totalBookingHome[1] += item.totalPayment;
-      }
+      totalBookingHome[0] += item.bookingHomePrice;
+      totalBookingHome[2] += item.bookingHomePrice;
+      countBookingHome[2] += 1;
     });
     bookingSpa.map((item) => {
-      totalBookingSpa[0] += item.totalPayment;
-      if (item.payMethod === CONST.PAYMENT_METHOD.VNPAY) {
-        countBookingSpa[2] += 1;
-        totalBookingSpa[2] += item.totalPayment;
-      } else {
-        countBookingSpa[1] += 1;
-        totalBookingSpa[1] += item.totalPayment;
-      }
+      totalBookingSpa[0] += item.bookingSpaPrice;
+      totalBookingSpa[2] += item.bookingSpaPrice;
+      countBookingSpa[2] += 1;
     });
     total = totalOrder[0] + totalBookingHome[0] + totalBookingSpa[0];
     return {

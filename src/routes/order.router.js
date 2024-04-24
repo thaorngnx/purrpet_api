@@ -18,6 +18,5 @@ router.post('/create', controllers.createOrder);
 router.put('/update/:purrPetCode', controllers.updateOrder);
 router.put('/update-status/:purrPetCode', controllers.updateStatusOrder);
 router.delete('/delete/:purrPetCode', controllers.deleteOrder);
-// router.post('/request-refund/:purrPetCode', controllers.requestRefundOrder);
 
 module.exports = router;

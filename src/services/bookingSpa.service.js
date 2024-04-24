@@ -5,8 +5,6 @@ import {
   NOTIFICATION_TYPE,
   PREFIX,
   ROLE,
-  PAYMENT_METHOD,
-  STATUS_BOOKING,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import dayjs from 'dayjs';
@@ -64,17 +62,11 @@ export const createBookingSpa = async (data) =>
         PREFIX.BOOKING_SPA,
       );
 
-      const point = data.bookingSpaPrice * 0.01;
-      if (data.payMethod === PAYMENT_METHOD.COD) {
-        data.status = STATUS_BOOKING.PAID;
-      } else {
-        data.status = STATUS_BOOKING.WAITING_FOR_PAY;
-      }
+      const point = data.bookingSpaPrice * 0.1;
       const response = await db.bookingSpa.create({
         ...data,
         totalPayment: totalPayment,
         pointUsed: pointUsed,
-        status: data.status,
       });
       customer.point += point;
       await customer.save();

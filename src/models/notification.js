@@ -30,6 +30,14 @@ export const notificationSchema = new Schema(
       type: String,
       default: '',
     },
+    admin: {
+      type: Boolean,
+      default: false,
+    },
+    staff: {
+      type: Boolean,
+      default: false,
+    },
     seen: {
       type: Boolean,
       default: false,

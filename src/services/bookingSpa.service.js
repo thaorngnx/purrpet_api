@@ -6,6 +6,7 @@ import {
   PREFIX,
   ROLE,
   STATUS_BOOKING,
+  PAYMENT_METHOD,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import dayjs from 'dayjs';
@@ -41,6 +42,7 @@ export const createBookingSpa = async (data) =>
           message: 'Không tìm thấy khách hàng',
         });
       }
+
       let totalPayment = data.bookingSpaPrice;
       let availablePoint = data.bookingHomePrice * 0.01;
       if (!data.userPoint) data.userPoint = 0;
@@ -58,6 +60,7 @@ export const createBookingSpa = async (data) =>
         totalPayment = data.bookingSpaPrice - data.userPoint;
       }
       const pointUsed = data.userPoint;
+
       data.purrPetCode = await generateCode(
         COLLECTION.BOOKING_SPA,
         PREFIX.BOOKING_SPA,
@@ -73,6 +76,7 @@ export const createBookingSpa = async (data) =>
         ...data,
         totalPayment: totalPayment,
         pointUsed: pointUsed,
+        status: data.status,
       });
       customer.point += point;
       await customer.save();

@@ -95,17 +95,6 @@ export const createOrder = async (data) => {
       customer.point += point;
       await customer.save();
 
-      let notification = {
-        title: 'Đơn hàng mới',
-        message: `Đơn hàng ${response.purrPetCode} đã được tạo`,
-        action: NOTIFICATION_ACTION.NEW_ORDER,
-        type: NOTIFICATION_TYPE.ORDER,
-        orderCode: response.purrPetCode,
-        userId: customer._id,
-        admin: true,
-        staff: true,
-      };
-      await db.notification.create(notification);
       const userCodeList = [
         {
           _id: customer._id,

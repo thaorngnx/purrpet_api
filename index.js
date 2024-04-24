@@ -9,7 +9,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { onConnection } from './websocket/websocket.js';
 import jwt from 'jsonwebtoken';
-import { startConsumer } from './src/queue/consumer.js';
+//import { startConsumer } from './src/queue/consumer.js';
 
 const app = express();
 

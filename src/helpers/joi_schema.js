@@ -474,4 +474,10 @@ export const updateReviewDto = Joi.object({
   rating: Joi.number().allow(null),
   comment: Joi.string().allow(null),
 });
+
+export const refundDto = Joi.object({
+  orderCode: Joi.string().required(),
+  message: Joi.string().required(),
+  images: Joi.array().items(images).allow(null),
+});
 //#endregion

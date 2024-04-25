@@ -10,6 +10,10 @@ import {
 import querystring from 'qs';
 import crypto from 'crypto';
 import * as CONST from '../utils/constants';
+import { resolve } from 'path';
+import { images } from '../helpers/joi_schema';
+import { ROLE } from '../utils/constants';
+import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
 dotenv.config();
 
@@ -268,6 +272,145 @@ export const financialReport = async (data) => {
         totalBookingHome,
         totalBookingSpa,
       },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const requestRefund = async (data) => {
+  try {
+    console.log('data', data);
+    const response = await db.order.findOne({
+      purrPetCode: data.orderCode,
+    });
+    if (!response) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy đơn hàng',
+      };
+    }
+
+    const userCodeList = [];
+    const adminList = await db.account
+      .find({ role: ROLE.ADMIN })
+      .select('role');
+    const staffList = await db.account
+      .find({ role: ROLE.STAFF })
+      .select('role');
+    userCodeList.push(...adminList, ...staffList);
+
+    userCodeList.forEach(async (user) => {
+      let notification = {
+        title: 'Yêu cầu trả hàng, hoàn tiền',
+        message: `${data.message}`,
+        image: data.images,
+        action: CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+        type: CONST.NOTIFICATION_TYPE.ORDER,
+        orderCode: data.orderCode,
+        userId: user._id,
+      };
+      await db.notification.create(notification);
+    });
+
+    notifyMultiUser(
+      userCodeList,
+      CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+      response,
+    );
+    console.log('userCode', userCodeList);
+    return {
+      err: 0,
+      message: 'Yêu cầu trả hàng, hoàn tiền đã được gửi thành công',
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const acceptRefund = async (data) => {
+  try {
+    const response = await db.order.findOneAndUpdate(
+      {
+        purrPetCode: data.orderCode,
+      },
+      {
+        status: STATUS_ORDER.CANCEL,
+      },
+    );
+    if (!response) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy đơn hàng',
+      };
+    }
+    const customer = await db.customer.findOne({
+      purrPetCode: response.customerCode,
+    });
+    const userCodeList = [
+      {
+        _id: customer.id,
+        role: ROLE.CUSTOMER,
+      },
+    ];
+    let notification = {
+      title: 'Yêu cầu trả hàng, hoàn tiền đã được chấp nhận',
+      message: `Đơn hàng ${data.orderCode} đã được chấp nhận trả hàng, hoàn tiền. Vui lòng gửi hàng trả lại cho cửa hàng. Tiền hàng sẽ được hoàn lại sau khi cửa hàng nhận được hàng trả lại. Xin cảm ơn!`,
+      action: CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+      type: CONST.NOTIFICATION_TYPE.ORDER,
+      orderCode: data.orderCode,
+      userId: customer.id,
+    };
+    await db.notification.create(notification);
+    notifyMultiUser(
+      userCodeList,
+      CONST.NOTIFICATION_ACTION.CANCEL_ORDER,
+      response,
+    );
+    return {
+      err: 0,
+      message: 'Chấp nhận yêu cầu trả hàng, hoàn tiền thành công',
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const cancelRefund = async (data) => {
+  try {
+    const response = await db.order.findOne({
+      purrPetCode: data.orderCode,
+    });
+    if (!response) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy đơn hàng',
+      };
+    }
+    const customer = await db.customer.findOne({
+      purrPetCode: response.customerCode,
+    });
+    const userCodeList = [
+      {
+        _id: customer.id,
+        role: ROLE.CUSTOMER,
+      },
+    ];
+    let notification = {
+      title: 'Yêu cầu trả hàng, hoàn tiền đã bị từ chối',
+      message: `Đơn hàng ${data.orderCode} đã bị từ chối trả hàng, hoàn tiền. Vui lòng liên hệ cửa hàng để biết thêm chi tiết. Xin cảm ơn!`,
+      action: CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+      type: CONST.NOTIFICATION_TYPE.ORDER,
+      orderCode: data.orderCode,
+      userId: customer.id,
+    };
+    await db.notification.create(notification);
+    notifyMultiUser(
+      userCodeList,
+      CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+      response,
+    );
+    return {
+      err: 0,
+      message: 'Từ chối yêu cầu trả hàng, hoàn tiền thành công',
     };
   } catch (error) {
     throw error;

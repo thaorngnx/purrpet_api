@@ -77,16 +77,15 @@ export const createBookingSpa = async (user, data) =>
       );
 
       const point = data.bookingSpaPrice * 0.01;
-      if (data.payMethod === PAYMENT_METHOD.COD) {
-        data.status = STATUS_BOOKING.PAID;
-      } else {
-        data.status = STATUS_BOOKING.WAITING_FOR_PAY;
-      }
+      // if (data.payMethod === PAYMENT_METHOD.COD) {
+      //   data.status = STATUS_BOOKING.WAITING_FOR_PAY;
+      // } else {
+      //   data.status = STATUS_BOOKING.WAITING_FOR_PAY;
+      // }
       const response = await db.bookingSpa.create({
         ...data,
         totalPayment: totalPayment,
         pointUsed: pointUsed,
-        status: data.status,
       });
       customer.point += point;
       await customer.save();

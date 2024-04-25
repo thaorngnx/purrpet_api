@@ -18,6 +18,10 @@ export const notificationSchema = new Schema(
       type: String,
       required: [true, 'Please fill message'],
     },
+    image: {
+      type: Array,
+      required: false,
+    },
     type: {
       type: String,
       default: '',

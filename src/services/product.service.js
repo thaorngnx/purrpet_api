@@ -181,12 +181,42 @@ export const getAllProductCustomer = async ({
         sort,
       );
 
+      let products = [];
+      for (let i = 0; i < result.data.length; i++) {
+        const reviews = await db.review.find({
+          productCode: result.data[i].purrPetCode,
+        });
+        let averageRating = 0;
+        if (reviews.length !== 0) {
+          averageRating =
+            reviews.reduce((total, review) => {
+              return total + review.rating;
+            }, 0) / reviews.length;
+        }
+        const orderQuantity = await db.order.aggregate([
+          { $unwind: '$orderItems' },
+          { $match: { 'orderItems.productCode': result.data[i].purrPetCode } },
+          {
+            $group: {
+              _id: null,
+              totalQuantity: { $sum: '$orderItems.quantity' },
+            },
+          },
+        ]);
+        const newProduct = {
+          ...result.data[i]._doc,
+          averageRating: averageRating,
+          orderQuantity:
+            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+        };
+        products.push(newProduct);
+      }
       resolve({
         err: result ? 0 : -1,
         message: result
           ? 'Lấy danh sách sản phẩm thành công!'
           : 'Lấy danh sách sản phẩm thất bại!',
-        data: result.data,
+        data: products,
         pagination: result.pagination,
       });
     } catch (error) {

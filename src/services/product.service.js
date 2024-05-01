@@ -643,7 +643,6 @@ export const getAllSellingProduct = async (query) =>
         };
         products.push(newProduct);
       }
-      console.log(products);
       resolve({
         err: 0,
         message: 'Lấy danh sách sản phẩm bán chạy thành công!',

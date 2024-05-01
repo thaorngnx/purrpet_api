@@ -24,12 +24,15 @@ export const markAllAsRead = async (userId) =>
         { userId: userId },
         { $set: { seen: true } },
       );
+
+      const notifications = await db.notification.find({ userId: userId });
+
       resolve({
-        err: response ? 0 : -1,
-        message: response
+        err: notifications ? 0 : -1,
+        message: notifications
           ? 'Đánh dấu tất cả thông báo là đã đọc'
           : 'Đánh dấu thất bại',
-        data: response,
+        data: notifications,
       });
     } catch (error) {
       reject(error);

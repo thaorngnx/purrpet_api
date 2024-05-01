@@ -613,10 +613,41 @@ export const getAllSellingProduct = async (query) =>
         //nối 2 mảng lại
         result.push(...products);
       }
+      let products = [];
+      for (let i = 0; i < result.length; i++) {
+        const reviews = await db.review.find({
+          productCode: result[i].purrPetCode,
+        });
+        let averageRating = 0;
+        if (reviews.length !== 0) {
+          averageRating =
+            reviews.reduce((total, review) => {
+              return total + review.rating;
+            }, 0) / reviews.length;
+        }
+        const orderQuantity = await db.order.aggregate([
+          { $unwind: '$orderItems' },
+          { $match: { 'orderItems.productCode': result[i].purrPetCode } },
+          {
+            $group: {
+              _id: null,
+              totalQuantity: { $sum: '$orderItems.quantity' },
+            },
+          },
+        ]);
+        const newProduct = {
+          ...result[i],
+          averageRating: averageRating,
+          orderQuantity:
+            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+        };
+        products.push(newProduct);
+      }
+      console.log(products);
       resolve({
         err: 0,
         message: 'Lấy danh sách sản phẩm bán chạy thành công!',
-        data: result,
+        data: products,
       });
     } catch (error) {
       console.error(error);

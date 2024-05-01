@@ -29,6 +29,7 @@ export const markAllAsRead = async (userId) =>
         message: response
           ? 'Đánh dấu tất cả thông báo là đã đọc'
           : 'Đánh dấu thất bại',
+        data: response,
       });
     } catch (error) {
       reject(error);

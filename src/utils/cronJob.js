@@ -117,4 +117,17 @@ export const cronJob = () => {
       await db.otp.findByIdAndDelete(otp.id);
     });
   });
+
+  //job: delete notification after 2 months - RUN 1 day 1 time
+  cron.schedule('0 0 * * *', async () => {
+    // console.log("delete notification after 2 months");
+    const now = new Date();
+    now.setMonth(now.getMonth() - 2);
+    const notifications = await db.notification.find({
+      createdAt: { $lte: now },
+    });
+    notifications.forEach(async (notification) => {
+      await db.notification.findByIdAndDelete(notification.id);
+    });
+  });
 };

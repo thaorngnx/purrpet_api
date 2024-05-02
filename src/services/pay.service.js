@@ -280,7 +280,6 @@ export const financialReport = async (data) => {
 
 export const requestRefund = async (data) => {
   try {
-    console.log('data', data);
     const response = await db.order.findOne({
       purrPetCode: data.orderCode,
     });
@@ -415,4 +414,49 @@ export const cancelRefund = async (data) => {
   } catch (error) {
     throw error;
   }
+};
+export const financialForCustomer = async (data) => {
+  const user = data.purrPetCode;
+  const order = await db.order.find({
+    customerCode: user,
+    status: STATUS_ORDER.DONE,
+  });
+  const bookingHome = await db.bookingHome.find({
+    customerCode: user,
+    status: STATUS_BOOKING.PAID,
+  });
+  const bookingSpa = await db.bookingSpa.find({
+    customerCode: user,
+    status: STATUS_BOOKING.PAID,
+  });
+  let totalOrder = 0;
+  let totalBookingHome = 0;
+  let totalBookingSpa = 0;
+  let quantityOrder = 0;
+  let quantityBookingHome = 0;
+  let quantityBookingSpa = 0;
+
+  order.map((item) => {
+    totalOrder += item.totalPayment;
+    quantityOrder += 1;
+  });
+  bookingHome.map((item) => {
+    totalBookingHome += item.totalPayment;
+    quantityBookingHome += 1;
+  });
+  bookingSpa.map((item) => {
+    totalBookingSpa += item.totalPayment;
+    quantityBookingSpa += 1;
+  });
+  return {
+    message: 'Thống kê thành công',
+    data: {
+      totalOrder,
+      totalBookingHome,
+      totalBookingSpa,
+      quantityOrder,
+      quantityBookingHome,
+      quantityBookingSpa,
+    },
+  };
 };

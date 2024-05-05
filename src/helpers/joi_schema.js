@@ -87,7 +87,6 @@ export const productDto = Joi.object({
   price: Joi.number().required(),
   categoryCode: Joi.string().required(),
   images: Joi.array().items(images).allow(null),
-  inventory: Joi.number().integer().required(),
   status: Joi.string()
     .valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE)
     .allow(null),
@@ -274,6 +273,26 @@ export const notificationDto = Joi.object({
   orderCode: Joi.string().required(),
   action: Joi.string().required(),
   seen: Joi.boolean().allow(null),
+});
+export const consignmentDto = Joi.object({
+  productList: Joi.array().items(
+    Joi.object({
+      productCode: Joi.string().required(),
+      quantity: Joi.number().integer().required(),
+      cost: Joi.number().required(),
+      expiryDate: Joi.date().required(),
+    }),
+  ),
+  supplierCode: Joi.string().required(),
+  createBy: Joi.string().allow(null),
+  updateBy: Joi.string().allow(null),
+});
+export const supplierDto = Joi.object({
+  supplierName: Joi.string().required(),
+  phoneNumber: Joi.string().required().custom(checkNumberPhone),
+  email: Joi.string().email().required(),
+  createBy: Joi.string().allow(null),
+  updateBy: Joi.string().allow(null),
 });
 
 //#endregion
@@ -479,5 +498,17 @@ export const refundDto = Joi.object({
   orderCode: Joi.string().required(),
   message: Joi.string().required(),
   images: Joi.array().items(images).allow(null),
+});
+
+export const updateSupplierDto = Joi.object({
+  purrPetCode: Joi.string().allow(null),
+  supplierName: Joi.string().allow(null),
+  phoneNumber: Joi.string().allow(null).custom(checkNumberPhone),
+  email: Joi.string().email().allow(null),
+  status: Joi.string()
+    .valid(Constant.STATUS_PRODUCT.ACTIVE, Constant.STATUS_PRODUCT.INACTIVE)
+    .allow(null),
+  createBy: Joi.string().allow(null),
+  updateBy: Joi.string().allow(null),
 });
 //#endregion

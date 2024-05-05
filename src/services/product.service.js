@@ -40,6 +40,7 @@ export const createProduct = async (data) =>
           message: 'Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác!',
         });
       }
+      data.inventory = 0;
 
       const response = await db.product.create(data);
       resolve({

@@ -12,15 +12,21 @@ import {
 import { generateCode } from '../utils/generateCode';
 import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
+import {
+  checkExpiryDateProduct,
+  findProductInMerchandise,
+} from '../utils/validationData';
+import consignment from '../models/consignment';
+import e from 'express';
 
 export const createOrder = async (user, data) => {
   try {
-    if (user.role === ROLE.CUSTOMER && user.purrPetCode !== data.customerCode) {
-      return {
-        err: -1,
-        message: 'Bạn không có quyền tạo đơn hàng cho người khác',
-      };
-    }
+    // if (user.role === ROLE.CUSTOMER && user.purrPetCode !== data.customerCode) {
+    //   return {
+    //     err: -1,
+    //     message: 'Bạn không có quyền tạo đơn hàng cho người khác',
+    //   };
+    // }
 
     const customer = await db.customer.findOne({
       purrPetCode: data.customerCode,
@@ -50,7 +56,6 @@ export const createOrder = async (user, data) => {
 
     let isOutOfStock = false;
     let orderPrice = 0;
-
     for (const item of products) {
       const orderItem = data.orderItems.find(
         (i) => i.productCode === item.purrPetCode,
@@ -62,7 +67,32 @@ export const createOrder = async (user, data) => {
       orderItem.totalPrice = totalPriceItems;
       orderItem.image = item.images[0]?.path;
       await item.save();
+      if (item.inventory < 0) {
+        isOutOfStock = true;
+      } else {
+        const response = await findProductInMerchandise(
+          item.purrPetCode,
+          orderItem.quantity,
+        );
+        if (response.length === 0) {
+          isOutOfStock = true;
+        } else {
+          const productList = response[0].products;
+          productList[0].inventory -= orderItem.quantity;
+          orderItem.consignmentCode = productList[0].purrPetCode.split('+')[1];
+          console.log(
+            'sản phẩm đã bán thuộc lô hàng',
+            productList[0].purrPetCode.split('+')[1],
+          );
+          const updateMerchandise = await db.merchandise.findOne({
+            purrPetCode: productList[0].purrPetCode,
+          });
+          updateMerchandise.inventory -= orderItem.quantity;
+          await updateMerchandise.save();
+        }
+      }
     }
+
     let totalPayment = orderPrice;
     let availablePoint = orderPrice * 0.1;
     if (!data.userPoint) data.userPoint = 0;
@@ -91,7 +121,6 @@ export const createOrder = async (user, data) => {
     } else {
       data.status = STATUS_ORDER.WAITING_FOR_PAY;
     }
-
     if (!isOutOfStock) {
       const point = Math.floor(orderPrice * 0.01);
       const response = await db.order.create({
@@ -102,7 +131,6 @@ export const createOrder = async (user, data) => {
       });
       customer.point += point;
       await customer.save();
-
       const userCodeList = [
         {
           _id: customer._id,
@@ -151,6 +179,145 @@ export const createOrder = async (user, data) => {
     throw error;
   }
 };
+
+// export const createOrder = async (user, data) => {
+//   try {
+//     if (user.role === ROLE.CUSTOMER && user.purrPetCode !== data.customerCode) {
+//       return {
+//         err: -1,
+//         message: 'Bạn không có quyền tạo đơn hàng cho người khác',
+//       };
+//     }
+
+//     const customer = await db.customer.findOne({
+//       purrPetCode: data.customerCode,
+//     });
+
+//     if (!customer) {
+//       return {
+//         err: -1,
+//         message: 'Không tìm thấy khách hàng',
+//       };
+//     }
+
+//     data.customerAddress = customer.address;
+//     data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
+
+//     const productItems = data.orderItems.map((item) => item.productCode);
+//     const products = await db.product.find({
+//       purrPetCode: { $in: productItems },
+//     });
+
+//     if (products.length !== productItems.length) {
+//       return {
+//         err: -1,
+//         message: 'Không tìm thấy sản phẩm',
+//       };
+//     }
+
+//     let isOutOfStock = false;
+//     let orderPrice = 0;
+
+//     for (const item of products) {
+//       const orderItem = data.orderItems.find(
+//         (i) => i.productCode === item.purrPetCode,
+//       );
+//       const totalPriceItems = item.price * orderItem.quantity;
+//       orderPrice += totalPriceItems;
+//       item.inventory -= orderItem.quantity;
+//       orderItem.productPrice = item.price;
+//       orderItem.totalPrice = totalPriceItems;
+//       orderItem.image = item.images[0]?.path;
+//       await item.save();
+//     }
+//     let totalPayment = orderPrice;
+//     let availablePoint = orderPrice * 0.1;
+//     if (!data.userPoint) data.userPoint = 0;
+//     if (
+//       data.userPoint > availablePoint ||
+//       data.userPoint < 0 ||
+//       data.userPoint > customer.point
+//     ) {
+//       return {
+//         err: -1,
+//         message: 'Điểm tích lũy không đủ',
+//       };
+//     } else {
+//       customer.point -= data.userPoint;
+//       totalPayment -= data.userPoint;
+//     }
+
+//     const inventoryCheck = products.map((item) => item.inventory);
+//     const inventory = inventoryCheck.every((item) => item > -1);
+
+//     if (!inventory) {
+//       isOutOfStock = true;
+//     }
+//     if (data.payMethod === PAYMENT_METHOD.COD) {
+//       data.status = STATUS_ORDER.NEW;
+//     } else {
+//       data.status = STATUS_ORDER.WAITING_FOR_PAY;
+//     }
+
+//     if (!isOutOfStock) {
+//       const point = Math.floor(orderPrice * 0.01);
+//       const response = await db.order.create({
+//         ...data,
+//         orderPrice,
+//         totalPayment,
+//         pointUsed: data.userPoint,
+//       });
+//       customer.point += point;
+//       await customer.save();
+
+//       const userCodeList = [
+//         {
+//           _id: customer._id,
+//           role: ROLE.CUSTOMER,
+//         },
+//       ];
+//       const adminList = await db.account
+//         .find({ role: ROLE.ADMIN })
+//         .select('role');
+//       const staffList = await db.account
+//         .find({ role: ROLE.STAFF })
+//         .select('role');
+//       userCodeList.push(...adminList, ...staffList);
+
+//       userCodeList.forEach(async (user) => {
+//         let notification = {
+//           title: 'Đơn hàng mới',
+//           message: `Đơn hàng ${response.purrPetCode} đã được tạo`,
+//           action: NOTIFICATION_ACTION.NEW_ORDER,
+//           type: NOTIFICATION_TYPE.ORDER,
+//           orderCode: response.purrPetCode,
+//           userId: user._id,
+//         };
+//         await db.notification.create(notification);
+//       });
+
+//       notifyMultiUser(userCodeList, NOTIFICATION_ACTION.NEW_ORDER, response);
+//       return {
+//         err: response ? 0 : -1,
+//         message: response ? 'Tạo đơn hàng thành công' : 'Tạo đơn hàng thất bại',
+//         data: response,
+//       };
+//     } else {
+//       products.forEach(async (item) => {
+//         item.inventory += data.orderItems.find(
+//           (i) => i.productCode === item.purrPetCode,
+//         ).quantity;
+//         await item.save();
+//       });
+//       return {
+//         err: -1,
+//         message: 'Sản phẩm đã hết hàng',
+//       };
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const getAllOrder = async (
   user,
@@ -383,6 +550,11 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               });
               product.inventory += item.quantity;
               await product.save();
+              const merchandise = await db.merchandise.findOne({
+                purrPetCode: item.productCode + '+' + item.consignmentCode,
+              });
+              merchandise.inventory += item.quantity;
+              await merchandise.save();
             });
             customer.point += response.pointUsed;
             customer.point -= Math.floor(response.orderPrice * 0.01);

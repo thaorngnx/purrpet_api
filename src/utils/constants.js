@@ -61,6 +61,7 @@ export const NOTIFICATION_TYPE = {
   BOOKING_HOME: 'bookingHome',
   BOOKING_SPA: 'bookingSpa',
   REVIEW: 'review',
+  PRODUCT: 'product',
 };
 
 export const NOTIFICATION_ACTION = {
@@ -72,6 +73,8 @@ export const NOTIFICATION_ACTION = {
   BOOKING_SPA_UPDATE: 'bookingSpaUpdate',
   NEW_REVIEW: 'newReview',
   REFUND_ORDER: 'orderRefund',
+  CANCEL_ORDER: 'orderCancel',
+  PRODUCT_EXPIRED: 'productExpired',
 };
 
 export const PREFIX = {
@@ -88,6 +91,8 @@ export const PREFIX = {
   OTP: 'OTP_',
   FAVORITE: 'FAV_',
   REVIEW: 'REV_',
+  SUPPLIER: 'SUP_',
+  CONSIGNMENT: 'CON_',
 };
 
 export const COLLECTION = {
@@ -105,6 +110,9 @@ export const COLLECTION = {
   FAVORITE: 'favorite',
   REVIEW: 'review',
   NOTIFICATION: 'notification',
+  SUPPLIER: 'supplier',
+  CONSIGNMENT: 'consignment',
+  MERCHANDISE: 'merchandise',
 };
 
 export const SPA_TYPE = {
@@ -136,6 +144,7 @@ export const VALIDATE_DUPLICATE = {
   MASTERDATA_CODE: 'masterDataCode',
   PHONE_NUMBER: 'phoneNumber',
   EMAIL: 'email',
+  SUPPLIER_NAME: 'supplierName',
 };
 
 export const GROUP_CODE = {

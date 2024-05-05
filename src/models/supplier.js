@@ -5,38 +5,27 @@ mongoose.set('runValidators', true);
 
 const Schema = mongoose.Schema;
 
-export const productSchema = new Schema(
+export const supplierSchema = new Schema(
   {
     purrPetCode: {
       type: String,
       required: true,
     },
-    productName: {
+    supplierName: {
       type: String,
       required: true,
       trim: true,
       unique: true,
     },
-    description: {
+    email: {
       type: String,
       required: true,
       trim: true,
     },
-    price: {
-      type: Number,
-      required: true,
-    },
-    categoryCode: {
+    phoneNumber: {
       type: String,
       required: true,
-    },
-    images: {
-      type: Array,
-    },
-    inventory: {
-      type: Number,
-      required: true,
-      default: 0,
+      trim: true,
     },
     status: {
       type: String,
@@ -56,4 +45,4 @@ export const productSchema = new Schema(
   { timestamps: true },
 );
 
-export default mongoose.model('product', productSchema);
+export default mongoose.model('supplier', supplierSchema);

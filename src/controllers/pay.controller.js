@@ -16,9 +16,11 @@ export const createPaymentUrl = async (req, res) => {
 
 export const vnpayReturn = async (req, res) => {
   try {
-    await services.vnpayReturn(req.query);
-    console.log(res);
-    res.redirect('https://ui-purrpetshop.vercel.app/order');
+    const user = req.user;
+    console.log('user', user);
+    console.log('req.query', req);
+    const response = await services.vnpayReturn(req.query);
+    return res.status(200).json(response);
   } catch (error) {
     return internalServerError(res);
   }
@@ -37,6 +39,7 @@ export const financialReport = async (req, res) => {
 export const requestRefund = async (req, res) => {
   try {
     const { error } = refundDto.validate(req.body);
+    if (error) return badRequest(error.message, res);
     const response = await services.requestRefund(req.body);
     return res.status(200).json(response);
   } catch (error) {

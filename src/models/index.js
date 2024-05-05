@@ -12,6 +12,9 @@ import otp from './otp';
 import favorite from './favorite';
 import review from './review';
 import notification from './notification';
+import supplier from './supplier';
+import consignment from './consignment';
+import merchandise from './merchandise';
 
 export default {
   account,
@@ -28,4 +31,7 @@ export default {
   favorite,
   review,
   notification,
+  supplier,
+  consignment,
+  merchandise,
 };

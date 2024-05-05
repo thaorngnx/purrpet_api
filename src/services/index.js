@@ -15,3 +15,5 @@ export * from './otp.service';
 export * from './favorite.service';
 export * from './review.service';
 export * from './notification.service';
+export * from './supplier.service';
+export * from './consignment.service';

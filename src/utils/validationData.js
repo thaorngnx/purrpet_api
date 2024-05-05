@@ -5,6 +5,7 @@ import {
   COLLECTION,
   PREFIX,
   STATUS_BOOKING,
+  STATUS_PRODUCT,
 } from './constants';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -363,4 +364,61 @@ export const checkValidStatusBooking = async (statusOld, statusNew) => {
     default:
       break;
   }
+};
+
+export const checkExpiryDateProduct = async (expiryDate) => {
+  const expiry = dayjs(expiryDate);
+  const now = dayjs();
+  const diff = expiry.diff(now, 'day');
+  if (diff < 0) {
+    return false;
+  }
+  return true;
+};
+
+export const findProductInMerchandise = async (productCode, quantity) => {
+  const productList = await db.merchandise.aggregate([
+    {
+      $project: {
+        _id: 1,
+        originalPurrPetCode: {
+          $arrayElemAt: [{ $split: ['$purrPetCode', '+'] }, 0],
+        },
+        purrPetCode: 1,
+        inventory: 1,
+        expiryDate: 1,
+        status: 1,
+        __v: 1,
+      },
+    },
+    {
+      $match: {
+        originalPurrPetCode: productCode,
+        status: STATUS_PRODUCT.ACTIVE,
+        inventory: { $gte: quantity },
+      },
+    },
+    {
+      $sort: {
+        expiryDate: 1,
+      },
+    },
+
+    {
+      $group: {
+        _id: '$originalPurrPetCode',
+        products: {
+          $push: {
+            _id: '$_id',
+            purrPetCode: '$purrPetCode',
+            inventory: '$inventory',
+            expiryDate: '$expiryDate',
+            status: '$status',
+            __v: '$__v',
+          },
+        },
+      },
+    },
+  ]);
+  return productList;
 };

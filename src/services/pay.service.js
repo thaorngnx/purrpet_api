@@ -119,7 +119,7 @@ export const vnpayReturn = async (vnp_Params) =>
                 purrPetCode: vnp_Params['vnp_TxnRef'],
               });
               if (exsitOrder) {
-                exsitOrder.paymentStatus = STATUS_ORDER.DONE;
+                exsitOrder.paymentStatus = STATUS_PAYMENT.PAID;
                 await exsitOrder.save();
               }
               if (exsitBooking || exsitBookingSpa) {
@@ -144,6 +144,30 @@ export const vnpayReturn = async (vnp_Params) =>
               let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
               paymentType.status = STATUS_ORDER.CANCEL;
               await paymentType.save();
+              const user = await db.customer.findOne({
+                purrPetCode: paymentType.customerCode,
+              });
+              let notification = {
+                title: 'Thanh toán thất bại',
+                message: `Thanh toán đơn hàng ${vnp_Params['vnp_TxnRef']} thất bại. Đơn hàng đã được huỷ thành công`,
+                action: CONST.NOTIFICATION_ACTION.CANCEL_ORDER,
+                type: CONST.NOTIFICATION_TYPE.ORDER,
+                orderCode: vnp_Params['vnp_TxnRef'],
+                userId: user._id,
+              };
+              await db.notification.create(notification);
+
+              const userCodeList = [
+                {
+                  _id: user._id,
+                  role: ROLE.CUSTOMER,
+                },
+              ];
+              notifyMultiUser(
+                userCodeList,
+                CONST.NOTIFICATION_ACTION.CANCEL_ORDER,
+                paymentType,
+              );
               resolve({
                 RspCode: '01',
                 Message: 'Hủy thanh toán thành công',

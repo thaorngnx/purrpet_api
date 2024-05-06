@@ -8,6 +8,7 @@ import {
   STATUS_ORDER,
   STATUS_PAYMENT,
 } from '../utils/constants';
+import dayjs from 'dayjs';
 
 export const cronJob = () => {
   //job: check waiting for payment booking spa/ home/ order and cancel it after 10 minutes created
@@ -22,6 +23,7 @@ export const cronJob = () => {
       });
       const order = await db.order.find({
         paymentStatus: STATUS_PAYMENT.WAITING_FOR_PAY,
+        paymentMethod: PAYMENT_METHOD.VNPAY,
       });
       bookingSpa.forEach(async (booking) => {
         const now = new Date();
@@ -47,7 +49,7 @@ export const cronJob = () => {
         const now = new Date();
         const timeDiff = now.getTime() - order.createdAt.getTime();
         const minutes = Math.floor(timeDiff / 60000);
-        if (minutes >= 10 && order.payMethod === PAYMENT_METHOD.VNPAY) {
+        if (minutes >= 10) {
           await db.order.findByIdAndUpdate(order.id, {
             status: STATUS_ORDER.CANCEL,
           });
@@ -57,6 +59,7 @@ export const cronJob = () => {
             const product = await db.product.findOne({
               purrPetCode: item.productCode,
             });
+            console.log(product);
             product.inventory += item.quantity;
             await product.save();
             const merchandise = await db.merchandise.findOne({

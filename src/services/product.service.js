@@ -13,6 +13,7 @@ import { generateCode } from '../utils/generateCode';
 import {
   checkValidCategory,
   checkDuplicateValue,
+  findProductAllInMerchandise,
 } from '../utils/validationData';
 
 export const createProduct = async (data) =>
@@ -484,10 +485,34 @@ export const updateProductStatus = async (purrPetCode) =>
           message: 'Sản phẩm không tồn tại!',
         });
       } else {
+        const productInmerchandise = await findProductAllInMerchandise(
+          purrPetCode,
+          0,
+        );
         if (response.status === STATUS_PRODUCT.INACTIVE) {
           response.status = STATUS_PRODUCT.ACTIVE;
+          productInmerchandise[0].products.forEach(async (item) => {
+            await db.merchandise.findOneAndUpdate(
+              {
+                purrPetCode: item.purrPetCode,
+              },
+              {
+                status: STATUS_PRODUCT.ACTIVE,
+              },
+            );
+          });
         } else {
           response.status = STATUS_PRODUCT.INACTIVE;
+          productInmerchandise[0].products.forEach(async (item) => {
+            await db.merchandise.findOneAndUpdate(
+              {
+                purrPetCode: item.purrPetCode,
+              },
+              {
+                status: STATUS_PRODUCT.INACTIVE,
+              },
+            );
+          });
         }
         await response.save();
         resolve({
@@ -613,6 +638,11 @@ export const getAllSellingProduct = async (query) =>
 
         //nối 2 mảng lại
         result.push(...products);
+        resolve({
+          err: 0,
+          message: 'Lấy danh sách sản phẩm bán chạy thành công!',
+          data: result,
+        });
       }
       let products = [];
       for (let i = 0; i < result.length; i++) {
@@ -644,6 +674,7 @@ export const getAllSellingProduct = async (query) =>
         };
         products.push(newProduct);
       }
+
       resolve({
         err: 0,
         message: 'Lấy danh sách sản phẩm bán chạy thành công!',

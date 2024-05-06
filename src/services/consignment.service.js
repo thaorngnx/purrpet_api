@@ -1,7 +1,7 @@
 import db from '../models';
 import { COLLECTION, PREFIX, STATUS_ACCOUNT } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
-import { findProductInMerchandise } from '../utils/validationData';
+import { findProductActiveInMerchandise } from '../utils/validationData';
 import { paginationQuery } from '../utils/pagination';
 import { purrPetCode } from '../helpers/joi_schema';
 
@@ -90,7 +90,7 @@ export const getAllConsignment = async ({ page, limit, sort, query }) =>
 export const getProductInConsignment = async (productCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await findProductInMerchandise(productCode, 0);
+      const response = await findProductActiveInMerchandise(productCode, 0);
       if (!response) {
         return resolve({
           err: -1,

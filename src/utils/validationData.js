@@ -376,7 +376,7 @@ export const checkExpiryDateProduct = async (expiryDate) => {
   return true;
 };
 
-export const findProductInMerchandise = async (productCode, quantity) => {
+export const findProductActiveInMerchandise = async (productCode, quantity) => {
   const productList = await db.merchandise.aggregate([
     {
       $project: {
@@ -395,6 +395,51 @@ export const findProductInMerchandise = async (productCode, quantity) => {
       $match: {
         originalPurrPetCode: productCode,
         status: STATUS_PRODUCT.ACTIVE,
+        inventory: { $gte: quantity },
+      },
+    },
+    {
+      $sort: {
+        expiryDate: 1,
+      },
+    },
+
+    {
+      $group: {
+        _id: '$originalPurrPetCode',
+        products: {
+          $push: {
+            _id: '$_id',
+            purrPetCode: '$purrPetCode',
+            inventory: '$inventory',
+            expiryDate: '$expiryDate',
+            status: '$status',
+            __v: '$__v',
+          },
+        },
+      },
+    },
+  ]);
+  return productList;
+};
+export const findProductAllInMerchandise = async (productCode, quantity) => {
+  const productList = await db.merchandise.aggregate([
+    {
+      $project: {
+        _id: 1,
+        originalPurrPetCode: {
+          $arrayElemAt: [{ $split: ['$purrPetCode', '+'] }, 0],
+        },
+        purrPetCode: 1,
+        inventory: 1,
+        expiryDate: 1,
+        status: 1,
+        __v: 1,
+      },
+    },
+    {
+      $match: {
+        originalPurrPetCode: productCode,
         inventory: { $gte: quantity },
       },
     },

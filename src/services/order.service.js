@@ -14,7 +14,7 @@ import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 import {
   checkExpiryDateProduct,
-  findProductInMerchandise,
+  findProductActiveInMerchandise,
 } from '../utils/validationData';
 import consignment from '../models/consignment';
 import e from 'express';
@@ -70,7 +70,7 @@ export const createOrder = async (user, data) => {
       if (item.inventory < 0) {
         isOutOfStock = true;
       } else {
-        const response = await findProductInMerchandise(
+        const response = await findProductActiveInMerchandise(
           item.purrPetCode,
           orderItem.quantity,
         );

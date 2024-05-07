@@ -96,11 +96,15 @@ export const updateReview = async (reviewCode, data) =>
 export const getReviewByProduct = async (productCode) =>
   new Promise(async (resolve, reject) => {
     try {
-      const reviews = await db.review.find({ productCode }).populate({
-        path: 'user',
-        select: 'name',
-        model: 'customer',
-      });
+      console.log('productCode', productCode);
+      const reviews = await db.review
+        .find({ productCode })
+        .populate({
+          path: 'user',
+          select: 'name',
+          model: 'customer',
+        })
+        .limit(5);
       //calculate average rating
       let totalRating = 0;
       reviews.forEach((review) => {
@@ -111,6 +115,43 @@ export const getReviewByProduct = async (productCode) =>
         err: 0,
         message: 'Lấy danh sách đánh giá thành công',
         data: { count: totalRating, averageRating, reviews },
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getReviewDetailProduct = async (
+  productCode,
+  { page, limit, ...query },
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const sort = { createdAt: -1 };
+      const _limit = parseInt(limit) || 12;
+      const _page = parseInt(page) || 1;
+      const _sort = sort || { _id: -1 };
+      const count = await db.review.countDocuments({ productCode });
+      const totalPage = Math.ceil(count / _limit);
+      const reviews = await db.review
+        .find({ productCode })
+        .populate({
+          path: 'user',
+          select: 'name',
+          model: 'customer',
+        })
+        .limit(_limit)
+        .skip((_page - 1) * _limit)
+        .sort(_sort);
+      resolve({
+        err: 0,
+        message: 'Lấy danh sách đánh giá thành công',
+        data: reviews,
+        pagination: {
+          page: _page,
+          limit: _limit,
+          total: totalPage,
+        },
       });
     } catch (error) {
       reject(error);

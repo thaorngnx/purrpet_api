@@ -28,3 +28,16 @@ export const updateReview = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+export const getReviewDetailProduct = async (req, res) => {
+  try {
+    const response = await services.getReviewDetailProduct(
+      req.params.productCode,
+      req.query,
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};

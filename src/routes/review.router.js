@@ -12,5 +12,6 @@ router.put(
   isCustomer,
   controllers.updateReview,
 );
+router.get('/product/:productCode', controllers.getReviewDetailProduct);
 
 export default router;

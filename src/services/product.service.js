@@ -15,6 +15,7 @@ import {
   checkDuplicateValue,
   findProductAllInMerchandise,
 } from '../utils/validationData';
+import { STATUS_ORDER } from '../utils/constants';
 
 export const createProduct = async (data) =>
   new Promise(async (resolve, reject) => {
@@ -197,7 +198,12 @@ export const getAllProductCustomer = async ({
         }
         const orderQuantity = await db.order.aggregate([
           { $unwind: '$orderItems' },
-          { $match: { 'orderItems.productCode': result.data[i].purrPetCode } },
+          {
+            $match: {
+              'orderItems.productCode': result.data[i].purrPetCode,
+              status: STATUS_ORDER.DONE,
+            },
+          },
           {
             $group: {
               _id: null,
@@ -289,7 +295,12 @@ export const getProductByCode = async (purrPetCode) =>
       //đếm lượt bán ra của sản phẩm
       const orderQuantity = await db.order.aggregate([
         { $unwind: '$orderItems' },
-        { $match: { 'orderItems.productCode': purrPetCode } },
+        {
+          $match: {
+            'orderItems.productCode': purrPetCode,
+            status: STATUS_ORDER.DONE,
+          },
+        },
         {
           $group: {
             _id: null,
@@ -323,7 +334,12 @@ export const getDetailProductByCode = async (purrPetCode) =>
       //đếm lượt bán ra của sản phẩm
       const orderQuantity = await db.order.aggregate([
         { $unwind: '$orderItems' },
-        { $match: { 'orderItems.productCode': purrPetCode } },
+        {
+          $match: {
+            'orderItems.productCode': purrPetCode,
+            status: STATUS_ORDER.DONE,
+          },
+        },
         {
           $group: {
             _id: null,
@@ -604,6 +620,7 @@ export const getAllSellingProduct = async (query) =>
         {
           $match: {
             inventory: { $gt: 0 },
+            status: STATUS_ORDER.DONE,
           },
         },
         {
@@ -632,12 +649,27 @@ export const getAllSellingProduct = async (query) =>
       //nếu không có sản phẩm nào được bán thì lấy 10 sản phẩm có inventory lớn nhất
       if (result.length < 10) {
         const products = await db.product
-          .find({ inventory: { $gt: 0 } })
+          .find(
+            { inventory: { $gt: 0 } },
+            {
+              createdAt: 0,
+              updatedAt: 0,
+              status: 0,
+              __v: 0,
+            },
+          )
           .sort({ inventory: -1 })
           .limit(10 - result.length);
 
+        const newProducts = products.map((product) => {
+          return {
+            ...product._doc,
+            totalQuantity: 0,
+          };
+        });
+
         //nối 2 mảng lại
-        result.push(...products);
+        result.push(...newProducts);
       }
       let products = [];
       for (let i = 0; i < result.length; i++) {
@@ -653,7 +685,12 @@ export const getAllSellingProduct = async (query) =>
         }
         const orderQuantity = await db.order.aggregate([
           { $unwind: '$orderItems' },
-          { $match: { 'orderItems.productCode': result[i].purrPetCode } },
+          {
+            $match: {
+              'orderItems.productCode': result[i].purrPetCode,
+              status: STATUS_ORDER.DONE,
+            },
+          },
           {
             $group: {
               _id: null,
@@ -661,6 +698,7 @@ export const getAllSellingProduct = async (query) =>
             },
           },
         ]);
+
         const newProduct = {
           ...result[i],
           averageRating: averageRating,

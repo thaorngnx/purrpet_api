@@ -41,8 +41,6 @@ export const getOrderByCustomer = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const user = req.user;
-    console.log(user);
     const { error } = orderDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.createOrder(req.user, req.body);

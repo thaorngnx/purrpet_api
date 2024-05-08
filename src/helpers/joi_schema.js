@@ -138,6 +138,7 @@ export const orderDto = Joi.object({
   }).allow(null),
   customerNote: Joi.string().allow(null, ''),
   userPoint: Joi.number().integer().allow(null),
+  totalPayment: Joi.number().required(),
   payMethod: Joi.string()
     .valid(Constant.PAYMENT_METHOD.COD, Constant.PAYMENT_METHOD.VNPAY)
     .required(),

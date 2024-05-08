@@ -17,8 +17,8 @@ export const createPaymentUrl = async (req, res) => {
 export const vnpayReturn = async (req, res) => {
   try {
     await services.vnpayReturn(req.query);
-    // res.redirect('https://ui-purrpetshop.vercel.app/order');
-    res.redirect('Sản phẩm');
+    res.redirect('https://ui-purrpetshop.vercel.app/order');
+    // res.redirect('Sản phẩm');
   } catch (error) {
     return internalServerError(res);
   }

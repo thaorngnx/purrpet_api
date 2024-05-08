@@ -638,11 +638,6 @@ export const getAllSellingProduct = async (query) =>
 
         //nối 2 mảng lại
         result.push(...products);
-        resolve({
-          err: 0,
-          message: 'Lấy danh sách sản phẩm bán chạy thành công!',
-          data: result,
-        });
       }
       let products = [];
       for (let i = 0; i < result.length; i++) {
@@ -667,7 +662,7 @@ export const getAllSellingProduct = async (query) =>
           },
         ]);
         const newProduct = {
-          ...result[i],
+          ...result[i]._doc,
           averageRating: averageRating,
           orderQuantity:
             orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,

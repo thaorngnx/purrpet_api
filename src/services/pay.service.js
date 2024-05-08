@@ -13,7 +13,10 @@ import * as CONST from '../utils/constants';
 import { resolve } from 'path';
 import { images } from '../helpers/joi_schema';
 import { ROLE } from '../utils/constants';
-import { notifyMultiUser } from '../../websocket/service/websocket.service';
+import {
+  notifyMultiUser,
+  notifyToUser,
+} from '../../websocket/service/websocket.service';
 
 dotenv.config();
 
@@ -127,6 +130,19 @@ export const vnpayReturn = async (vnp_Params) =>
                 booking.status = STATUS_BOOKING.PAID;
                 await booking.save();
               }
+              const user = await db.customer.findOne({
+                purrPetCode: paymentType.customerCode,
+              });
+              //push socket
+              const userCode = {
+                _id: user._id,
+                role: ROLE.CUSTOMER,
+              };
+              notifyToUser(
+                userCode,
+                CONST.NOTIFICATION_ACTION.ORDER_UPDATE,
+                null,
+              );
               resolve({
                 RspCode: '00',
                 Message: 'Thanh toán thành công',

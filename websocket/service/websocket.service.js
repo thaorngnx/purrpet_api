@@ -8,9 +8,10 @@ export async function notifyToUser(userResquest, action, data) {
     userResquest.role === Constant.ROLE.STAFF ||
     userResquest.role === Constant.ROLE.ADMIN
   ) {
-    user = await db.account.findById(userResquest.id);
+    user = await db.account.findById(userResquest._id);
   } else if (userResquest.role === Constant.ROLE.CUSTOMER) {
-    user = await db.customer.findById(userResquest.id);
+    user = await db.customer.findById(userResquest._id);
+    console.log(user);
   } else {
     return;
   }

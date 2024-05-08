@@ -130,19 +130,6 @@ export const vnpayReturn = async (vnp_Params) =>
                 booking.status = STATUS_BOOKING.PAID;
                 await booking.save();
               }
-              const user = await db.customer.findOne({
-                purrPetCode: paymentType.customerCode,
-              });
-              //push socket
-              const userCode = {
-                _id: user._id,
-                role: ROLE.CUSTOMER,
-              };
-              notifyToUser(
-                userCode,
-                CONST.NOTIFICATION_ACTION.ORDER_UPDATE,
-                null,
-              );
               resolve({
                 RspCode: '00',
                 Message: 'Thanh toán thành công',

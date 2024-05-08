@@ -498,7 +498,7 @@ export const updateReviewDto = Joi.object({
 export const refundDto = Joi.object({
   orderCode: Joi.string().required(),
   message: Joi.string().required(),
-  images: Joi.array().items(images).allow(null),
+  images: Joi.string().allow(null),
 });
 
 export const updateSupplierDto = Joi.object({

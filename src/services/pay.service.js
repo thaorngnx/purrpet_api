@@ -341,7 +341,6 @@ export const requestRefund = async (data) => {
       CONST.NOTIFICATION_ACTION.REFUND_ORDER,
       response,
     );
-    console.log('userCode', userCodeList);
     return {
       err: 0,
       message: 'Yêu cầu trả hàng, hoàn tiền đã được gửi thành công',

@@ -662,7 +662,7 @@ export const getAllSellingProduct = async (query) =>
           },
         ]);
         const newProduct = {
-          ...result[i]._doc,
+          ...result[i],
           averageRating: averageRating,
           orderQuantity:
             orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,

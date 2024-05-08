@@ -13,7 +13,10 @@ import * as CONST from '../utils/constants';
 import { resolve } from 'path';
 import { images } from '../helpers/joi_schema';
 import { ROLE } from '../utils/constants';
-import { notifyMultiUser } from '../../websocket/service/websocket.service';
+import {
+  notifyMultiUser,
+  notifyToUser,
+} from '../../websocket/service/websocket.service';
 
 dotenv.config();
 

@@ -15,6 +15,7 @@ import notification from './notification';
 import supplier from './supplier';
 import consignment from './consignment';
 import merchandise from './merchandise';
+import coin from './coin';
 
 export default {
   account,
@@ -34,4 +35,5 @@ export default {
   supplier,
   consignment,
   merchandise,
+  coin,
 };

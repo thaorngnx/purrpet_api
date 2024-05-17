@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { STATUS_PRODUCT } from '../utils/constants';
+import { boolean } from 'joi';
 
 const merchandiseSchema = new mongoose.Schema({
   purrPetCode: {
@@ -21,6 +22,14 @@ const merchandiseSchema = new mongoose.Schema({
       message: '{VALUE} is not supported',
     },
     default: STATUS_PRODUCT.ACTIVE,
+  },
+  expired: {
+    type: Boolean,
+    default: false,
+  },
+  promotion: {
+    type: Boolean,
+    default: false,
   },
 });
 

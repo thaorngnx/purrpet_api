@@ -58,12 +58,16 @@ export const bookingSpaSchema = new Schema(
     payMethod: {
       type: String,
       enum: {
-        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY],
+        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY, PAYMENT_METHOD.COIN],
         message: '{VALUE} is not supported',
       },
       required: true,
     },
     pointUsed: {
+      type: Number,
+      default: 0,
+    },
+    useCoin: {
       type: Number,
       default: 0,
     },

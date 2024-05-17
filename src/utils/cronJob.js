@@ -7,8 +7,11 @@ import {
   STATUS_BOOKING,
   STATUS_ORDER,
   STATUS_PAYMENT,
+  ROLE,
+  STATUS_PRODUCT,
 } from '../utils/constants';
 import dayjs from 'dayjs';
+import { notifyMultiUser } from '../../websocket/service/websocket.service';
 
 export const cronJob = () => {
   //job: check waiting for payment booking spa/ home/ order and cancel it after 10 minutes created
@@ -95,6 +98,7 @@ export const cronJob = () => {
           await db.bookingSpa.findByIdAndUpdate(booking.id, {
             status: STATUS_BOOKING.EXPIRED,
           });
+          console.log('booking spa expired');
         }
       });
     } catch (error) {
@@ -166,38 +170,46 @@ cron.schedule('0 0 * * *', async () => {
   }
 });
 //job: check expiry product revice noti for admin - RUN 1 day 1 time
-// cron.schedule('0 0 * * *', async () => {
-//   // console.log("check expiry product revice noti for admin");
-//   try {
-//    const now = dayjs();
-// const twoMonthsAhead = now.add(2, 'month');
+cron.schedule('0 0 * * *', async () => {
+  // console.log("check expiry product revice noti for admin");
+  try {
+    const now = dayjs();
+    const twoMonthsAhead = now.add(2, 'month');
 
-// const merchandise = await db.merchandise.find({
-//   expiryDate: { $gt: now.toDate(), $lte: twoMonthsAhead.toDate() },
-// });
-//     const userCodeList = [];
-//     const adminList = await db.account
-//       .find({ role: ROLE.ADMIN })
-//       .select('role');
-//     userCodeList.push(adminList);
-//     userCodeList.forEach(async (user) => {
-//       let notification = {
-//         title: 'Sản phẩm sắp hết hạn',
-//         message: `Sản phẩm ${merchandise} sắp hết hạn`,
-//         action: NOTIFICATION_ACTION.PRODUCT_EXPIRED,
-//         type: NOTIFICATION_TYPE.PRODUCT,
-//         orderCode: null,
-//         userId: user._id,
-//       };
-//       await db.notification.create(notification);
-//     });
+    const merchandise = await db.merchandise.find({
+      status: STATUS_PRODUCT.ACTIVE,
+      expiryDate: { $gt: now.toDate(), $lte: twoMonthsAhead.toDate() },
+    });
 
-//     notifyMultiUser(
-//       userCodeList,
-//       NOTIFICATION_ACTION.PRODUCT_EXPIRED,
-//       merchandise,
-//     );
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+    const userCodeList = [];
+    const adminList = await db.account
+      .find({ role: ROLE.ADMIN })
+      .select('role');
+    userCodeList.push(...adminList);
+    merchandise.forEach(async (item) => {
+      await db.merchandise.findByIdAndUpdate(item.id, {
+        expired: true,
+      });
+      console.log('item', item);
+      userCodeList.forEach(async (user) => {
+        let notification = {
+          title: 'Sản phẩm sắp hết hạn',
+          message: `Sản phẩm ${item.purrPetCode} sắp hết hạn`,
+          action: NOTIFICATION_ACTION.PRODUCT_EXPIRED,
+          type: NOTIFICATION_TYPE.PRODUCT,
+          orderCode: item.purrPetCode,
+          userId: user._id,
+        };
+        await db.notification.create(notification);
+      });
+    });
+
+    notifyMultiUser(
+      userCodeList,
+      NOTIFICATION_ACTION.PRODUCT_EXPIRED,
+      merchandise,
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});

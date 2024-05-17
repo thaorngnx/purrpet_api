@@ -8,6 +8,7 @@ import {
   STATUS_PAYMENT,
   NOTIFICATION_ACTION,
   NOTIFICATION_TYPE,
+  STATUS_COIN,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import { paginationQuery } from '../utils/pagination';
@@ -18,6 +19,7 @@ import {
 } from '../utils/validationData';
 import consignment from '../models/consignment';
 import e from 'express';
+import coin from '../models/coin';
 
 export const createOrder = async (user, data) => {
   try {
@@ -106,10 +108,22 @@ export const createOrder = async (user, data) => {
         message: 'Điểm tích lũy không đủ',
       };
     } else {
-      customer.point -= data.userPoint;
-      totalPayment -= data.userPoint;
+      if (data.useCoin <= customer.coin) {
+        totalPayment -= data.useCoin;
+        customer.point -= data.userPoint;
+        totalPayment -= data.userPoint;
+        customer.coin -= data.useCoin;
+      } else {
+        return {
+          err: -1,
+          message: 'Số xu không đủ',
+        };
+      }
     }
-
+    if (totalPayment === 0) {
+      data.payMethod = PAYMENT_METHOD.COIN;
+      data.paymentStatus = STATUS_PAYMENT.PAID;
+    }
     const inventoryCheck = products.map((item) => item.inventory);
     const inventory = inventoryCheck.every((item) => item > -1);
 
@@ -129,6 +143,14 @@ export const createOrder = async (user, data) => {
         totalPayment,
         pointUsed: data.userPoint,
       });
+      if (response.useCoin > 0) {
+        await coin.create({
+          customerCode: customer.purrPetCode,
+          coin: data.useCoin,
+          orderCode: response.purrPetCode,
+          status: STATUS_COIN.MINUS,
+        });
+      }
       customer.point += point;
       await customer.save();
       const userCodeList = [
@@ -556,9 +578,25 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               merchandise.inventory += item.quantity;
               await merchandise.save();
             });
-            customer.point += response.pointUsed;
-            customer.point -= Math.floor(response.orderPrice * 0.01);
-            await customer.save();
+            if (response.payMethod === PAYMENT_METHOD.COIN) {
+              customer.coin += response.useCoin * 0.9;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: response.useCoin * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            } else {
+              customer.coin += (response.totalPayment + response.useCoin) * 0.9;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: (response.totalPayment + response.useCoin) * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            }
           }
           resolve({
             err: 0,

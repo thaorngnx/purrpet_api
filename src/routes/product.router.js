@@ -43,6 +43,19 @@ router.get(
   verifyToken,
   controllers.getProductsOrderReview,
 );
+router.get('/promotion', controllers.getAllPromotion);
 router.get('/:purrPetCode', controllers.getProductByCode);
+router.post(
+  '/create-promotion',
+  verifyToken,
+  isAdmin,
+  controllers.createPromotion,
+);
+router.post(
+  '/cancel-promotion',
+  verifyToken,
+  isAdmin,
+  controllers.cancelPromotion,
+);
 
 module.exports = router;

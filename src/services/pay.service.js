@@ -146,10 +146,12 @@ export const vnpayReturn = async (vnp_Params) =>
               });
               let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
               paymentType.status = STATUS_ORDER.CANCEL;
+
               await paymentType.save();
               const user = await db.customer.findOne({
                 purrPetCode: paymentType.customerCode,
               });
+              user.point += paymentType.totalPayment;
               let notification = {
                 title: 'Thanh toán thất bại',
                 message: `Thanh toán đơn hàng ${vnp_Params['vnp_TxnRef']} thất bại. Đơn hàng đã được huỷ thành công`,

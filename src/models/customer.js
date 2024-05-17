@@ -31,6 +31,10 @@ export const customerSchema = new Schema(
       type: String,
       default: ROLE.CUSTOMER,
     },
+    coin: {
+      type: Number,
+      default: 0,
+    },
     point: {
       type: Number,
       default: 0,

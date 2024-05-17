@@ -17,3 +17,4 @@ export * from './review.service';
 export * from './notification.service';
 export * from './supplier.service';
 export * from './consignment.service';
+export * from './coin.service';

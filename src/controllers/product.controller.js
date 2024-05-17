@@ -177,3 +177,31 @@ export const getAllSellingProduct = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+export const createPromotion = async (req, res) => {
+  try {
+    const response = await services.createPromotion(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+export const cancelPromotion = async (req, res) => {
+  try {
+    const response = await services.cancelPromotion(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+export const getAllPromotion = async (req, res) => {
+  try {
+    const response = await services.getAllPromotion();
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};

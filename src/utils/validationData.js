@@ -357,7 +357,10 @@ export const checkValidStatusBooking = async (statusOld, statusNew) => {
       }
       break;
     case STATUS_BOOKING.PAID:
-      if (statusNew === STATUS_BOOKING.CHECKIN) {
+      if (
+        statusNew === STATUS_BOOKING.CHECKIN ||
+        statusNew === STATUS_BOOKING.CANCEL
+      ) {
         return 0;
       }
       break;

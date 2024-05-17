@@ -26,6 +26,9 @@ export const productSchema = new Schema(
       type: Number,
       required: true,
     },
+    priceDiscount: {
+      type: Number,
+    },
     categoryCode: {
       type: String,
       required: true,

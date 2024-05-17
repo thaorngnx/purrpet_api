@@ -41,6 +41,7 @@ export const bookingHomeSchema = new Schema(
       type: Date,
       required: true,
     },
+
     status: {
       type: String,
       enum: {
@@ -58,13 +59,17 @@ export const bookingHomeSchema = new Schema(
     payMethod: {
       type: String,
       enum: {
-        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY],
+        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY, PAYMENT_METHOD.COIN],
         message: '{VALUE} is not supported',
       },
       required: true,
       default: PAYMENT_METHOD.COD,
     },
     pointUsed: {
+      type: Number,
+      default: 0,
+    },
+    useCoin: {
       type: Number,
       default: 0,
     },

@@ -40,7 +40,7 @@ export const orderSchema = new Schema(
     payMethod: {
       type: String,
       enum: {
-        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY],
+        values: [PAYMENT_METHOD.COD, PAYMENT_METHOD.VNPAY, PAYMENT_METHOD.COIN],
         message: '{VALUE} is not supported',
       },
       required: true,
@@ -54,6 +54,10 @@ export const orderSchema = new Schema(
       default: STATUS_PAYMENT.WAITING_FOR_PAY,
     },
     pointUsed: {
+      type: Number,
+      default: 0,
+    },
+    useCoin: {
       type: Number,
       default: 0,
     },

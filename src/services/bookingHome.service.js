@@ -3,9 +3,11 @@ import {
   COLLECTION,
   NOTIFICATION_ACTION,
   NOTIFICATION_TYPE,
+  PAYMENT_METHOD,
   PREFIX,
   ROLE,
   STATUS_BOOKING,
+  STATUS_COIN,
 } from '../utils/constants';
 import { generateCode } from '../utils/generateCode';
 import {
@@ -16,6 +18,7 @@ import {
 import dayjs from 'dayjs';
 import { pagination, paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
+import coin from '../models/coin';
 
 export const createBookingHome = async (user, data) =>
   new Promise(async (resolve, reject) => {
@@ -72,16 +75,41 @@ export const createBookingHome = async (user, data) =>
           message: 'Điểm tích lũy không đủ',
         };
       } else {
-        customer.point -= data.userPoint;
-        totalPayment = data.bookingHomePrice - data.userPoint;
+        if (data.useCoin <= customer.coin) {
+          totalPayment -= data.useCoin;
+          customer.point -= data.userPoint;
+          totalPayment -= data.userPoint;
+          customer.coin -= data.useCoin;
+        } else {
+          return {
+            err: -1,
+            message: 'Số xu không đủ',
+          };
+        }
       }
+      if (totalPayment === 0) {
+        data.payMethod = PAYMENT_METHOD.COIN;
+        data.status = STATUS_BOOKING.PAID;
+      }
+
       const pointUsed = data.userPoint;
       const point = data.bookingHomePrice * 0.01;
+
       const response = await db.bookingHome.create({
         ...data,
         pointUsed,
         totalPayment,
       });
+
+      if (response.useCoin > 0) {
+        await db.coin.create({
+          customerCode: customer.purrPetCode,
+          coin: response.useCoin,
+          orderCode: response.purrPetCode,
+          status: STATUS_COIN.MINUS,
+        });
+      }
+
       customer.point += point;
       await customer.save();
 
@@ -116,7 +144,6 @@ export const createBookingHome = async (user, data) =>
         NOTIFICATION_ACTION.NEW_BOOKING_HOME,
         response,
       );
-
       resolve({
         err: response ? 0 : -1,
         message: response
@@ -313,10 +340,82 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
             message: 'Không thể cập nhật trạng thái',
           });
         } else {
+          const customer = await db.customer.findOne({
+            purrPetCode: response.customerCode,
+          });
+          if (!customer) {
+            return resolve({
+              err: -1,
+              message: 'Không tìm thấy khách hàng',
+            });
+          }
+          if (
+            data.status === STATUS_BOOKING.CANCEL &&
+            response.status === STATUS_BOOKING.PAID
+          ) {
+            if (response.payMethod === PAYMENT_METHOD.COIN) {
+              customer.coin += response.useCoin * 0.9;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: response.useCoin * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            } else {
+              customer.coin +=
+                (response.bookingHomePrice - response.pointUsed) * 0.9;
+              customer.point -= response.totalPayment * 0.01;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: (response.bookingHomePrice - response.pointUsed) * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            }
+          } else if (
+            data.status === STATUS_BOOKING.CANCEL &&
+            response.status === STATUS_BOOKING.WAITING_FOR_PAY
+          ) {
+            if (response.coin > 0) {
+              customer.coin += response.useCoin * 0.9;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: response.useCoin * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            }
+          }
+
           const updateStatus = await db.bookingHome.findOneAndUpdate(
             { purrPetCode: purrPetCode },
             { status: data.status },
           );
+          if (data.status === STATUS_BOOKING.CANCEL) {
+            const notification = {
+              title: 'Hủy đơn đặt phòng',
+              message: `Đơn đặt phòng ${response.purrPetCode} đã huỷ thành công, bạn đã được hoàn lại 90% số tiền đã thanh toán vào ví xu của mình`,
+              action: NOTIFICATION_ACTION.BOOKING_HOME_UPDATE,
+              type: NOTIFICATION_TYPE.BOOKING_HOME,
+              orderCode: response.purrPetCode,
+              userId: customer._id,
+            };
+            await db.notification.create(notification);
+            let userCodeList = [
+              {
+                _id: customer._id,
+                role: ROLE.CUSTOMER,
+              },
+            ];
+            notifyMultiUser(
+              userCodeList,
+              NOTIFICATION_ACTION.BOOKING_HOME_UPDATE,
+              response,
+            );
+          }
           resolve({
             err: updateStatus ? 0 : -1,
             message: updateStatus

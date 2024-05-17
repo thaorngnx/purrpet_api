@@ -17,3 +17,4 @@ export * from './review.controller';
 export * from './notification.controller';
 export * from './supplier.controller';
 export * from './consignment.controller';
+export * from './coin.controller';

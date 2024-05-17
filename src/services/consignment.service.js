@@ -33,7 +33,6 @@ export const createConsignment = async (data) =>
           );
 
           const response = await db.consignment.create(data);
-          console.log(response);
           response.productList.map(async (item) => {
             await db.merchandise.create({
               purrPetCode: item.productCode + '+' + data.purrPetCode,

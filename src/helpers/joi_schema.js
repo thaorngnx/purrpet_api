@@ -138,9 +138,14 @@ export const orderDto = Joi.object({
   }).allow(null),
   customerNote: Joi.string().allow(null, ''),
   userPoint: Joi.number().integer().allow(null),
+  useCoin: Joi.number().integer().allow(null),
   totalPayment: Joi.number().allow(null),
   payMethod: Joi.string()
-    .valid(Constant.PAYMENT_METHOD.COD, Constant.PAYMENT_METHOD.VNPAY)
+    .valid(
+      Constant.PAYMENT_METHOD.COD,
+      Constant.PAYMENT_METHOD.VNPAY,
+      Constant.PAYMENT_METHOD.COIN,
+    )
     .required(),
   status: Joi.string()
     .valid(
@@ -166,6 +171,7 @@ export const bookingSpaDto = Joi.object({
   bookingDate: Joi.date().required(),
   bookingTime: Joi.string().required(),
   userPoint: Joi.number().integer().allow(null),
+  useCoin: Joi.number().integer().allow(null),
   payMethod: Joi.string().allow(null),
   status: Joi.string()
     .valid(
@@ -191,6 +197,7 @@ export const bookingHomeDto = Joi.object({
   dateCheckIn: Joi.date().required(),
   dateCheckOut: Joi.date().required(),
   userPoint: Joi.number().integer().allow(null),
+  useCoin: Joi.number().integer().allow(null),
   payMethod: Joi.string().allow(null),
   status: Joi.string()
     .valid(

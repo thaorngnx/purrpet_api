@@ -167,4 +167,9 @@ export const COOKIES_PATH = {
 export const PAYMENT_METHOD = {
   COD: 'Tiền mặt',
   VNPAY: 'VNPAY',
+  COIN: 'Xu',
+};
+export const STATUS_COIN = {
+  PLUS: 'cộng',
+  MINUS: 'trừ',
 };

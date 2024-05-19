@@ -39,8 +39,7 @@ io.on('connection', onConnection);
 
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, '*'],
-    origin: '*',
+    origin: [process.env.CLIENT_URL, 'http://115.78.235.227:5173', '*'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }),

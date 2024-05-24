@@ -14,6 +14,7 @@ import {
   checkValidBookingDateOfHome,
   getUnavailableDayByHome,
   checkValidStatusBooking,
+  checkTimeValidRefundBookingHome,
 } from '../utils/validationData';
 import dayjs from 'dayjs';
 import { pagination, paginationQuery } from '../utils/pagination';
@@ -93,7 +94,6 @@ export const createBookingHome = async (user, data) =>
       }
 
       const pointUsed = data.userPoint;
-      const point = data.bookingHomePrice * 0.01;
 
       const response = await db.bookingHome.create({
         ...data,
@@ -110,7 +110,6 @@ export const createBookingHome = async (user, data) =>
         });
       }
 
-      customer.point += point;
       await customer.save();
 
       const userCodeList = [
@@ -324,6 +323,7 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
       const response = await db.bookingHome.findOne({
         purrPetCode: purrPetCode,
       });
+      const check = await checkTimeValidRefundBookingHome(response.dateCheckIn);
       if (!response) {
         return resolve({
           err: -1,
@@ -354,6 +354,52 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
             response.status === STATUS_BOOKING.PAID
           ) {
             if (response.payMethod === PAYMENT_METHOD.COIN) {
+              if (check === false) {
+                customer.coin += response.useCoin * 0.9;
+                await customer.save();
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.useCoin * 0.9,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+              } else {
+                customer.coin += response.useCoin;
+                await customer.save();
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.useCoin,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+              }
+            } else {
+              if (check === false) {
+                customer.coin +=
+                  (response.totalPayment + response.useCoin) * 0.9;
+                await customer.save();
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: (response.totalPayment + response.useCoin) * 0.9,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+              } else {
+                customer.coin += response.totalPayment + response.useCoin;
+                await customer.save();
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.totalPayment + response.useCoin,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+              }
+            }
+          } else if (
+            data.status === STATUS_BOOKING.CANCEL &&
+            response.status === STATUS_BOOKING.WAITING_FOR_PAY
+          ) {
+            if (check === false) {
               customer.coin += response.useCoin * 0.9;
               await customer.save();
               await coin.create({
@@ -363,27 +409,11 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
                 status: STATUS_COIN.PLUS,
               });
             } else {
-              customer.coin +=
-                (response.bookingHomePrice - response.pointUsed) * 0.9;
-              customer.point -= response.totalPayment * 0.01;
+              customer.coin += response.useCoin;
               await customer.save();
               await coin.create({
                 customerCode: customer.purrPetCode,
-                coin: (response.bookingHomePrice - response.pointUsed) * 0.9,
-                orderCode: response.purrPetCode,
-                status: STATUS_COIN.PLUS,
-              });
-            }
-          } else if (
-            data.status === STATUS_BOOKING.CANCEL &&
-            response.status === STATUS_BOOKING.WAITING_FOR_PAY
-          ) {
-            if (response.coin > 0) {
-              customer.coin += response.useCoin * 0.9;
-              await customer.save();
-              await coin.create({
-                customerCode: customer.purrPetCode,
-                coin: response.useCoin * 0.9,
+                coin: response.useCoin,
                 orderCode: response.purrPetCode,
                 status: STATUS_COIN.PLUS,
               });
@@ -415,6 +445,10 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
               NOTIFICATION_ACTION.BOOKING_HOME_UPDATE,
               response,
             );
+          } else if (data.status === STATUS_BOOKING.CHECKIN) {
+            const point = (response.totalPayment + response.useCoin) * 0.01;
+            customer.point += point;
+            await customer.save();
           }
           resolve({
             err: updateStatus ? 0 : -1,

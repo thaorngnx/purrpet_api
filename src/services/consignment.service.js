@@ -46,7 +46,7 @@ export const createConsignment = async (data) =>
               (product) => product.purrPetCode === item.productCode,
             );
             if (product) {
-              product.inventory += item.quantity;
+              product.inventory = Math.floor(item.quantity) + product.inventory;
               await product.save();
             }
           }
@@ -167,6 +167,25 @@ export const updateStatusMerchandise = async (purrPetCode) =>
         merchandise.status === STATUS_ACCOUNT.ACTIVE
           ? STATUS_ACCOUNT.INACTIVE
           : STATUS_ACCOUNT.ACTIVE;
+      if (merchandise.status === STATUS_ACCOUNT.INACTIVE) {
+        const productCode = purrPetCode.split('+')[0];
+        const product = await db.product
+          .findOne({ purrPetCode: productCode })
+          .select('inventory');
+        if (product) {
+          product.inventory -= merchandise.inventory;
+          await product.save();
+        }
+      } else {
+        const productCode = purrPetCode.split('+')[0];
+        const product = await db.product
+          .findOne({ purrPetCode: productCode })
+          .select('inventory');
+        if (product) {
+          product.inventory += merchandise.inventory;
+          await product.save();
+        }
+      }
       await merchandise.save();
       resolve({
         err: 0,

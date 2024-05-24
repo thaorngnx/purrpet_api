@@ -15,6 +15,9 @@ const merchandiseSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  priceDiscount: {
+    type: Number,
+  },
   status: {
     type: String,
     enum: {

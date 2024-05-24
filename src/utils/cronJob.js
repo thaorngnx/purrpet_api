@@ -78,23 +78,24 @@ export const cronJob = () => {
     }
   });
   //job: check booking spa paid but after booking time and move to expired - RUN 1 HOUR 1 TIME
-  cron.schedule('0 * * * *', async () => {
+  cron.schedule('0 0 * * *', async () => {
     try {
-      // console.log("check booking spa paid but after booking time");
       const bookingSpa = await db.bookingSpa.find({
         status: STATUS_BOOKING.PAID,
       });
       bookingSpa.forEach(async (booking) => {
-        const now = new Date();
+        const timeNow = dayjs();
         //check booking day same
-        const bookingDate = new Date(booking.bookingDate);
-        const bookingTime = booking.bookingTime.split(':');
-        bookingDate.setHours(bookingTime[0]);
-        bookingDate.setMinutes(bookingTime[1]);
-        bookingDate.setSeconds(bookingTime[2]);
-        const timeDiff = now.getTime() - bookingDate.getTime();
-        const minutes = Math.floor(timeDiff / 60000);
-        if (minutes >= 0) {
+        //const bookingDate = new Date(booking.bookingDate);
+        const bookingDate = dayjs(bookingSpa.bookingDate);
+        const bookingTime = dayjs(booking.bookingTime, 'HH:mm');
+        bookingDate.set('hour', bookingTime.hour());
+        bookingDate.set('minute', bookingTime.minute());
+        bookingDate.set('second', 0);
+        bookingDate.set('millisecond', 0);
+        const timeDiff = timeNow.diff(bookingDate);
+        console.log(timeDiff);
+        if (timeDiff >= 0) {
           await db.bookingSpa.findByIdAndUpdate(booking.id, {
             status: STATUS_BOOKING.EXPIRED,
           });
@@ -158,19 +159,27 @@ cron.schedule('0 0 * * *', async () => {
     const sevenDaysAgo = now.subtract(7, 'day');
 
     const merchandise = await db.merchandise.find({
-      expiryDate: { $lte: now.toDate(), $gt: sevenDaysAgo.toDate() },
+      expiryDate: { $lt: sevenDaysAgo.toDate() },
     });
+
     merchandise.forEach(async (item) => {
+      const productCode = item.purrPetCode.split('+')[0];
       await db.merchandise.findByIdAndUpdate(item.id, {
-        status: STATUS_ACCOUNT.INACTIVE,
+        status: STATUS_PRODUCT.INACTIVE,
       });
+      await db.product.findOneAndUpdate(
+        { purrPetCode: productCode },
+        {
+          priceDiscount: null,
+        },
+      );
     });
   } catch (error) {
     console.log(error);
   }
 });
 //job: check expiry product revice noti for admin - RUN 1 day 1 time
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('* * * * *', async () => {
   // console.log("check expiry product revice noti for admin");
   try {
     const now = dayjs();
@@ -178,6 +187,7 @@ cron.schedule('0 0 * * *', async () => {
 
     const merchandise = await db.merchandise.find({
       status: STATUS_PRODUCT.ACTIVE,
+      promotion: false,
       expiryDate: { $gt: now.toDate(), $lte: twoMonthsAhead.toDate() },
     });
 
@@ -190,7 +200,6 @@ cron.schedule('0 0 * * *', async () => {
       await db.merchandise.findByIdAndUpdate(item.id, {
         expired: true,
       });
-      console.log('item', item);
       userCodeList.forEach(async (user) => {
         let notification = {
           title: 'Sản phẩm sắp hết hạn',
@@ -211,5 +220,28 @@ cron.schedule('0 0 * * *', async () => {
     );
   } catch (error) {
     console.log(error);
+  }
+});
+
+cron.schedule('* * * * *', async () => {
+  // up date pricedisount for product
+  const productPromotion = await db.merchandise
+    .find({
+      promotion: true,
+      status: STATUS_PRODUCT.ACTIVE,
+    })
+    .sort({ expiryDate: 1 });
+  const isExistProduct = {};
+  for (const item of productPromotion) {
+    const productCode = item.purrPetCode.split('+')[0];
+    const product = await db.product.findOne({
+      purrPetCode: productCode,
+    });
+    if (!isExistProduct[productCode]) {
+      product.priceDiscount = item.priceDiscount;
+      product.discountQuantity = item.inventory;
+      await product.save();
+      isExistProduct[productCode] = true;
+    }
   }
 });

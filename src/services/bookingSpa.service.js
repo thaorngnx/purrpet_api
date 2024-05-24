@@ -16,6 +16,7 @@ import {
   getAvailableTimeInDayOfSpa,
   checkValidBookingDateTimeOfSpa,
   checkValidStatusBooking,
+  checkTimeValidRefundBookingSpa,
 } from '../utils/validationData';
 dayjs.extend(customParseFormat);
 import { paginationQuery } from '../utils/pagination';
@@ -91,7 +92,6 @@ export const createBookingSpa = async (user, data) =>
         PREFIX.BOOKING_SPA,
       );
 
-      const point = data.bookingSpaPrice * 0.01;
       const response = await db.bookingSpa.create({
         ...data,
         totalPayment: totalPayment,
@@ -106,7 +106,6 @@ export const createBookingSpa = async (user, data) =>
         });
       }
 
-      customer.point += point;
       await customer.save();
 
       const userCodeList = [
@@ -317,6 +316,10 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
       const response = await db.bookingSpa.findOne({
         purrPetCode: purrPetCode,
       });
+      const check = await checkTimeValidRefundBookingSpa(
+        response.bookingDate,
+        response.bookingTime,
+      );
       if (!response) {
         return resolve({
           err: -1,
@@ -347,32 +350,60 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
             response.status === STATUS_BOOKING.PAID
           ) {
             if (response.payMethod === PAYMENT_METHOD.COIN) {
-              customer.coin += response.useCoin * 0.9;
-              await coin.create({
-                customerCode: customer.purrPetCode,
-                coin: response.useCoin * 0.9,
-                orderCode: response.purrPetCode,
-                status: STATUS_COIN.PLUS,
-              });
-              await customer.save();
+              if (check === true) {
+                customer.coin += response.useCoin;
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.useCoin,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+                await customer.save();
+              } else {
+                customer.coin += response.useCoin * 0.9;
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.useCoin * 0.9,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+                await customer.save();
+              }
             } else {
-              customer.coin += response.totalPayment * 0.9;
-              // customer.point -= response.totalPayment * 0.01;
-              await coin.create({
-                customerCode: customer.purrPetCode,
-                coin: response.totalPayment * 0.9,
-                orderCode: response.purrPetCode,
-                status: STATUS_COIN.PLUS,
-              });
-              await customer.save();
+              if (check === true) {
+                customer.coin += response.totalPayment + response.useCoin;
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: response.totalPayment + response.useCoin,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+                await customer.save();
+              } else {
+                customer.coin += (response.totalPayment + useCoin) * 0.9;
+                await coin.create({
+                  customerCode: customer.purrPetCode,
+                  coin: (response.totalPayment + useCoin) * 0.9,
+                  orderCode: response.purrPetCode,
+                  status: STATUS_COIN.PLUS,
+                });
+                await customer.save();
+              }
             }
           } else if (
             data.status === STATUS_BOOKING.CANCEL &&
             response.status === STATUS_BOOKING.WAITING_FOR_PAY
           ) {
-            if (response.coin > 0) {
+            if (check === true) {
+              customer.coin += response.useCoin;
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: response.useCoin,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
+            } else {
               customer.coin += response.useCoin * 0.9;
-              await customer.save();
               await coin.create({
                 customerCode: customer.purrPetCode,
                 coin: response.useCoin * 0.9,
@@ -406,6 +437,10 @@ export const updateStatusBookingSpa = async (data, purrPetCode) =>
               NOTIFICATION_ACTION.BOOKING_SPA_UPDATE,
               response,
             );
+          } else if (data.status === STATUS_BOOKING.CHECKIN) {
+            const point = (response.totalPayment + response.useCoin) * 0.01;
+            customer.point += point;
+            await customer.save();
           }
           resolve({
             err: updateStatus ? 0 : -1,

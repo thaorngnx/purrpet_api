@@ -437,6 +437,9 @@ export const findProductAllInMerchandise = async (productCode, quantity) => {
         inventory: 1,
         expiryDate: 1,
         status: 1,
+        priceDiscount: 1,
+        expired: 1,
+        promotion: 1,
         __v: 1,
       },
     },
@@ -461,6 +464,9 @@ export const findProductAllInMerchandise = async (productCode, quantity) => {
             purrPetCode: '$purrPetCode',
             inventory: '$inventory',
             expiryDate: '$expiryDate',
+            priceDiscount: '$priceDiscount',
+            expired: '$expired',
+            promotion: '$promotion',
             status: '$status',
             __v: '$__v',
           },
@@ -469,4 +475,36 @@ export const findProductAllInMerchandise = async (productCode, quantity) => {
     },
   ]);
   return productList;
+};
+
+export const checkTimeValidRefundBookingSpa = async (
+  bookingDate,
+  bookingTime,
+) => {
+  const currentTime = dayjs();
+  const Date = dayjs(bookingDate);
+  const Time = dayjs(bookingTime, 'HH:mm');
+  Date.set('hour', Time.hour());
+  Date.set('minute', Time.minute());
+  Date.set('second', 0);
+  Date.set('millisecond', 0);
+  const timeDiff = Date.diff(currentTime);
+  const fourHours = 4 * 60 * 60 * 1000;
+  if (timeDiff < fourHours) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const checkTimeValidRefundBookingHome = async (dateCheckIn) => {
+  const currentTime = dayjs();
+  const checkIn = dayjs(dateCheckIn, 'DD/MM/YYYY');
+  const timeDiff = checkIn.diff(currentTime);
+  const oneDay = 24 * 60 * 60 * 1000;
+  if (timeDiff < oneDay) {
+    return false;
+  } else {
+    return true;
+  }
 };

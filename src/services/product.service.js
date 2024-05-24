@@ -56,7 +56,6 @@ export const createProduct = async (data) =>
       reject(error);
     }
   });
-
 export const getAllProduct = async ({
   productCodes,
   page,
@@ -286,6 +285,7 @@ export const getProductByCode = async (purrPetCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const response = await db.product.findOne({ purrPetCode: purrPetCode });
+
       //tính số sao trung bình của sản phẩm
       const reviews = await db.review.find({ productCode: purrPetCode });
       const averageRating =
@@ -736,9 +736,9 @@ export const createPromotion = async (data) =>
       const discountProduct = await db.product.findOne({
         purrPetCode: productCode,
       });
-      discountProduct.priceDiscount =
+      merchandise.priceDiscount =
         discountProduct.price - (discountProduct.price * data.discount) / 100;
-      await discountProduct.save();
+
       merchandise.promotion = true;
       await merchandise.save();
       return resolve({
@@ -762,13 +762,16 @@ export const cancelPromotion = async (data) =>
           message: 'Không tìm thấy sản phẩm!',
         });
       }
+      merchandise.priceDiscount = null;
+      merchandise.promotion = false;
       const productCode = data.merchandiseCode.split('+')[0];
       const discountProduct = await db.product.findOne({
         purrPetCode: productCode,
       });
       discountProduct.priceDiscount = null;
+      discountProduct.discountQuantity = null;
       await discountProduct.save();
-      merchandise.promotion = false;
+
       await merchandise.save();
       resolve({
         err: 0,
@@ -786,25 +789,11 @@ export const getAllPromotion = async () =>
         promotion: true,
         status: STATUS_PRODUCT.ACTIVE,
       });
-      const products = [];
-      const productCodes = {};
-      for (const item of result) {
-        const productCode = item.purrPetCode.split('+')[0];
-
-        // Kiểm tra xem mã sản phẩm đã tồn tại trong đối tượng/mảng tạm thời chưa
-        if (!productCodes[productCode]) {
-          const product = await db.product.findOne({
-            purrPetCode: productCode,
-          });
-          products.push({ product });
-          productCodes[productCode] = true; // Đánh dấu mã sản phẩm đã xuất hiện
-        }
-      }
 
       resolve({
         err: 0,
         message: 'Lấy danh sách khuyến mãi thành công!',
-        data: products,
+        data: result,
       });
     } catch (error) {
       console.error(error);

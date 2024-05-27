@@ -13,12 +13,7 @@ import {
 import { generateCode } from '../utils/generateCode';
 import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
-import {
-  checkExpiryDateProduct,
-  findProductActiveInMerchandise,
-} from '../utils/validationData';
-import consignment from '../models/consignment';
-import e from 'express';
+import { findProductActiveInMerchandise } from '../utils/validationData';
 import coin from '../models/coin';
 
 export const createOrder = async (user, data) => {
@@ -110,19 +105,19 @@ export const createOrder = async (user, data) => {
         err: -1,
         message: 'Điểm tích lũy không đủ',
       };
-    } else {
-      if (data.useCoin <= customer.coin) {
-        totalPayment -= data.useCoin;
-        customer.point -= data.userPoint;
-        totalPayment -= data.userPoint;
-        customer.coin -= data.useCoin;
-      } else {
-        return {
-          err: -1,
-          message: 'Số xu không đủ',
-        };
-      }
     }
+
+    if (data.useCoin > customer.coin) {
+      return {
+        err: -1,
+        message: 'Số xu không đủ',
+      };
+    }
+    totalPayment -= data.useCoin;
+    customer.point -= data.userPoint;
+    totalPayment -= data.userPoint;
+    customer.coin -= data.useCoin;
+
     if (totalPayment === 0) {
       data.payMethod = PAYMENT_METHOD.COIN;
       data.paymentStatus = STATUS_PAYMENT.PAID;
@@ -402,6 +397,8 @@ export const updateStatusOrder = async (data, purrPetCode) =>
                 response.paymentStatus === STATUS_PAYMENT.PAID) ||
               (data.status === STATUS_ORDER.PREPARE &&
                 response.payMethod === PAYMENT_METHOD.COD) ||
+              (data.status === STATUS_ORDER.PREPARE &&
+                response.payMethod === PAYMENT_METHOD.COIN) ||
               data.status === STATUS_ORDER.CANCEL
             ) {
               validStatus = true;
@@ -461,7 +458,9 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               });
             }
           } else if (data.status === STATUS_ORDER.DONE) {
-            const point = Math.floor((response.totalPayment + useCoin) * 0.01);
+            const point = Math.floor(
+              (response.totalPayment + response.useCoin) * 0.01,
+            );
             customer.point += point;
             await customer.save();
           }

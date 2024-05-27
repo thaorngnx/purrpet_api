@@ -17,6 +17,7 @@ import {
   notifyMultiUser,
   notifyToUser,
 } from '../../websocket/service/websocket.service';
+import { title } from 'process';
 
 dotenv.config();
 
@@ -44,7 +45,8 @@ export const createPaymentUrl = async (data) =>
       let tmnCode = process.env.vnp_TmnCode;
       let secretKey = process.env.vnp_HashSecret;
       let vnpUrl = process.env.vnp_Url;
-      let returnUrl = process.env.vnp_ReturnUrl;
+      let returnUrl = process.env.vnp_ReturnUrl + data.returnUrl;
+
       let amount = exsitOrder
         ? exsitOrder.orderPrice * 100
         : exsitBookingHome
@@ -65,6 +67,7 @@ export const createPaymentUrl = async (data) =>
       vnp_Params['vnp_ReturnUrl'] = returnUrl;
       vnp_Params['vnp_IpAddr'] = ipAddr;
       vnp_Params['vnp_CreateDate'] = createDate;
+
       if (bankCode !== null && bankCode !== '') {
         vnp_Params['vnp_BankCode'] = bankCode;
       }
@@ -133,6 +136,7 @@ export const vnpayReturn = async (vnp_Params) =>
               resolve({
                 RspCode: '00',
                 Message: 'Thanh toán thành công',
+                orderCode: vnp_Params['vnp_TxnRef'],
               });
             } else {
               const exsitOrder = await db.order.findOne({
@@ -176,24 +180,28 @@ export const vnpayReturn = async (vnp_Params) =>
               resolve({
                 RspCode: '01',
                 Message: 'Hủy thanh toán thành công',
+                orderCode: vnp_Params['vnp_TxnRef'],
               });
             }
           } else {
             resolve({
               RspCode: '02',
               Message: 'Đơn hàng đã được thanh toán',
+              orderCode: vnp_Params['vnp_TxnRef'],
             });
           }
         } else {
           resolve({
             RspCode: '04',
             Message: 'Số tiền không hợp lệ',
+            orderCode: vnp_Params['vnp_TxnRef'],
           });
         }
       } else {
         resolve({
           RspCode: '03',
           Message: 'Mã đơn hàng không hợp lệ',
+          orderCode: vnp_Params['vnp_TxnRef'],
         });
       }
     } else {
@@ -309,9 +317,15 @@ export const financialReport = async (data) => {
 
 export const requestRefund = async (data) => {
   try {
-    const response = await db.order.findOne({
-      purrPetCode: data.orderCode,
-    });
+    const response = await db.order.findOneAndUpdate(
+      {
+        purrPetCode: data.orderCode,
+      },
+      {
+        status: STATUS_ORDER.RETURN,
+        statusRefund: CONST.STATUS_REFUND.WAITING,
+      },
+    );
     if (!response) {
       return {
         err: -1,
@@ -361,7 +375,7 @@ export const acceptRefund = async (data) => {
         purrPetCode: data.orderCode,
       },
       {
-        status: STATUS_ORDER.CANCEL,
+        statusRefund: CONST.STATUS_REFUND.ACCEPT,
       },
     );
     if (!response) {
@@ -403,9 +417,14 @@ export const acceptRefund = async (data) => {
 };
 export const cancelRefund = async (data) => {
   try {
-    const response = await db.order.findOne({
-      purrPetCode: data.orderCode,
-    });
+    const response = await db.order.findOneAndUpdate(
+      {
+        purrPetCode: data.orderCode,
+      },
+      {
+        statusRefund: CONST.STATUS_REFUND.CANCEL,
+      },
+    );
     if (!response) {
       return {
         err: -1,
@@ -487,4 +506,119 @@ export const financialForCustomer = async (data) => {
       quantityBookingSpa,
     },
   };
+};
+
+export const getRefund = async () => {
+  try {
+    const response = await db.notification.aggregate([
+      {
+        $match: {
+          action: CONST.NOTIFICATION_ACTION.REFUND_ORDER,
+        },
+      },
+      {
+        $lookup: {
+          from: 'orders',
+          localField: 'orderCode',
+          foreignField: 'purrPetCode',
+          as: 'order',
+        },
+      },
+      {
+        $unwind: '$order',
+      },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'order.customerCode',
+          foreignField: 'purrPetCode',
+          as: 'customer',
+        },
+      },
+      {
+        $unwind: '$customer',
+      },
+      {
+        $group: {
+          _id: {
+            orderCode: '$order.purrPetCode',
+            customerCode: '$customer.purrPetCode',
+            customerName: '$customer.name',
+            customerPhone: '$customer.phone',
+            customerEmail: '$customer.email',
+            status: '$order.status',
+            statusRefund: '$order.statusRefund',
+          },
+          message: { $first: '$message' },
+          images: { $first: '$image' },
+          createdAt: { $first: '$createdAt' },
+          title: { $first: '$title' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          title: 1,
+          orderCode: '$_id.orderCode',
+          customerCode: '$_id.customerCode',
+          customerName: '$_id.customerName',
+          customerPhone: '$_id.customerPhone',
+          customerEmail: '$_id.customerEmail',
+          status: '$_id.status',
+          statusRefund: '$_id.statusRefund',
+          message: 1,
+          images: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+    ]);
+
+    return {
+      err: 0,
+      message: 'Lấy thông báo trả hàng, hoàn tiền thành công',
+      data: response,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const refund = async (data) => {
+  try {
+    const response = await db.order.findOne({
+      purrPetCode: data.orderCode,
+    });
+    if (!response) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy đơn hàng',
+      };
+    }
+    response.statusRefund = CONST.STATUS_REFUND.REFUND;
+    await response.save();
+
+    const customer = await db.customer.findOne({
+      purrPetCode: response.customerCode,
+    });
+    customer.coin += response.totalPayment + response.useCoin;
+    await customer.save();
+    console.log('customer', customer);
+
+    await db.coin.create({
+      customerCode: response.customerCode,
+      coin: response.totalPayment + response.useCoin,
+      status: CONST.STATUS_COIN.PLUS,
+      orderCode: response.purrPetCode,
+    });
+    return {
+      err: 0,
+      message: 'Hoàn tiền thành công',
+    };
+  } catch (error) {
+    throw error;
+  }
 };

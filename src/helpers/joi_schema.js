@@ -42,6 +42,7 @@ export const images = Joi.object({
 export const payDto = Joi.object({
   orderCode: Joi.string().required(),
   vnp_BankCode: Joi.string().allow(null),
+  returnUrl: Joi.string().allow(null),
 });
 
 export const loginDto = Joi.object({
@@ -505,7 +506,7 @@ export const updateReviewDto = Joi.object({
 export const refundDto = Joi.object({
   orderCode: Joi.string().required(),
   message: Joi.string().required(),
-  images: Joi.string().allow(null),
+  images: Joi.array().items().allow(null),
 });
 
 export const updateSupplierDto = Joi.object({

@@ -3,6 +3,7 @@ import {
   PAYMENT_METHOD,
   STATUS_ORDER,
   STATUS_PAYMENT,
+  STATUS_REFUND,
 } from '../utils/constants';
 
 mongoose.set('runValidators', true);
@@ -74,10 +75,23 @@ export const orderSchema = new Schema(
           STATUS_ORDER.DELIVERING,
           STATUS_ORDER.CANCEL,
           STATUS_ORDER.DONE,
+          STATUS_ORDER.RETURN,
         ],
         message: '{VALUE} is not supported',
       },
       default: STATUS_ORDER.NEW,
+    },
+    statusRefund: {
+      type: String,
+      enum: {
+        values: [
+          STATUS_REFUND.WAITING,
+          STATUS_REFUND.ACCEPT,
+          STATUS_REFUND.CANCEL,
+          STATUS_REFUND.REFUND,
+        ],
+        message: '{VALUE} is not supported',
+      },
     },
     createBy: {
       type: String,

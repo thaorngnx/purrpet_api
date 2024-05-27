@@ -1,10 +1,11 @@
 import * as services from '../services/pay.service';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 import { payDto, refundDto } from '../helpers/joi_schema';
+import { callbackPromise } from 'nodemailer/lib/shared';
+import io from '../../index';
 
 export const createPaymentUrl = async (req, res) => {
   try {
-    // const user = req.user;
     const { error } = payDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.createPaymentUrl(req.body);
@@ -14,11 +15,38 @@ export const createPaymentUrl = async (req, res) => {
   }
 };
 
-export const vnpayReturn = async (req, res) => {
+export const vnpayReturnForCustomer = async (req, res) => {
+  try {
+    const response = await services.vnpayReturn(req.query);
+
+    res.redirect(
+      `http://localhost:5173/resultvnpay?response=${encodeURIComponent(
+        JSON.stringify(response),
+      )}&isCustomer=true`,
+    );
+  } catch (error) {
+    return internalServerError(res);
+  }
+};
+
+export const vnpayReturnForStaff = async (req, res) => {
+  try {
+    const response = await services.vnpayReturn(req.query);
+
+    res.redirect(
+      `http://localhost:5173/resultvnpay?response=${encodeURIComponent(
+        JSON.stringify(response),
+      )}&isStaff=true`,
+    );
+  } catch (error) {
+    return internalServerError(res);
+  }
+};
+
+export const vnpayReturnForMoblieApp = async (req, res) => {
   try {
     await services.vnpayReturn(req.query);
-    res.redirect('https://ui-purrpetshop.vercel.app/order');
-    // res.redirect('Sản phẩm');
+    return res.status(200).json({ success: true });
   } catch (error) {
     return internalServerError(res);
   }
@@ -67,6 +95,23 @@ export const financialForCustomer = async (req, res) => {
     const response = await services.financialForCustomer(user);
     return res.status(200).json(response);
   } catch (error) {
+    return internalServerError(res);
+  }
+};
+export const getRefund = async (req, res) => {
+  try {
+    const response = await services.getRefund();
+    return res.status(200).json(response);
+  } catch (error) {
+    return internalServerError(res);
+  }
+};
+export const refund = async (req, res) => {
+  try {
+    const response = await services.refund(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
     return internalServerError(res);
   }
 };

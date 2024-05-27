@@ -152,14 +152,14 @@ export const cronJob = () => {
   });
 };
 //job: check expiry product - RUN 1 day 1 time
-cron.schedule('0 0 * * *', async () => {
-  // console.log("check expiry product");
+cron.schedule('* * * * *', async () => {
   try {
     const now = dayjs();
-    const sevenDaysAgo = now.subtract(7, 'day');
+    const sevenDays = now.add(7, 'day');
 
     const merchandise = await db.merchandise.find({
-      expiryDate: { $lt: sevenDaysAgo.toDate() },
+      expiryDate: { $lt: sevenDays.toDate() },
+      status: STATUS_PRODUCT.ACTIVE,
     });
 
     merchandise.forEach(async (item) => {
@@ -167,12 +167,13 @@ cron.schedule('0 0 * * *', async () => {
       await db.merchandise.findByIdAndUpdate(item.id, {
         status: STATUS_PRODUCT.INACTIVE,
       });
-      await db.product.findOneAndUpdate(
-        { purrPetCode: productCode },
-        {
-          priceDiscount: null,
-        },
-      );
+      const product = await db.product.findOne({
+        purrPetCode: productCode,
+      });
+      product.inventory = product.inventory - item.inventory;
+      product.priceDiscount = null;
+      product.discountQuantity = null;
+      await product.save();
     });
   } catch (error) {
     console.log(error);

@@ -18,12 +18,7 @@ export const createPaymentUrl = async (req, res) => {
 export const vnpayReturnForCustomer = async (req, res) => {
   try {
     const response = await services.vnpayReturn(req.query);
-
-    res.redirect(
-      `http://localhost:5173/resultvnpay?response=${encodeURIComponent(
-        JSON.stringify(response),
-      )}&isCustomer=true`,
-    );
+    res.redirect(`http://localhost:5173/order`);
   } catch (error) {
     return internalServerError(res);
   }
@@ -33,11 +28,7 @@ export const vnpayReturnForStaff = async (req, res) => {
   try {
     const response = await services.vnpayReturn(req.query);
 
-    res.redirect(
-      `http://localhost:5173/resultvnpay?response=${encodeURIComponent(
-        JSON.stringify(response),
-      )}&isStaff=true`,
-    );
+    res.redirect(`http://localhost:5173/staff/create/order`);
   } catch (error) {
     return internalServerError(res);
   }
@@ -109,6 +100,16 @@ export const getRefund = async (req, res) => {
 export const refund = async (req, res) => {
   try {
     const response = await services.refund(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+export const getSpendingStatistic = async (req, res) => {
+  try {
+    const user = req.user;
+    const response = await services.getSpendingStatistic(user);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

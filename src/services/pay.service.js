@@ -470,11 +470,11 @@ export const financialForCustomer = async (data) => {
   });
   const bookingHome = await db.bookingHome.find({
     customerCode: user,
-    status: STATUS_BOOKING.PAID,
+    status: STATUS_BOOKING.CHECKIN,
   });
   const bookingSpa = await db.bookingSpa.find({
     customerCode: user,
-    status: STATUS_BOOKING.PAID,
+    status: STATUS_BOOKING.CHECKIN,
   });
   let totalOrder = 0;
   let totalBookingHome = 0;
@@ -622,3 +622,110 @@ export const refund = async (data) => {
     throw error;
   }
 };
+export const getSpendingStatistic = async (user) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const orders = await db.order.find({
+        customerCode: user.purrPetCode,
+        status: STATUS_ORDER.DONE,
+        createdAt: {
+          $gte: new Date(new Date().getFullYear(), 0, 1),
+          $lte: new Date(new Date().getFullYear(), 11, 31, 23, 59, 59),
+        },
+      });
+      const bookingSpa = await db.bookingSpa.find({
+        customerCode: user.purrPetCode,
+        status: STATUS_BOOKING.CHECKIN,
+        createdAt: {
+          $gte: new Date(new Date().getFullYear(), 0, 1),
+          $lte: new Date(new Date().getFullYear(), 11, 31, 23, 59, 59),
+        },
+      });
+      const bookingHotel = await db.bookingHome.find({
+        customerCode: user.purrPetCode,
+        status: STATUS_BOOKING.CHECKIN,
+        createdAt: {
+          $gte: new Date(new Date().getFullYear(), 0, 1),
+          $lte: new Date(new Date().getFullYear(), 11, 31, 23, 59, 59),
+        },
+      });
+      const countOrder = orders.length;
+      const countBookingSpa = bookingSpa.length;
+      const countBookingHotel = bookingHotel.length;
+      const orderPerMonth = orders.reduce((acc, order) => {
+        const month = moment(order.createdAt).format('MM');
+        if (acc[month]) {
+          acc[month].total += order.totalPayment + order.useCoin;
+          acc[month].count += 1;
+        } else {
+          acc[month] = {
+            total: order.totalPayment,
+            count: 1,
+          };
+        }
+        return acc;
+      }, {});
+      const bookingSpaPerMonth = bookingSpa.reduce((acc, booking) => {
+        const month = moment(booking.createdAt).format('MM');
+        if (acc[month]) {
+          acc[month].total += booking.totalPayment + booking.useCoin;
+          acc[month].count += 1;
+        } else {
+          acc[month] = {
+            total: booking.totalPayment,
+            count: 1,
+          };
+        }
+        return acc;
+      }, {});
+      const bookingHotelPerMonth = bookingHotel.reduce((acc, booking) => {
+        const month = moment(booking.createdAt).format('MM');
+        if (acc[month]) {
+          acc[month].total += booking.totalPayment + booking.useCoin;
+          acc[month].count += 1;
+        } else {
+          acc[month] = {
+            total: booking.totalPayment,
+            count: 1,
+          };
+        }
+
+        return acc;
+      }, {});
+      const SpendingPerMonth = {
+        order: orderPerMonth,
+        bookingSpa: bookingSpaPerMonth,
+        bookingHotel: bookingHotelPerMonth,
+      };
+      const totalOrder = orders.reduce((acc, order) => {
+        acc += order.totalPayment + order.useCoin;
+        return acc;
+      }, 0);
+
+      const totalBookingSpa = bookingSpa.reduce((acc, booking) => {
+        acc += booking.totalPayment + booking.useCoin;
+        return acc;
+      }, 0);
+
+      const totalBookingHotel = bookingHotel.reduce((acc, booking) => {
+        acc += booking.totalPayment + booking.useCoin;
+        return acc;
+      }, 0);
+
+      const total = totalOrder + totalBookingSpa + totalBookingHotel;
+      resolve({
+        err: 0,
+        message: 'Lấy thống kê đơn hàng thành công',
+        data: SpendingPerMonth,
+        totalOrder,
+        countOrder,
+        totalBookingSpa,
+        countBookingSpa,
+        totalBookingHotel,
+        countBookingHotel,
+        total,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

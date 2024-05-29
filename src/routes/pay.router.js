@@ -13,6 +13,7 @@ router.post('/request-refund', controllers.requestRefund);
 router.post('/accept-refund', controllers.acceptRefund);
 router.post('/cancel-refund', controllers.cancelRefund);
 router.post('/refund', controllers.refund);
+router.get('/spendingstatistic', verifyToken, controllers.getSpendingStatistic);
 router.get(
   '/financial-statistics',
   verifyToken,

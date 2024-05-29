@@ -3,8 +3,8 @@ import {
   purrPetCode,
   updateBookingHomeDto,
   bookingHomeDto,
-  updateOrderStatusDto,
   masterDataCode,
+  updateBookingHomeStatusDto,
 } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
 
@@ -75,7 +75,7 @@ export const updateBookingHome = async (req, res) => {
 
 export const updateStatusBookingHome = async (req, res) => {
   try {
-    const { error } = updateOrderStatusDto.validate({
+    const { error } = updateBookingHomeStatusDto.validate({
       purrPetCode: req.params.purrPetCode,
       ...req.body,
     });

@@ -9,6 +9,7 @@ export const createPaymentUrl = async (req, res) => {
     const { error } = payDto.validate(req.body);
     if (error) return badRequest(error.message, res);
     const response = await services.createPaymentUrl(req.body);
+
     return res.status(200).json(response);
   } catch (error) {
     return internalServerError(res);
@@ -17,7 +18,7 @@ export const createPaymentUrl = async (req, res) => {
 
 export const vnpayReturnForCustomer = async (req, res) => {
   try {
-    const response = await services.vnpayReturn(req.query);
+    await services.vnpayReturn(req.query);
     res.redirect(`http://localhost:5173/order`);
   } catch (error) {
     return internalServerError(res);
@@ -26,7 +27,7 @@ export const vnpayReturnForCustomer = async (req, res) => {
 
 export const vnpayReturnForStaff = async (req, res) => {
   try {
-    const response = await services.vnpayReturn(req.query);
+    await services.vnpayReturn(req.query);
 
     res.redirect(`http://localhost:5173/staff/create/order`);
   } catch (error) {
@@ -36,8 +37,8 @@ export const vnpayReturnForStaff = async (req, res) => {
 
 export const vnpayReturnForMoblieApp = async (req, res) => {
   try {
-    await services.vnpayReturn(req.query);
-    return res.status(200).json({ success: true });
+    const response = await services.vnpayReturn(req.query);
+    io.emit('payment_success', { data: response });
   } catch (error) {
     return internalServerError(res);
   }

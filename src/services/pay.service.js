@@ -46,7 +46,7 @@ export const createPaymentUrl = async (data) =>
       let secretKey = process.env.vnp_HashSecret;
       let vnpUrl = process.env.vnp_Url;
       let returnUrl = process.env.vnp_ReturnUrl + data.returnUrl;
-
+      console.log('returnUrl', returnUrl);
       let amount = exsitOrder
         ? exsitOrder.orderPrice * 100
         : exsitBookingHome

@@ -9,6 +9,10 @@ const router = express.Router();
 router.get('/query', verifyToken, controllers.getAllProduct);
 router.get('/query-staff', controllers.getAllProductStaff);
 router.get('/query-customer', controllers.getAllProductCustomer);
+router.get(
+  '/query-customer-promotion',
+  controllers.getAllProductCustomerPromotion,
+);
 
 router.get('/best-seller', controllers.getAllSellingProduct);
 
@@ -44,6 +48,7 @@ router.get(
   controllers.getProductsOrderReview,
 );
 router.get('/promotion', controllers.getAllPromotion);
+router.get('/new-product', controllers.getAllNewProduct);
 router.get('/:purrPetCode', controllers.getProductByCode);
 router.post(
   '/create-promotion',

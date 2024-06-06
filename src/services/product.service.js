@@ -615,6 +615,8 @@ export const getAllSellingProduct = async (query) =>
             inventory: { $first: '$productInfo.inventory' },
             description: { $first: '$productInfo.description' },
             star: { $first: '$productInfo.star' },
+            discountQuantity: { $first: '$productInfo.discountQuantity' },
+            priceDiscount: { $first: '$productInfo.priceDiscount' },
           },
         },
         {
@@ -635,6 +637,8 @@ export const getAllSellingProduct = async (query) =>
             star: { $first: '$star' },
             inventory: { $first: '$inventory' },
             totalQuantity: { $sum: '$orderItems.quantity' },
+            discountQuantity: { $first: '$discountQuantity' },
+            priceDiscount: { $first: '$priceDiscount' },
           },
         },
         {
@@ -798,5 +802,113 @@ export const getAllPromotion = async () =>
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  });
+
+export const getAllProductCustomerPromotion = async ({
+  page,
+  limit,
+  order,
+  key,
+  ...query
+}) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const result = await db.product.find({
+        priceDiscount: { $ne: null },
+        inventory: { $gt: 0 },
+      });
+      for (let i = 0; i < result.length; i++) {
+        const reviews = await db.review.find({
+          productCode: result[i].purrPetCode,
+        });
+        let averageRating = 0;
+        if (reviews.length !== 0) {
+          averageRating =
+            reviews.reduce((total, review) => {
+              return total + review.rating;
+            }, 0) / reviews.length;
+        }
+        const orderQuantity = await db.order.aggregate([
+          { $unwind: '$orderItems' },
+          {
+            $match: {
+              'orderItems.productCode': result[i].purrPetCode,
+              status: STATUS_ORDER.DONE,
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalQuantity: { $sum: '$orderItems.quantity' },
+            },
+          },
+        ]);
+        result[i] = {
+          ...result[i]._doc,
+          averageRating: averageRating,
+          orderQuantity:
+            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+        };
+      }
+
+      resolve({
+        err: 0,
+        message: 'Lấy danh sách sản phẩm khuyến mãi thành công!',
+        data: result,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getAllNewProduct = async () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const result = await db.product
+        .find({ inventory: { $gt: 0 } })
+        .sort({ createdAt: -1 })
+        .limit(10);
+      for (let i = 0; i < result.length; i++) {
+        const reviews = await db.review.find({
+          productCode: result[i].purrPetCode,
+        });
+        let averageRating = 0;
+        if (reviews.length !== 0) {
+          averageRating =
+            reviews.reduce((total, review) => {
+              return total + review.rating;
+            }, 0) / reviews.length;
+        }
+        const orderQuantity = await db.order.aggregate([
+          { $unwind: '$orderItems' },
+          {
+            $match: {
+              'orderItems.productCode': result[i].purrPetCode,
+              status: STATUS_ORDER.DONE,
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              totalQuantity: { $sum: '$orderItems.quantity' },
+            },
+          },
+        ]);
+        result[i] = {
+          ...result[i]._doc,
+          averageRating: averageRating,
+          orderQuantity:
+            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
+        };
+      }
+
+      resolve({
+        err: 0,
+        message: 'Lấy danh sách sản phẩm mới thành công!',
+        data: result,
+      });
+    } catch (error) {
+      reject(error);
     }
   });

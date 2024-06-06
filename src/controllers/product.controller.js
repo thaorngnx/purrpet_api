@@ -205,3 +205,21 @@ export const getAllPromotion = async (req, res) => {
     return internalServerError(res);
   }
 };
+export const getAllProductCustomerPromotion = async (req, res) => {
+  try {
+    const response = await services.getAllProductCustomerPromotion(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};
+export const getAllNewProduct = async (req, res) => {
+  try {
+    const response = await services.getAllNewProduct();
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};

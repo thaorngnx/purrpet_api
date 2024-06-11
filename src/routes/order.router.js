@@ -15,7 +15,7 @@ router.get(
 );
 router.get('/:purrPetCode', verifyToken, controllers.getOrderByCode);
 router.post('/create', verifyToken, controllers.createOrder);
-//router.post('/create', controllers.createOrder);
+router.post('/create-staff', verifyToken, controllers.createOrderStaff);
 router.put('/update/:purrPetCode', controllers.updateOrder);
 router.put('/update-status/:purrPetCode', controllers.updateStatusOrder);
 router.delete('/delete/:purrPetCode', controllers.deleteOrder);

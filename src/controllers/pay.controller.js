@@ -26,8 +26,7 @@ export const vnpayReturnForCustomer = async (req, res) => {
 
 export const vnpayReturnForStaff = async (req, res) => {
   try {
-    await services.vnpayReturn(req.query);
-
+    await services.vnpayReturnForStaff(req.query);
     res.redirect(`http://localhost:5173/staff/create/order`);
   } catch (error) {
     return internalServerError(res);

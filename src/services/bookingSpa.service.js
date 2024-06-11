@@ -491,3 +491,64 @@ export const getAvailableTime = async (bookingDate) =>
       reject(error);
     }
   });
+export const createBookingSpaStaff = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const checkValidBookingDateTime = await checkValidBookingDateTimeOfSpa(
+        data.bookingDate,
+        data.bookingTime,
+      );
+      if (checkValidBookingDateTime.err !== 0) {
+        return resolve({
+          err: -1,
+          message: 'Giờ đặt lịch không hợp lệ',
+        });
+      }
+      const customer = await db.customer.findOne({
+        purrPetCode: data.customerCode,
+      });
+      if (!customer) {
+        return resolve({
+          err: -1,
+          message: 'Không tìm thấy khách hàng',
+        });
+      }
+
+      let totalPayment = data.bookingSpaPrice;
+      let availablePoint = data.bookingHomePrice * 0.01;
+      if (!data.userPoint) data.userPoint = 0;
+      if (
+        data.userPoint > availablePoint ||
+        data.userPoint < 0 ||
+        data.userPoint > customer.point
+      ) {
+        return resolve({
+          err: -1,
+          message: 'Điểm tích lũy không đủ',
+        });
+      }
+      const pointUsed = data.userPoint;
+      totalPayment -= data.userPoint;
+
+      data.purrPetCode = await generateCode(
+        COLLECTION.BOOKING_SPA,
+        PREFIX.BOOKING_SPA,
+      );
+
+      const response = await db.bookingSpa.create({
+        ...data,
+        totalPayment: totalPayment,
+        pointUsed: pointUsed,
+      });
+      await customer.save();
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? 'Tạo đơn đặt lịch thành công'
+          : 'Tạo đơn đặt lịch thất bại',
+        data: response,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });

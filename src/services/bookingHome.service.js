@@ -489,3 +489,70 @@ export const getUnavailableDay = async (query) =>
       reject(err);
     }
   });
+
+export const createBookingHomeStaff = async (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const checkValidBookingDate = await checkValidBookingDateOfHome(
+        data.checkIn,
+        data.checkOut,
+        data.homeCode,
+      );
+      if (checkValidBookingDate.err !== 0) {
+        return resolve({
+          err: -1,
+          message: 'Ngày đặt phòng không hợp lệ',
+        });
+      }
+      const customer = await db.customer.findOne({
+        purrPetCode: data.customerCode,
+      });
+      if (!customer) {
+        return resolve({
+          err: -1,
+          message: 'Không tìm thấy khách hàng',
+        });
+      }
+
+      //Todo: check home price
+
+      let totalPayment = data.bookingHomePrice;
+
+      data.purrPetCode = await generateCode(
+        COLLECTION.BOOKING_HOME,
+        PREFIX.BOOKING_HOME,
+      );
+
+      let availablePoint = data.bookingHomePrice * 0.1;
+      if (!data.userPoint) data.userPoint = 0;
+      if (
+        data.userPoint > availablePoint ||
+        data.userPoint < 0 ||
+        data.userPoint > customer.point
+      ) {
+        return {
+          err: -1,
+          message: 'Điểm tích lũy không đủ',
+        };
+      }
+
+      const pointUsed = data.userPoint;
+      totalPayment -= data.userPoint;
+
+      const response = await db.bookingHome.create({
+        ...data,
+        pointUsed,
+        totalPayment,
+      });
+
+      resolve({
+        err: response ? 0 : -1,
+        message: response
+          ? 'Tạo đơn đặt phòng thành công'
+          : 'Tạo đơn đặt phòng thất bại',
+        data: response,
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });

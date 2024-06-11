@@ -114,3 +114,15 @@ export const getUnavailableDay = async (req, res) => {
     return internalServerError(res);
   }
 };
+
+export const createBookingHomeStaff = async (req, res) => {
+  try {
+    const { error } = bookingHomeDto.validate(req.body);
+    if (error) return badRequest(error.message, res);
+    const response = await services.createBookingHomeStaff(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};

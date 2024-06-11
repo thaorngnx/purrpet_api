@@ -18,6 +18,7 @@ import {
   notifyToUser,
 } from '../../websocket/service/websocket.service';
 import { title } from 'process';
+import e from 'express';
 
 dotenv.config();
 
@@ -154,7 +155,7 @@ export const vnpayReturn = async (vnp_Params) =>
               const user = await db.customer.findOne({
                 purrPetCode: paymentType.customerCode,
               });
-              user.point += paymentType.totalPayment;
+              user.coin += paymentType.totalPayment;
               let notification = {
                 title: 'Thanh toán thất bại',
                 message: `Thanh toán đơn hàng ${vnp_Params['vnp_TxnRef']} thất bại. Đơn hàng đã được huỷ thành công`,
@@ -176,6 +177,104 @@ export const vnpayReturn = async (vnp_Params) =>
                 CONST.NOTIFICATION_ACTION.CANCEL_ORDER,
                 paymentType,
               );
+              resolve({
+                RspCode: '01',
+                Message: 'Hủy thanh toán thành công',
+                orderCode: vnp_Params['vnp_TxnRef'],
+              });
+            }
+          } else {
+            resolve({
+              RspCode: '02',
+              Message: 'Đơn hàng đã được thanh toán',
+              orderCode: vnp_Params['vnp_TxnRef'],
+            });
+          }
+        } else {
+          resolve({
+            RspCode: '04',
+            Message: 'Số tiền không hợp lệ',
+            orderCode: vnp_Params['vnp_TxnRef'],
+          });
+        }
+      } else {
+        resolve({
+          RspCode: '03',
+          Message: 'Mã đơn hàng không hợp lệ',
+          orderCode: vnp_Params['vnp_TxnRef'],
+        });
+      }
+    } else {
+      resolve({
+        RspCode: '97',
+        Message: 'Chữ ký không hợp lệ',
+      });
+    }
+  });
+
+export const vnpayReturnForStaff = async (vnp_Params) =>
+  new Promise(async (resolve, reject) => {
+    var secureHash = vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHashType'];
+    var rspCode = vnp_Params['vnp_ResponseCode'];
+    vnp_Params = sortObject(vnp_Params);
+    var secretKey = process.env.vnp_HashSecret;
+    var signData = querystring.stringify(vnp_Params, { encode: false });
+    var hmac = crypto.createHmac('sha512', secretKey);
+    var signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
+
+    let paymentStatus = '0';
+    let checkOrderId = true;
+    let checkAmount = true;
+    if (secureHash === signed) {
+      if (checkOrderId) {
+        if (checkAmount) {
+          if (paymentStatus == '0') {
+            if (rspCode == '00') {
+              const exsitOrder = await db.order.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              const exsitBooking = await db.bookingHome.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              const exsitBookingSpa = await db.bookingSpa.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              if (exsitOrder) {
+                exsitOrder.paymentStatus = STATUS_PAYMENT.PAID;
+                exsitOrder.status = STATUS_ORDER.DONE;
+                await exsitOrder.save();
+              }
+              if (exsitBooking || exsitBookingSpa) {
+                let booking = exsitBooking ?? exsitBookingSpa;
+                booking.status = STATUS_BOOKING.PAID;
+                await booking.save();
+              }
+              resolve({
+                RspCode: '00',
+                Message: 'Thanh toán thành công',
+                orderCode: vnp_Params['vnp_TxnRef'],
+              });
+            } else {
+              const exsitOrder = await db.order.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              const exsitBooking = await db.bookingHome.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              const exsitBookingSpa = await db.bookingSpa.findOne({
+                purrPetCode: vnp_Params['vnp_TxnRef'],
+              });
+              let paymentType = exsitOrder ?? exsitBooking ?? exsitBookingSpa;
+              paymentType.status = STATUS_ORDER.CANCEL;
+
+              await paymentType.save();
+              const user = await db.customer.findOne({
+                purrPetCode: paymentType.customerCode,
+              });
+              user.coin += paymentType.totalPayment;
+
               resolve({
                 RspCode: '01',
                 Message: 'Hủy thanh toán thành công',

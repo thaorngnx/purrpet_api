@@ -15,7 +15,6 @@ import { paginationQuery } from '../utils/pagination';
 import { notifyMultiUser } from '../../websocket/service/websocket.service';
 import { findProductActiveInMerchandise } from '../utils/validationData';
 import coin from '../models/coin';
-import moment from 'moment';
 
 export const createOrder = async (user, data) => {
   try {
@@ -107,7 +106,6 @@ export const createOrder = async (user, data) => {
         message: 'Điểm tích lũy không đủ',
       };
     }
-
     if (data.useCoin > customer.coin) {
       return {
         err: -1,
@@ -118,10 +116,8 @@ export const createOrder = async (user, data) => {
     customer.point -= data.userPoint;
     totalPayment -= data.userPoint;
     customer.coin -= data.useCoin;
-
     if (totalPayment === 0) {
       data.payMethod = PAYMENT_METHOD.COIN;
-      data.paymentStatus = STATUS_PAYMENT.PAID;
     }
     const inventoryCheck = products.map((item) =>
       item.discountQuantity ? item.discountQuantity : item.inventory,
@@ -133,8 +129,10 @@ export const createOrder = async (user, data) => {
     }
     if (data.payMethod === PAYMENT_METHOD.COD) {
       data.status = STATUS_ORDER.NEW;
+    } else if (data.payMethod === PAYMENT_METHOD.COIN) {
+      data.paymentStatus = STATUS_PAYMENT.PAID;
     } else {
-      data.status = STATUS_ORDER.WAITING_FOR_PAY;
+      data.paymentStatus = STATUS_PAYMENT.WAITING_FOR_PAY;
     }
     if (!isOutOfStock) {
       const response = await db.order.create({
@@ -400,7 +398,8 @@ export const updateStatusOrder = async (data, purrPetCode) =>
                 response.payMethod === PAYMENT_METHOD.COD) ||
               (data.status === STATUS_ORDER.PREPARE &&
                 response.payMethod === PAYMENT_METHOD.COIN) ||
-              data.status === STATUS_ORDER.CANCEL
+              data.status === STATUS_ORDER.CANCEL ||
+              data.status === STATUS_ORDER.DONE
             ) {
               validStatus = true;
             }
@@ -495,3 +494,133 @@ export const deleteOrder = async (purrPetCode) =>
       reject(error);
     }
   });
+
+export const createOrderStaff = async (user, data) => {
+  try {
+    const customer = await db.customer.findOne({
+      purrPetCode: data.customerCode,
+    });
+
+    if (!customer) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy khách hàng',
+      };
+    }
+
+    data.customerAddress = customer.address;
+    data.purrPetCode = await generateCode(COLLECTION.ORDER, PREFIX.ORDER);
+
+    const productItems = data.orderItems.map((item) => item.productCode);
+    const products = await db.product.find({
+      purrPetCode: { $in: productItems },
+    });
+
+    if (products.length !== productItems.length) {
+      return {
+        err: -1,
+        message: 'Không tìm thấy sản phẩm',
+      };
+    }
+
+    let isOutOfStock = false;
+    let orderPrice = 0;
+    for (const item of products) {
+      const orderItem = data.orderItems.find(
+        (i) => i.productCode === item.purrPetCode,
+      );
+      const totalPriceItems = item.discountQuantity
+        ? item.priceDiscount * orderItem.quantity
+        : item.price * orderItem.quantity;
+      orderPrice += totalPriceItems;
+      item.inventory -= orderItem.quantity;
+      orderItem.productPrice =
+        item.discountQuantity > 0 ? item.priceDiscount : item.price;
+      orderItem.totalPrice = totalPriceItems;
+      orderItem.image = item.images[0]?.path;
+      await item.save();
+      if (item.inventory < 0) {
+        isOutOfStock = true;
+      } else {
+        const response = await findProductActiveInMerchandise(
+          item.purrPetCode,
+          orderItem.quantity,
+        );
+        if (response.length === 0) {
+          isOutOfStock = true;
+        } else {
+          const productList = response[0].products;
+          productList[0].inventory -= orderItem.quantity;
+          orderItem.consignmentCode = productList[0].purrPetCode.split('+')[1];
+          console.log(
+            'sản phẩm đã bán thuộc lô hàng',
+            productList[0].purrPetCode.split('+')[1],
+          );
+          const updateMerchandise = await db.merchandise.findOne({
+            purrPetCode: productList[0].purrPetCode,
+          });
+          updateMerchandise.inventory -= orderItem.quantity;
+          await updateMerchandise.save();
+        }
+      }
+    }
+
+    let totalPayment = orderPrice;
+    let availablePoint = orderPrice * 0.1;
+    if (!data.userPoint) data.userPoint = 0;
+    if (
+      data.userPoint > availablePoint ||
+      data.userPoint < 0 ||
+      data.userPoint > customer.point
+    ) {
+      return {
+        err: -1,
+        message: 'Điểm tích lũy không đủ',
+      };
+    }
+
+    customer.point -= data.userPoint;
+    totalPayment -= data.userPoint;
+    const inventoryCheck = products.map((item) =>
+      item.discountQuantity ? item.discountQuantity : item.inventory,
+    );
+    const inventory = inventoryCheck.every((item) => item > -1);
+
+    if (!inventory) {
+      isOutOfStock = true;
+    }
+    if (data.payMethod === PAYMENT_METHOD.COD) {
+      data.paymentStatus = STATUS_PAYMENT.PAID;
+    } else {
+      data.paymentStatus = STATUS_PAYMENT.WAITING_FOR_PAY;
+    }
+    if (!isOutOfStock) {
+      const response = await db.order.create({
+        ...data,
+        orderPrice,
+        totalPayment,
+        pointUsed: data.userPoint,
+        createdBy: user.purrPetCode,
+      });
+      await customer.save();
+      return {
+        err: response ? 0 : -1,
+        message: response ? 'Tạo đơn hàng thành công' : 'Tạo đơn hàng thất bại',
+        data: response,
+      };
+    } else {
+      products.forEach(async (item) => {
+        item.inventory += data.orderItems.find(
+          (i) => i.productCode === item.purrPetCode,
+        ).quantity;
+        await item.save();
+      });
+      return {
+        err: -1,
+        message: 'Sản phẩm đã hết hàng',
+      };
+    }
+  } catch (error) {
+    throw error;
+  }
+};

@@ -98,3 +98,15 @@ export const deleteOrder = async (req, res) => {
     return internalServerError(res);
   }
 };
+export const createOrderStaff = async (req, res) => {
+  try {
+    const { error } = orderDto.validate(req.body);
+    if (error) return badRequest(error.message, res);
+    const user = req.user;
+    const response = await services.createOrderStaff(user, req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return internalServerError(res);
+  }
+};

@@ -7,6 +7,7 @@ import {
   bookingDate,
 } from '../helpers/joi_schema';
 import { internalServerError, badRequest } from '../middlewares/handle_errors';
+import e from 'express';
 
 export const getAllBookingSpa = async (req, res) => {
   try {
@@ -109,6 +110,16 @@ export const getAvailableTime = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
+    return internalServerError(res);
+  }
+};
+export const createBookingSpaStaff = async (req, res) => {
+  try {
+    const { error } = bookingSpaDto.validate(req.body);
+    if (error) return badRequest(error.message, res);
+    const response = await services.createBookingSpaStaff(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
     return internalServerError(res);
   }
 };

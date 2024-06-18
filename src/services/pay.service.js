@@ -424,6 +424,8 @@ export const requestRefund = async (data) => {
         statusRefund: CONST.STATUS_REFUND.WAITING,
       },
     );
+
+    console.log('response', response);
     if (!response) {
       return {
         err: -1,

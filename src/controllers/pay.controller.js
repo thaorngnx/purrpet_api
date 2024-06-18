@@ -18,7 +18,7 @@ export const createPaymentUrl = async (req, res) => {
 export const vnpayReturnForCustomer = async (req, res) => {
   try {
     await services.vnpayReturn(req.query);
-    res.redirect(`http://localhost:5173/order`);
+    res.redirect(`https://purrpet.me/order`);
   } catch (error) {
     return internalServerError(res);
   }
@@ -27,7 +27,7 @@ export const vnpayReturnForCustomer = async (req, res) => {
 export const vnpayReturnForStaff = async (req, res) => {
   try {
     await services.vnpayReturnForStaff(req.query);
-    res.redirect(`http://localhost:5173/staff/create/order`);
+    res.redirect(`https://purrpet.me/staff/create/order`);
   } catch (error) {
     return internalServerError(res);
   }
@@ -55,10 +55,13 @@ export const financialReport = async (req, res) => {
 export const requestRefund = async (req, res) => {
   try {
     const { error } = refundDto.validate(req.body);
+    console.log(error);
     if (error) return badRequest(error.message, res);
+
     const response = await services.requestRefund(req.body);
     return res.status(200).json(response);
   } catch (error) {
+    console.log(error);
     return internalServerError(res);
   }
 };

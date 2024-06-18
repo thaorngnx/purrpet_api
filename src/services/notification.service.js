@@ -25,7 +25,9 @@ export const markAllAsRead = async (userId) =>
         { $set: { seen: true } },
       );
 
-      const notifications = await db.notification.find({ userId: userId });
+      const notifications = await db.notification
+        .find({ userId: userId })
+        .sort({ createdAt: -1 });
 
       resolve({
         err: notifications ? 0 : -1,

@@ -180,7 +180,7 @@ cron.schedule('* * * * *', async () => {
   }
 });
 //job: check expiry product revice noti for admin - RUN 1 day 1 time
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
   // console.log("check expiry product revice noti for admin");
   try {
     const now = dayjs();

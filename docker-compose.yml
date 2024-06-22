@@ -7,7 +7,12 @@ services:
       - '80:80' # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81' # Admin Web Port
-
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+
+  purrpet-api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '3000:3000'

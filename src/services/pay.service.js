@@ -48,7 +48,7 @@ export const createPaymentUrl = async (data) =>
       let vnpUrl = process.env.vnp_Url;
       let returnUrl = process.env.vnp_ReturnUrl + data.returnUrl;
       let amount = exsitOrder
-        ? exsitOrder.orderPrice * 100
+        ? exsitOrder.totalPayment * 100
         : exsitBookingHome
         ? exsitBookingHome.totalPayment * 100
         : exsitBookingSpa.totalPayment * 100;

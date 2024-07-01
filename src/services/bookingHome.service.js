@@ -353,47 +353,24 @@ export const updateStatusBookingHome = async (data, purrPetCode) =>
             data.status === STATUS_BOOKING.CANCEL &&
             response.status === STATUS_BOOKING.PAID
           ) {
-            if (response.payMethod === PAYMENT_METHOD.COIN) {
-              if (check === false) {
-                customer.coin += response.useCoin * 0.9;
-                await customer.save();
-                await coin.create({
-                  customerCode: customer.purrPetCode,
-                  coin: response.useCoin * 0.9,
-                  orderCode: response.purrPetCode,
-                  status: STATUS_COIN.PLUS,
-                });
-              } else {
-                customer.coin += response.useCoin;
-                await customer.save();
-                await coin.create({
-                  customerCode: customer.purrPetCode,
-                  coin: response.useCoin,
-                  orderCode: response.purrPetCode,
-                  status: STATUS_COIN.PLUS,
-                });
-              }
+            if (check === false) {
+              customer.coin += (response.totalPayment + response.useCoin) * 0.9;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: (response.totalPayment + response.useCoin) * 0.9,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
             } else {
-              if (check === false) {
-                customer.coin +=
-                  (response.totalPayment + response.useCoin) * 0.9;
-                await customer.save();
-                await coin.create({
-                  customerCode: customer.purrPetCode,
-                  coin: (response.totalPayment + response.useCoin) * 0.9,
-                  orderCode: response.purrPetCode,
-                  status: STATUS_COIN.PLUS,
-                });
-              } else {
-                customer.coin += response.totalPayment + response.useCoin;
-                await customer.save();
-                await coin.create({
-                  customerCode: customer.purrPetCode,
-                  coin: response.totalPayment + response.useCoin,
-                  orderCode: response.purrPetCode,
-                  status: STATUS_COIN.PLUS,
-                });
-              }
+              customer.coin += response.totalPayment + response.useCoin;
+              await customer.save();
+              await coin.create({
+                customerCode: customer.purrPetCode,
+                coin: response.totalPayment + response.useCoin,
+                orderCode: response.purrPetCode,
+                status: STATUS_COIN.PLUS,
+              });
             }
           } else if (
             data.status === STATUS_BOOKING.CANCEL &&

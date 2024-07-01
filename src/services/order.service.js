@@ -438,21 +438,12 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               merchandise.inventory += item.quantity;
               await merchandise.save();
             });
-            if (response.payMethod === PAYMENT_METHOD.COIN) {
-              customer.coin += response.useCoin;
+            if (response.paymentStatus === STATUS_PAYMENT.PAID) {
+              customer.coin += response.useCoin + response.totalPayment;
               await customer.save();
               await coin.create({
                 customerCode: customer.purrPetCode,
                 coin: response.useCoin,
-                orderCode: response.purrPetCode,
-                status: STATUS_COIN.PLUS,
-              });
-            } else {
-              customer.coin += response.totalPayment + response.useCoin;
-              await customer.save();
-              await coin.create({
-                customerCode: customer.purrPetCode,
-                coin: response.totalPayment + response.useCoin,
                 orderCode: response.purrPetCode,
                 status: STATUS_COIN.PLUS,
               });

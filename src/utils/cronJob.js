@@ -16,7 +16,7 @@ import { notifyMultiUser } from '../../websocket/service/websocket.service';
 export const cronJob = () => {
   //job: check waiting for payment booking spa/ home/ order and cancel it after 10 minutes created
   cron.schedule('*/2 * * * *', async () => {
-    // console.log("cancel not paid after 10 minutes");
+    console.log('cancel not paid after 10 minutes');
     try {
       const bookingSpa = await db.bookingSpa.find({
         status: STATUS_BOOKING.WAITING_FOR_PAY,
@@ -26,7 +26,8 @@ export const cronJob = () => {
       });
       const order = await db.order.find({
         paymentStatus: STATUS_PAYMENT.WAITING_FOR_PAY,
-        paymentMethod: PAYMENT_METHOD.VNPAY,
+        payMethod: PAYMENT_METHOD.VNPAY,
+        status: STATUS_ORDER.NEW,
       });
       bookingSpa.forEach(async (booking) => {
         const now = new Date();
@@ -62,12 +63,12 @@ export const cronJob = () => {
             const product = await db.product.findOne({
               purrPetCode: item.productCode,
             });
-            console.log(product);
             product.inventory += item.quantity;
             await product.save();
             const merchandise = await db.merchandise.findOne({
               purrPetCode: item.productCode + '+' + item.consignmentCode,
             });
+            console.log(merchandise, item.quantity);
             merchandise.inventory += item.quantity;
             await merchandise.save();
           });

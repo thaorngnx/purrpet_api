@@ -689,6 +689,7 @@ export const getRefund = async () => {
 };
 export const refund = async (data) => {
   try {
+    console.log('data', data);
     const response = await db.order.findOne({
       purrPetCode: data.orderCode,
     });
@@ -708,12 +709,13 @@ export const refund = async (data) => {
     await customer.save();
     console.log('customer', customer);
 
-    await db.coin.create({
+    const result = await db.coin.create({
       customerCode: response.customerCode,
       coin: response.totalPayment + response.useCoin,
       status: CONST.STATUS_COIN.PLUS,
       orderCode: response.purrPetCode,
     });
+    console.log(result);
     return {
       err: 0,
       message: 'Hoàn tiền thành công',

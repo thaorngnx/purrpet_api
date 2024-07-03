@@ -816,7 +816,7 @@ export const getAllProductCustomerPromotion = async ({
     try {
       const result = await db.product.find({
         priceDiscount: { $ne: null },
-        inventory: { $gt: 0 },
+        discountQuantity: { $gt: 0 },
       });
       for (let i = 0; i < result.length; i++) {
         const reviews = await db.review.find({

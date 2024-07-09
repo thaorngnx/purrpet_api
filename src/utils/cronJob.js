@@ -16,7 +16,7 @@ import { notifyMultiUser } from '../../websocket/service/websocket.service';
 export const cronJob = () => {
   //job: check waiting for payment booking spa/ home/ order and cancel it after 10 minutes created
   cron.schedule('*/2 * * * *', async () => {
-    console.log('cancel not paid after 10 minutes');
+    //console.log('cancel not paid after 10 minutes');
     try {
       const bookingSpa = await db.bookingSpa.find({
         status: STATUS_BOOKING.WAITING_FOR_PAY,

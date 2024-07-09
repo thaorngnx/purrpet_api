@@ -12,14 +12,10 @@ router.post(
   controllers.getCustomerByEmail,
 );
 // router.use(verifyToken);
-router.get('/query', controllers.getAllCustomer);
-router.get('/:purrPetCode', controllers.getCustomerByCode);
-router.post(
-  '/find-by-id/:id',
-  verifyToken,
-  isCustomer,
-  controllers.getCustomerById,
-);
+router.get('/find-by-id', verifyToken, controllers.getCustomerById);
+router.get('/query', verifyToken, controllers.getAllCustomer);
+router.get('/:purrPetCode', verifyToken, controllers.getCustomerByCode);
+
 // router.use(verifyToken);
 router.post('/look-up-orders', controllers.lookUpOrders);
 router.post('/create', controllers.createCustomer);

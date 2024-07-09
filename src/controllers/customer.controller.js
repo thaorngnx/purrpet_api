@@ -10,7 +10,6 @@ import { internalServerError, badRequest } from '../middlewares/handle_errors';
 export const getAllCustomer = async (req, res) => {
   try {
     const response = await services.getAllCustomer(req.query);
-    console.log(response);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);
@@ -32,7 +31,8 @@ export const getCustomerByCode = async (req, res) => {
 
 export const getCustomerById = async (req, res) => {
   try {
-    const response = await services.getCustomerById(req.params.id);
+    const userId = req.user.id;
+    const response = await services.getCustomerById(userId);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

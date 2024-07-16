@@ -8,10 +8,11 @@ export const getFavorite = async (userCode) =>
   new Promise(async (resolve, reject) => {
     try {
       const result = await db.favorite.find({ userCode });
+      const productCodes = result.map((item) => item.productCode);
       resolve({
         err: 0,
         message: 'Lấy danh sách sản phẩm yêu thích thành công',
-        data: result,
+        data: productCodes,
       });
     } catch (error) {
       reject(error);

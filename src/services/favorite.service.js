@@ -3,7 +3,28 @@ import { COLLECTION } from '../utils/constants.js';
 import { paginationQuery } from '../utils/pagination.js';
 import { getProductByCodes } from './product.service.js';
 
-export const getAllFavorite = async ({ page, limit, order, ...query }) =>
+// chỉ lấy ra danh sách productCode
+export const getFavorite = async (userCode) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const result = await db.favorite.find({ userCode });
+      resolve({
+        err: 0,
+        message: 'Lấy danh sách sản phẩm yêu thích thành công',
+        data: result,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+// lấy thông tin chi tiết product
+export const getFavoriteProductDetail = async ({
+  page,
+  limit,
+  order,
+  ...query
+}) =>
   new Promise(async (resolve, reject) => {
     try {
       //Săp xếp

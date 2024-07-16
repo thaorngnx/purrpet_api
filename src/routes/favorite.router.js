@@ -5,7 +5,13 @@ import { isCustomer } from '../middlewares/verify_role';
 
 const router = express.Router();
 
-router.get('/', verifyToken, isCustomer, controllers.getAllFavorite);
+router.get('/', verifyToken, isCustomer, controllers.getFavorite);
+router.get(
+  '/detail',
+  verifyToken,
+  isCustomer,
+  controllers.getFavoriteProductDetail,
+);
 router.post(
   '/:productCode',
   verifyToken,

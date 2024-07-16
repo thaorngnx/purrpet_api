@@ -3,30 +3,6 @@ import { COLLECTION } from '../utils/constants.js';
 import { paginationQuery } from '../utils/pagination.js';
 import { getProductByCodes } from './product.service.js';
 
-// export const getAllFavorite = async ({ page, limit, sort, query }) =>
-//   new Promise(async (resolve, reject) => {
-//     try {
-//       const result = await paginationQuery(
-//         COLLECTION.FAVORITE,
-//         query,
-//         limit,
-//         page,
-//         sort,
-//       );
-
-//       resolve({
-//         err: result ? 0 : -1,
-//         message: result
-//           ? 'Lấy danh sách yêu thích thành công'
-//           : 'Lấy danh sách yêu thích thất bại',
-//         data: result.data,
-//         pagination: result.pagination,
-//       });
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-
 export const getAllFavorite = async ({ page, limit, order, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {

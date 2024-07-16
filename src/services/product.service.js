@@ -332,47 +332,12 @@ export const getProductByCodes = async (productCodes) =>
         purrPetCode: { $in: productCodes },
       });
 
-      let products = [];
-      for (let i = 0; i < result.length; i++) {
-        const reviews = await db.review.find({
-          productCode: result[i].purrPetCode,
-        });
-        let averageRating = 0;
-        if (reviews.length !== 0) {
-          averageRating =
-            reviews.reduce((total, review) => {
-              return total + review.rating;
-            }, 0) / reviews.length;
-        }
-        const orderQuantity = await db.order.aggregate([
-          { $unwind: '$orderItems' },
-          {
-            $match: {
-              'orderItems.productCode': result[i].purrPetCode,
-              status: STATUS_ORDER.DONE,
-            },
-          },
-          {
-            $group: {
-              _id: null,
-              totalQuantity: { $sum: '$orderItems.quantity' },
-            },
-          },
-        ]);
-        const newProduct = {
-          ...result[i]._doc,
-          averageRating: averageRating,
-          orderQuantity:
-            orderQuantity.length > 0 ? orderQuantity[0].totalQuantity : 0,
-        };
-        products.push(newProduct);
-      }
       resolve({
-        err: products ? 0 : -1,
-        message: products
+        err: result ? 0 : -1,
+        message: result
           ? 'Tìm thấy sản phẩm!'
           : 'Đã có lỗi xảy ra. Vui lòng thử lại!',
-        data: products,
+        data: result,
       });
     } catch (error) {
       reject(error);

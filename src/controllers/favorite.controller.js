@@ -15,7 +15,7 @@ export const getFavoriteProductDetail = async (req, res) => {
   try {
     let query = { ...req.query };
     query.userCode = req.user.purrPetCode;
-    const response = await services.getFavoriteProductDetail(req.query);
+    const response = await services.getFavoriteProductDetail(query);
     return res.status(200).json(response);
   } catch (error) {
     console.log(error);

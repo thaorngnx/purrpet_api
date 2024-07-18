@@ -65,12 +65,13 @@ export const cronJob = () => {
             });
             product.inventory += item.quantity;
             await product.save();
-            const merchandise = await db.merchandise.findOne({
-              purrPetCode: item.productCode + '+' + item.consignmentCode,
+            orderItems.consignmentCode.forEach(async (item) => {
+              const merchandise = await db.merchandise.findOne({
+                purrPetCode: item.productCode + '+' + item.consignmentCode,
+              });
+              merchandise.inventory += item.quantity;
+              await merchandise.save();
             });
-            console.log(merchandise, item.quantity);
-            merchandise.inventory += item.quantity;
-            await merchandise.save();
           });
         }
       });

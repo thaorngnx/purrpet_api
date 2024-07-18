@@ -398,7 +398,7 @@ export const findProductActiveInMerchandise = async (productCode, quantity) => {
       $match: {
         originalPurrPetCode: productCode,
         status: STATUS_PRODUCT.ACTIVE,
-        inventory: { $gte: quantity },
+        inventory: { $gte: 0 },
       },
     },
     {

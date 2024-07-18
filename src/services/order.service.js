@@ -57,6 +57,7 @@ export const createOrder = async (user, data) => {
       const orderItem = data.orderItems.find(
         (i) => i.productCode === item.purrPetCode,
       );
+      orderItem.consignmentCode = [];
       const totalPriceItems = item.discountQuantity
         ? item.priceDiscount * orderItem.quantity
         : item.price * orderItem.quantity;
@@ -77,22 +78,56 @@ export const createOrder = async (user, data) => {
         if (response.length === 0) {
           isOutOfStock = true;
         } else {
-          const productList = response[0].products;
-          productList[0].inventory -= orderItem.quantity;
-          orderItem.consignmentCode = productList[0].purrPetCode.split('+')[1];
-          console.log(
-            'sản phẩm đã bán thuộc lô hàng',
-            productList[0].purrPetCode.split('+')[1],
-          );
-          const updateMerchandise = await db.merchandise.findOne({
-            purrPetCode: productList[0].purrPetCode,
-          });
-          updateMerchandise.inventory -= orderItem.quantity;
-          await updateMerchandise.save();
+          let quantity = orderItem.quantity;
+          const merchandise = response[0].products;
+          for (let i = 0; i < merchandise.length; i++) {
+            if (merchandise[i].inventory < quantity) {
+              quantity -= merchandise[i].inventory;
+              const quantitySold = merchandise[i].inventory;
+              merchandise[i].inventory = 0;
+              await db.merchandise.findOneAndUpdate(
+                {
+                  purrPetCode: merchandise[i].purrPetCode,
+                },
+                { inventory: merchandise[i].inventory },
+              );
+              console.log(
+                'sản phẩm đã bán thuộc lô hàng',
+                merchandise[i].purrPetCode,
+                'số lượng còn lại',
+                merchandise[i].inventory,
+              );
+              orderItem.consignmentCode.push({
+                consignmentCode: merchandise[i].purrPetCode.split('+')[1],
+                quantity: quantitySold,
+              });
+            } else {
+              merchandise[i].inventory -= quantity;
+              // quantity = 0;
+              console.log(
+                'sản phẩm đã bán thuộc lô hàng',
+                merchandise[i].purrPetCode,
+                'số lượng còn lại',
+                merchandise[i].inventory,
+              );
+
+              await db.merchandise.findOneAndUpdate(
+                {
+                  purrPetCode: merchandise[i].purrPetCode,
+                },
+                { inventory: merchandise[i].inventory },
+              );
+              orderItem.consignmentCode.push({
+                consignmentCode: merchandise[i].purrPetCode.split('+')[1],
+                quantity: quantity,
+              });
+              quantity = 0;
+              break;
+            }
+          }
         }
       }
     }
-
     let totalPayment = orderPrice;
     let availablePoint = orderPrice * 0.1;
     if (!data.userPoint) data.userPoint = 0;
@@ -198,6 +233,29 @@ export const createOrder = async (user, data) => {
     throw error;
   }
 };
+//     if (response.length === 0) {
+//       isOutOfStock = true;
+//     } else {
+//       const productList = response[0].products;
+//       productList[0].inventory -= orderItem.quantity;
+//       orderItem.consignmentCode = productList[0].purrPetCode.split('+')[1];
+//       console.log(
+//         'sản phẩm đã bán thuộc lô hàng',
+//         productList[0].purrPetCode.split('+')[1],
+//       );
+//       const updateMerchandise = await db.merchandise.findOne({
+//         purrPetCode: productList[0].purrPetCode,
+//       });
+//       updateMerchandise.inventory -= orderItem.quantity;
+//       await updateMerchandise.save();
+//     }
+//   }
+// }
+
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const getAllOrder = async (
   user,
@@ -432,11 +490,14 @@ export const updateStatusOrder = async (data, purrPetCode) =>
               });
               product.inventory += item.quantity;
               await product.save();
-              const merchandise = await db.merchandise.findOne({
-                purrPetCode: item.productCode + '+' + item.consignmentCode,
+              item.consignmentCode.forEach(async (consignment) => {
+                const merchandise = await db.merchandise.findOne({
+                  purrPetCode:
+                    product.purrPetCode + '+' + consignment.consignmentCode,
+                });
+                merchandise.inventory += consignment.quantity;
+                await merchandise.save();
               });
-              merchandise.inventory += item.quantity;
-              await merchandise.save();
             });
             if (response.paymentStatus === STATUS_PAYMENT.PAID) {
               customer.coin += response.useCoin + response.totalPayment;

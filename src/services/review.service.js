@@ -56,6 +56,12 @@ export const createReview = async (user, data) =>
         createBy: user.purrPetCode,
       });
 
+      //add point to user
+      await db.customer.updateOne(
+        { purrPetCode: user.purrPetCode },
+        { $inc: { point: 10 } },
+      );
+
       resolve({
         err: 0,
         message: 'Đánh giá thành công',

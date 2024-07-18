@@ -65,7 +65,7 @@ export const cronJob = () => {
             });
             product.inventory += item.quantity;
             await product.save();
-            orderItems.consignmentCode.forEach(async (item) => {
+            item.consignmentCode.forEach(async (item) => {
               const merchandise = await db.merchandise.findOne({
                 purrPetCode: item.productCode + '+' + item.consignmentCode,
               });
